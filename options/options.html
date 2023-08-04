@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Options Page</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+<body>
+	<h1>Options Page</h1>
+    <div id="input-container-link-patterns" class="input-container">
+        <input type="text" id="title" placeholder="title">
+        <input type="text" id="pattern" placeholder="regex pattern">
+        <label for="show-parent">Show Context?</label>
+        <input type="checkbox" id="show-parent">
+        <button id="save-button">Save</button>
+    </div>
+    <div id="input-container-attachments" class="input-container"></div>
+    
+
+    <div id="table-container-link-patterns">
+    <h1>Saved Link Patterns</h1>
+        <table id="table-link-patterns">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Pattern</th>
+                <th>Show Context?</th>
+                <th>Delete</th>
+                <th>Reorder</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+	<script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+    "manifest_version": 3,
+    "name": "Zendesk Link Collector",
+    "version": "1.0",
+    "description": "Summarize links and attachments",
+    "content_scripts": [
+      {
+        "matches": ["https://*.zendesk.com/*"],
+        "run_at": "document_start",
+        "js": ["content-scripts/contentscript.js"]
+      }
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "options_page": "options/options.html",
+    "action": {
+        "default_popup": "popup/popup.html"
+      },
+      "permissions": [
+        "tabs",
+        "storage"
+      ],
+      "host_permissions": [
+        "https://*.zendesk.com/*"
+    ]
+  }
