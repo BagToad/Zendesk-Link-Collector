@@ -1,0 +1,1 @@
+# Zendesk-Link-Collector
