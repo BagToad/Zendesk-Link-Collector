@@ -21,14 +21,12 @@ function deleteLink(id) {
 function load() {
     const linkTable = document.getElementById('table-link-patterns').tBodies[0];
     linkTable.innerHTML = '';
-    let html2add = '';
     chrome.storage.sync.get('options', function (data) {
-        let checked = '';
-        let html2add = '';
         data.options.forEach(option => {
+            let checked = '';
+            let html2add = '';
             const tr = document.createElement('tr');
             tr.id = option.id;
-            html2add = '';
             html2add += `<td><strong>${option.title}</strong></td>`
             html2add += `<td><pre>${option.pattern}</pre></td>`
             html2add += `<td><input disabled="true" type="checkbox" name="showContext1" ${checked = option.showParent == true ? 'checked' : ''}></td>`
@@ -45,8 +43,7 @@ function load() {
 }
 
 function save() {
-    let options = [];
-    options = chrome.storage.sync.get('options', function (data) {
+    chrome.storage.sync.get('options', function (data) {
         if (data.options == undefined || data.options.length <= 0) {
             data.options = [];
         }
