@@ -24,6 +24,7 @@ function load() {
     let html2add = '';
     chrome.storage.sync.get('options', function (data) {
         let checked = '';
+        let html2add = '';
         data.options.forEach(option => {
             const tr = document.createElement('tr');
             tr.id = option.id;
