@@ -46,7 +46,7 @@ function load() {
 function save() {
     let options = [];
     options = chrome.storage.sync.get('options', function (data) {
-        if (data.options.length <= 0) {
+        if (data.options == undefined || data.options.length <= 0) {
             data.options = [];
         }
         data.options.push({
