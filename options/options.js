@@ -22,6 +22,9 @@ function load() {
     const linkTable = document.getElementById('table-link-patterns').tBodies[0];
     linkTable.innerHTML = '';
     browser.storage.sync.get('options').then(data => {
+        if (data.options == undefined || data.options.length <= 0){
+            data.options = [];
+        }
         data.options.forEach(option => {
             let html2add = '';
             const tr = document.createElement('tr');

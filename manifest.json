@@ -13,7 +13,11 @@
         ]
       }
     ],
-    "options_page": "options/options.html",
+    "options_ui": {
+      "page": "options/options.html",
+      "browser_style": false,
+      "open_in_tab": true
+    },
     "action": {
         "default_popup": "popup/popup.html"
       },
@@ -21,7 +25,12 @@
         "tabs",
         "storage"
       ],
-      "host_permissions": [
+    "host_permissions": [
         "https://*.zendesk.com/*"
-    ]
+    ],
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "{3e9c2ec4-3490-11ee-be56-0242ac120002}"
+      }
+    }
   }

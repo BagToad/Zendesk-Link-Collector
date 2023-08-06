@@ -113,7 +113,7 @@ async function searchCommentsJSON(commentsJSON) {
 
 async function filterLinks(linksArr) {
   let filters = await browser.storage.sync.get('options').then((data) => {
-    if (data.options.length <= 0){
+    if (data.options == undefined || data.options.length <= 0){
         data.options = [];
     }
     return data.options;;
