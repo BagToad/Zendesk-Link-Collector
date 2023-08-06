@@ -82,21 +82,18 @@ async function searchCommentsJSON(commentsJSON) {
     });
 
     // Filter all the links according to the rules.
-    linksBundle = await filterLinks(linksArr);
+    const linksBundle = await filterLinks(linksArr);
 
     // Load the nice lists :)
     const linksList = document.getElementById('list-container-links');
     linksBundle.forEach(bundle => {
       linksList.innerHTML += `<h3 class="list-header list-header-links" >${bundle.title}</h3>`;
-      html2add = `<ul class='list-links' id="list-${bundle.title}">`;
-      // linksList.innerHTML += `<ul id="list-${bundle.title}">`;
+      let html2add = `<ul class='list-links' id="list-${bundle.title}">`;
       
       bundle.links.forEach(link => {
         if (bundle.showParent) {
-          // linksList.innerHTML += `<li class="list-item-links"><i class="icon-search" id='${link.id}'></i>${link.parent_text}</li>`;
           html2add += `<li class="list-item-links"><i class="icon-search" id='${link.id}'></i>${link.parent_text}</li>`;
         } else {
-          // linksList.innerHTML += `<li class="list-item-links"><i class="icon-search" id='${link.id}'></i><a target="_blank" href="${link.href}">${link.text}</a></li>`;
           html2add += `<li class="list-item-links"><i class="icon-search" id='${link.id}'></i><a target="_blank" href="${link.href}">${link.text}</a></li>`;
         }
       })
@@ -172,7 +169,7 @@ function parseTicketID(url) {
 }
 
 getCurrentTabURL().then(url => {
-    if (url.href.search(/https:\/\/[A-z0-9]+.zendesk.com\/agent\/tickets\/[0-9]+/i) >= 0) {
+    if (url.href.search(/^https:\/\/[\-_A-Za-z0-9]+\.zendesk.com\/agent\/tickets\/[0-9]+/i) >= 0) {
         const ticketID = parseTicketID(url.href)
         fetchResource(`https://${url.hostname}/api/v2/tickets/${ticketID}/comments`)
         .then(response => response.json())
