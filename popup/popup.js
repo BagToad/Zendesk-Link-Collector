@@ -82,7 +82,7 @@ async function searchCommentsJSON(commentsJSON) {
     });
 
     // Filter all the links according to the rules.
-    linksBundle = await filterLinks(linksArr);
+    const linksBundle = await filterLinks(linksArr);
 
     // Load the nice lists :)
     const linksList = document.getElementById('list-container-links');
