@@ -2,7 +2,7 @@
 // - Edit?
 
 function deleteLink(id) {
-    options = chrome.storage.sync.get('options', function (data) {
+    browser.storage.sync.get('options').then(data => {
         if (data.options.length <= 0){
             //Shouldn't happen?
             return;
@@ -12,7 +12,7 @@ function deleteLink(id) {
                 data.options.splice(data.options.indexOf(option), 1);
             }
         });
-        chrome.storage.sync.set({options: data.options}, function() {
+        browser.storage.sync.set({options: data.options}).then( () => {
             load();
         });
     });
@@ -21,7 +21,7 @@ function deleteLink(id) {
 function load() {
     const linkTable = document.getElementById('table-link-patterns').tBodies[0];
     linkTable.innerHTML = '';
-    chrome.storage.sync.get('options', function (data) {
+    browser.storage.sync.get('options').then(data => {
         data.options.forEach(option => {
             let html2add = '';
             const tr = document.createElement('tr');
@@ -42,7 +42,7 @@ function load() {
 }
 
 function save() {
-    chrome.storage.sync.get('options', function (data) {
+    browser.storage.sync.get('options').then(data => {
         if (data.options == undefined || data.options.length <= 0) {
             data.options = [];
         }
@@ -52,7 +52,7 @@ function save() {
             pattern: document.getElementById('pattern').value,
             showParent: document.getElementById('show-parent').checked
         })
-        chrome.storage.sync.set({options: data.options}, function() {
+        browser.storage.sync.set({options: data.options}).then( () => {
             load();
             document.getElementById('title').value = '';
             document.getElementById('pattern').value = '';
@@ -63,7 +63,7 @@ function save() {
 }
 
 function reorder(id, move) {
-    chrome.storage.sync.get('options', function (data) {
+    browser.storage.sync.get('options').then(data => {
         if (data.options.length <= 0){
             //Shouldn't happen?
             return;
@@ -87,7 +87,7 @@ function reorder(id, move) {
             }
         });
         
-        chrome.storage.sync.set({options: data.options}, function() {
+        browser.storage.sync.set({options: data.options}).then( () => {
             load();
         });
     });

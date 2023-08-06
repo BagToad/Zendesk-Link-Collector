@@ -19,12 +19,12 @@ document.getElementById('button-attachments').addEventListener('click', () => {
 
 
 function scrollToComment(commentId) {
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, {type: "scroll", commentId: commentId});
+  browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
+    browser.tabs.sendMessage(tabs[0].id, {type: "scroll", commentId: commentId});
   });
 
   // const type = 'scroll';
-  // chrome.runtime.sendMessage({type, commentId});
+  // browser.runtime.sendMessage({type, commentId});
 
   // const type = 'scroll'
   // const element = document.querySelector(`[data-comment-id="${commentId}"]`);
@@ -36,8 +36,8 @@ function scrollToComment(commentId) {
 function fetchResource(input, init) {
     const type = 'fetch';
     return new Promise((resolve, reject) => {
-      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {type, input, init}, messageResponse => {
+      browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
+        browser.tabs.sendMessage(tabs[0].id, {type, input, init}).then(messageResponse => {
           const [response, error] = messageResponse;
           if (response === null) {
             reject(error);
@@ -112,7 +112,7 @@ async function searchCommentsJSON(commentsJSON) {
 }
 
 async function filterLinks(linksArr) {
-  let filters = await chrome.storage.sync.get('options').then((data) => {
+  let filters = await browser.storage.sync.get('options').then((data) => {
     if (data.options.length <= 0){
         data.options = [];
     }
@@ -159,7 +159,7 @@ function updateUI(ticketURL, isZendesk) {
 
 async function getCurrentTabURL() {
     let queryOptions = { active: true, currentWindow: true };
-    let [tab] = await chrome.tabs.query(queryOptions);
+    let [tab] = await browser.tabs.query(queryOptions);
     return new URL(tab.url);
 }
 
