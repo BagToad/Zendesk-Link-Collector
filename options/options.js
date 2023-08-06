@@ -23,13 +23,12 @@ function load() {
     linkTable.innerHTML = '';
     chrome.storage.sync.get('options', function (data) {
         data.options.forEach(option => {
-            let checked = '';
             let html2add = '';
             const tr = document.createElement('tr');
             tr.id = option.id;
             html2add += `<td><strong>${option.title}</strong></td>`
             html2add += `<td><pre>${option.pattern}</pre></td>`
-            html2add += `<td><input disabled="true" type="checkbox" name="showContext1" ${checked = option.showParent == true ? 'checked' : ''}></td>`
+            html2add += `<td><input disabled="true" type="checkbox" name="showContext1" ${option.showParent == true ? 'checked' : ''}></td>`
             html2add += `<td><button>Delete</button></td>`
             html2add += `<td><button class="button-reorder-up">Up</button><button class="button-reorder-down">down</button></td>`
             tr.innerHTML = html2add;          
