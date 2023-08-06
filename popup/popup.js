@@ -172,7 +172,7 @@ function parseTicketID(url) {
 }
 
 getCurrentTabURL().then(url => {
-    if (url.href.search(/https:\/\/[A-z0-9]+.zendesk.com\/agent\/tickets\/[0-9]+/i) >= 0) {
+    if (url.href.search(/https:\/\/[A-z0-9]+\.zendesk.com\/agent\/tickets\/[0-9]+/i) >= 0) {
         const ticketID = parseTicketID(url.href)
         fetchResource(`https://${url.hostname}/api/v2/tickets/${ticketID}/comments`)
         .then(response => response.json())
