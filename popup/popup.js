@@ -88,15 +88,12 @@ async function searchCommentsJSON(commentsJSON) {
     const linksList = document.getElementById('list-container-links');
     linksBundle.forEach(bundle => {
       linksList.innerHTML += `<h3 class="list-header list-header-links" >${bundle.title}</h3>`;
-      html2add = `<ul class='list-links' id="list-${bundle.title}">`;
-      // linksList.innerHTML += `<ul id="list-${bundle.title}">`;
+      let html2add = `<ul class='list-links' id="list-${bundle.title}">`;
       
       bundle.links.forEach(link => {
         if (bundle.showParent) {
-          // linksList.innerHTML += `<li class="list-item-links"><i class="icon-search" id='${link.id}'></i>${link.parent_text}</li>`;
           html2add += `<li class="list-item-links"><i class="icon-search" id='${link.id}'></i>${link.parent_text}</li>`;
         } else {
-          // linksList.innerHTML += `<li class="list-item-links"><i class="icon-search" id='${link.id}'></i><a target="_blank" href="${link.href}">${link.text}</a></li>`;
           html2add += `<li class="list-item-links"><i class="icon-search" id='${link.id}'></i><a target="_blank" href="${link.href}">${link.text}</a></li>`;
         }
       })
