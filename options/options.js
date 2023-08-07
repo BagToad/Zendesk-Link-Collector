@@ -36,6 +36,7 @@ function load() {
             let strong = '';
             let pre = '';
             let input = '';
+            let button = '';
 
             // Create table cells.
             // Create title cell.
