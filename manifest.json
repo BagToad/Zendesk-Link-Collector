@@ -13,6 +13,12 @@
         ]
       }
     ],
+    "icons": {
+      "128": "icons/zlc-icon-128x128.png",
+      "48": "icons/zlc-icon-48x48.png",
+      "32": "icons/zlc-icon-32x32.png",
+      "16": "icons/zlc-icon-16x16.png"
+    },
     "options_ui": {
       "page": "options/options.html",
       "browser_style": false,

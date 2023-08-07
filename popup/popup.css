@@ -80,6 +80,7 @@ li.list-item-links, li.list-item-attachments {
 
 .icon-search {
     background-image: url(../icons/search.svg);
+    filter: invert(1);
     display: inline-block;
     padding: 6px;
     margin-right: 4px;
