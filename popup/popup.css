@@ -61,6 +61,7 @@ ul.list-links, ul.list-attachments {
 
 li.list-item-links, li.list-item-attachments {
     list-style: none;
+    margin-bottom: 2px;
 }
 
 .list-container {
@@ -80,6 +81,7 @@ li.list-item-links, li.list-item-attachments {
 
 .icon-search {
     background-image: url(../icons/search.svg);
+    background-repeat: no-repeat;
     filter: invert(1);
     display: inline-block;
     padding: 6px;

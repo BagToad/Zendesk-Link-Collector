@@ -1,6 +1,3 @@
-const div = document.createElement('div');
-document.body.appendChild(div);
-
 document.getElementById('button-links').addEventListener('click', () => {
   document.getElementById('button-links').classList.add('checked');
   document.getElementById('list-container-links').classList.add('selected');
@@ -22,15 +19,6 @@ function scrollToComment(commentId) {
   browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
     browser.tabs.sendMessage(tabs[0].id, {type: "scroll", commentId: commentId});
   });
-
-  // const type = 'scroll';
-  // browser.runtime.sendMessage({type, commentId});
-
-  // const type = 'scroll'
-  // const element = document.querySelector(`[data-comment-id="${commentId}"]`);
-  // if (element) {
-  //   element.scrollIntoView({ behavior: "smooth", block: "center" });
-  // }
 }
 
 function fetchResource(input, init) {
@@ -106,10 +94,8 @@ async function searchCommentsJSON(commentsJSON) {
       ul = document.createElement('ul');
       ul.setAttribute('class', 'list-links');
       ul.setAttribute('id', `list-${bundle.title}`);
-      
-      // linksList.innerHTML += `<h3 class="list-header list-header-links" >${bundle.title}</h3>`;
-      // let html2add = `<ul class='list-links' id="list-${bundle.title}">`;
-      
+
+      // For each link in bundle, create a list item.
       bundle.links.forEach(link => {
         // Create the list item.
         li = document.createElement('li');
@@ -126,7 +112,6 @@ async function searchCommentsJSON(commentsJSON) {
           // Parse the parent context as HTML and append to list item.
           // (Parent context is returned from Zendesk API as plain text)
           const parser = new DOMParser();
-          console.log(parser.parseFromString(link.parent_text, "text/html").getElementsByTagName('body')[0].childNodes)
           const nodes = parser.parseFromString(link.parent_text, "text/html").getElementsByTagName('body')[0].childNodes;
           li.append(...nodes)
         } else {
@@ -145,7 +130,6 @@ async function searchCommentsJSON(commentsJSON) {
     })
 
     // TODO Attachments
-
 
     console.log("attachments: ", attachmentsArr);
 }
@@ -185,17 +169,6 @@ async function filterLinks(linksArr) {
   return filteredLinks;
 }
 
-
-function updateUI(ticketURL, isZendesk) {
-    if (! isZendesk) {
-        console.log( ticketURL + " is not a zendesk ticket");
-        div.innerHTML = 'This is not a Zendesk ticket';
-        return;
-    }
-    console.log(ticketURL + " is a zendesk ticket");
-    div.innerHTML = 'This is a Zendesk ticket';
-}
-
 async function getCurrentTabURL() {
     let queryOptions = { active: true, currentWindow: true };
     let [tab] = await browser.tabs.query(queryOptions);
@@ -218,11 +191,9 @@ getCurrentTabURL().then(url => {
         .catch(error => {
           console.error('Request failed:', error);
         });
-        updateUI(url, true);
-
-    } else {
-        updateUI(url, false);
+        return;
     }
+    console.log( ticketURL + " is not a zendesk ticket");
 });
 
 

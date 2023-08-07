@@ -1,4 +1,4 @@
-# Zendesk-Link-Collector ![icon](icons/zlc-icon-32x32.png)
+# Zendesk Link Collector ![icon](icons/zlc-icon-32x32.png)
 
 
 
