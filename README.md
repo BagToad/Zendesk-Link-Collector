@@ -1,6 +1,6 @@
 # Zendesk Link Collector ![icon](icons/zlc-icon-32x32.png)
 
-This is a browser extension that collects links from a Zendesk ticket according to custom regex values. This tool's purpose is to help Zendesk users more easily handle _long_ tickets.
+This is a browser extension that collects links from a Zendesk ticket according to custom regex values. This tool's purpose is to help Zendesk users more easily handle _long_ tickets where links and/or attachments are key information.
 
 ## Features
 
@@ -15,7 +15,7 @@ This is a browser extension that collects links from a Zendesk ticket according 
 
 ### Attachments
 - Attachments are aggregated.
-- Scroll to an attachments source comment by clicking the spyglass icon beside a link.
+- Scroll to an attachment's source comment by clicking the spyglass icon beside a link.
 
 ![image](https://github.com/BagToad/Zendesk-Link-Collector/assets/47394200/f80331fa-e72a-4df0-8970-ac2e4033c4d4)
 
