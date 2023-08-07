@@ -1,4 +1,6 @@
-# Zendesk-Link-Collector
+# Zendesk-Link-Collector ![icon](icons/zlc-icon-32x32.png)
+
+
 
 This is a WIP browser extension that collects links from a Zendesk ticket according to custom regex values.
 
