@@ -26,16 +26,70 @@ function load() {
             data.options = [];
         }
         data.options.forEach(option => {
-            let html2add = '';
+            // Create table row.
             const tr = document.createElement('tr');
             tr.id = option.id;
-            html2add += `<td><strong>${option.title}</strong></td>`
-            html2add += `<td><pre>${option.pattern}</pre></td>`
-            html2add += `<td><input disabled="true" type="checkbox" name="showContext1" ${option.showParent == true ? 'checked' : ''}></td>`
-            html2add += `<td><button>Delete</button></td>`
-            html2add += `<td><button class="button-reorder-up">Up</button><button class="button-reorder-down">down</button></td>`
-            tr.innerHTML = html2add;          
+
+            // Initialize node types.
+            let nodes = [];
+            let td = '';
+            let strong = '';
+            let pre = '';
+            let input = '';
+
+            // Create table cells.
+            // Create title cell.
+            td = document.createElement('td');
+            strong = document.createElement('strong')
+            strong.textContent = option.title;
+            td.appendChild(strong);
+            nodes.push(td);
+
+            // Create pattern cell.
+            td = document.createElement('td');
+            pre = document.createElement('pre')
+            pre.textContent = option.pattern;
+            td.appendChild(pre);
+            nodes.push(td);
+
+            // Create show parent cell.
+            td = document.createElement('td');
+            input = document.createElement('input');
+            input.setAttribute('type', 'checkbox');
+            input.setAttribute('disabled', 'true');
+            input.checked = option.showParent;
+            td.appendChild(input);
+            nodes.push(td);
+
+            // Create delete cell.
+            td = document.createElement('td');
+            button = document.createElement('button')
+            button.textContent = 'Delete';
+            td.appendChild(button);
+            nodes.push(td);
+
+            // Create reorder cells.
+            // Create up button.
+            td = document.createElement('td');
+            button = document.createElement('button')
+            button.setAttribute('class', 'button-reorder-up');
+            button.textContent = 'Up';
+            td.appendChild(button);
+            // Create down button.
+            button = document.createElement('button')
+            button.setAttribute('class', 'button-reorder-down');
+            button.textContent = 'down';
+            td.appendChild(button);
+            nodes.push(td);
+            
+            // Add cells to row.
+            nodes.forEach(node => {
+                tr.appendChild(node);
+            });
+
+            // Add row to table.
             linkTable.appendChild(tr)
+
             //Add event listeners to dynamic elements.
             document.querySelector(`[id = '${option.id}'] td button`).addEventListener('click', () => deleteLink(option.id));
             document.querySelector(`[id = '${option.id}'] td button.button-reorder-up`).addEventListener('click', () => reorder(option.id, -1));
