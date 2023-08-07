@@ -19,12 +19,12 @@ document.getElementById('button-attachments').addEventListener('click', () => {
 
 
 function scrollToComment(commentId) {
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, {type: "scroll", commentId: commentId});
+  browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
+    browser.tabs.sendMessage(tabs[0].id, {type: "scroll", commentId: commentId});
   });
 
   // const type = 'scroll';
-  // chrome.runtime.sendMessage({type, commentId});
+  // browser.runtime.sendMessage({type, commentId});
 
   // const type = 'scroll'
   // const element = document.querySelector(`[data-comment-id="${commentId}"]`);
@@ -36,8 +36,8 @@ function scrollToComment(commentId) {
 function fetchResource(input, init) {
     const type = 'fetch';
     return new Promise((resolve, reject) => {
-      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {type, input, init}, messageResponse => {
+      browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
+        browser.tabs.sendMessage(tabs[0].id, {type, input, init}).then(messageResponse => {
           const [response, error] = messageResponse;
           if (response === null) {
             reject(error);
@@ -84,22 +84,61 @@ async function searchCommentsJSON(commentsJSON) {
     // Filter all the links according to the rules.
     const linksBundle = await filterLinks(linksArr);
 
-    // Load the nice lists :)
+    // Get list container
     const linksList = document.getElementById('list-container-links');
+
+    // For each bundle, create a header and the list of links.
     linksBundle.forEach(bundle => {
-      linksList.innerHTML += `<h3 class="list-header list-header-links" >${bundle.title}</h3>`;
-      let html2add = `<ul class='list-links' id="list-${bundle.title}">`;
+
+      // initialize node types.
+      let header = '';
+      let ul = '';
+      let li = '';
+      let i = '';
+
+      // Create header.
+      header = document.createElement('h3');
+      header.setAttribute('class', 'list-header list-header-links');
+      header.textContent = bundle.title;
+      linksList.appendChild(header);
+
+      // Create list.
+      ul = document.createElement('ul');
+      ul.setAttribute('class', 'list-links');
+      ul.setAttribute('id', `list-${bundle.title}`);
+      
+      // linksList.innerHTML += `<h3 class="list-header list-header-links" >${bundle.title}</h3>`;
+      // let html2add = `<ul class='list-links' id="list-${bundle.title}">`;
       
       bundle.links.forEach(link => {
+        // Create the list item.
+        li = document.createElement('li');
+        li.setAttribute('class', 'list-item-links');
+
+        // Create the icon and append to list item.
+        i = document.createElement('i');
+        i.setAttribute('class', 'icon-search');
+        i.setAttribute('id', link.id);
+        li.appendChild(i);
+
+        // Add link content or parent context to list item.
         if (bundle.showParent) {
-          html2add += `<li class="list-item-links"><i class="icon-search" id='${link.id}'></i>${link.parent_text}</li>`;
+          // Parse the parent context as HTML and append to list item.
+          // (Parent context is returned from Zendesk API as plain text)
+          const parser = new DOMParser();
+          console.log(parser.parseFromString(link.parent_text, "text/html").getElementsByTagName('body')[0].childNodes)
+          const nodes = parser.parseFromString(link.parent_text, "text/html").getElementsByTagName('body')[0].childNodes;
+          li.append(...nodes)
         } else {
-          html2add += `<li class="list-item-links"><i class="icon-search" id='${link.id}'></i><a target="_blank" href="${link.href}">${link.text}</a></li>`;
+          let a = document.createElement('a');
+          a.setAttribute('target', '_blank');
+          a.setAttribute('href', link.href);
+          a.textContent = link.text;
+          li.appendChild(a);
         }
+        ul.appendChild(li);
       })
-      // linksList.innerHTML += '</ul>'
-      html2add += '</ul>'
-      linksList.innerHTML += html2add;
+      linksList.appendChild(ul);
       document.getElementById('list-container-links').querySelectorAll('i').forEach(i => {
         i.addEventListener('click', () => {scrollToComment(i.id)});
       })
@@ -112,8 +151,8 @@ async function searchCommentsJSON(commentsJSON) {
 }
 
 async function filterLinks(linksArr) {
-  let filters = await chrome.storage.sync.get('options').then((data) => {
-    if (data.options.length <= 0){
+  let filters = await browser.storage.sync.get('options').then((data) => {
+    if (data.options == undefined || data.options.length <= 0){
         data.options = [];
     }
     return data.options;;
@@ -159,7 +198,7 @@ function updateUI(ticketURL, isZendesk) {
 
 async function getCurrentTabURL() {
     let queryOptions = { active: true, currentWindow: true };
-    let [tab] = await chrome.tabs.query(queryOptions);
+    let [tab] = await browser.tabs.query(queryOptions);
     return new URL(tab.url);
 }
 

@@ -7,10 +7,23 @@
       {
         "matches": ["https://*.zendesk.com/*"],
         "run_at": "document_start",
-        "js": ["content-scripts/contentscript.js"]
+        "js": [
+          "content-scripts/contentscript.js",
+          "lib/browser-polyfill.min.js"
+        ]
       }
     ],
-    "options_page": "options/options.html",
+    "icons": {
+      "128": "icons/zlc-icon-128x128.png",
+      "48": "icons/zlc-icon-48x48.png",
+      "32": "icons/zlc-icon-32x32.png",
+      "16": "icons/zlc-icon-16x16.png"
+    },
+    "options_ui": {
+      "page": "options/options.html",
+      "browser_style": false,
+      "open_in_tab": true
+    },
     "action": {
         "default_popup": "popup/popup.html"
       },
@@ -18,7 +31,12 @@
         "tabs",
         "storage"
       ],
-      "host_permissions": [
+    "host_permissions": [
         "https://*.zendesk.com/*"
-    ]
+    ],
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "{3e9c2ec4-3490-11ee-be56-0242ac120002}"
+      }
+    }
   }
