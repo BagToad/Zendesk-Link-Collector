@@ -64,6 +64,12 @@ li.list-item-links, li.list-item-attachments {
     margin-bottom: 2px;
 }
 
+li.list-item-attachments ul li {
+    margin-left: 10px;
+    list-style: circle;
+    list-style-position: inside;
+}
+
 .list-container {
     display: none;
     flex-direction: column;

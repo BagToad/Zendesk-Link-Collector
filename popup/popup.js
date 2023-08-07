@@ -43,31 +43,24 @@ function fetchResource(input, init) {
     });
   }
 
-async function searchCommentsJSON(commentsJSON) {
-    let linksArr = [];
-    const attachmentsArr = [];
+async function displayLinks(commentsJSON) {
+    const linksArr = [];
     const parser = new DOMParser();
+
     commentsJSON.comments.forEach(comments => {
         const doc = parser.parseFromString(comments.html_body, "text/html");
         const links = doc.querySelectorAll(`a`)
         if (links.length > 0) {
             links.forEach(link => {
                         linksArr.push({
+                        id: comments.id,
                         created_at: comments.created_at,
                         parent_text: link.parentElement.innerHTML,
                         text: link.innerHTML,
-                        href: link.href,
-                        id: comments.id
+                        href: link.href
                       })
             });
         }
-        if (comments.attachments.length > 0) {
-          attachmentsArr.push({
-            id: comments.id,
-            attachments: comments.attachments
-          })
-        }
-        
     });
 
     // Filter all the links according to the rules.
@@ -79,31 +72,31 @@ async function searchCommentsJSON(commentsJSON) {
     // For each bundle, create a header and the list of links.
     linksBundle.forEach(bundle => {
 
-      // initialize node types.
-      let header = '';
-      let ul = '';
-      let li = '';
-      let i = '';
+      // // initialize node types.
+      // let header = '';
+      // let ul = '';
+      // let li = '';
+      // let i = '';
 
       // Create header.
-      header = document.createElement('h3');
+      const header = document.createElement('h3');
       header.setAttribute('class', 'list-header list-header-links');
       header.textContent = bundle.title;
       linksList.appendChild(header);
 
       // Create list.
-      ul = document.createElement('ul');
+      const ul = document.createElement('ul');
       ul.setAttribute('class', 'list-links');
       ul.setAttribute('id', `list-${bundle.title}`);
 
       // For each link in bundle, create a list item.
       bundle.links.forEach(link => {
         // Create the list item.
-        li = document.createElement('li');
+        const li = document.createElement('li');
         li.setAttribute('class', 'list-item-links');
 
         // Create the icon and append to list item.
-        i = document.createElement('i');
+        const i = document.createElement('i');
         i.setAttribute('class', 'icon-search');
         i.setAttribute('id', link.id);
         li.appendChild(i);
@@ -116,7 +109,7 @@ async function searchCommentsJSON(commentsJSON) {
           const nodes = parser.parseFromString(link.parent_text, "text/html").getElementsByTagName('body')[0].childNodes;
           li.append(...nodes)
         } else {
-          let a = document.createElement('a');
+          const a = document.createElement('a');
           a.setAttribute('target', '_blank');
           a.setAttribute('href', link.href);
           a.textContent = link.text;
@@ -129,10 +122,65 @@ async function searchCommentsJSON(commentsJSON) {
         i.addEventListener('click', () => {scrollToComment(i.id)});
       })
     })
+}
 
-    // TODO Attachments
+async function displayAttachments(commentsJSON) {
 
-    console.log("attachments: ", attachmentsArr);
+  const attachmentsArr = [];
+  commentsJSON.comments.forEach(comments => {
+    if (comments.attachments.length > 0) {
+      attachmentsArr.push({
+        id: comments.id,
+        created_at: comments.created_at,
+        attachments: comments.attachments
+      })
+    }  
+  });
+
+  // TODO Attachments
+  // Create and display attachments list.
+  console.log("attachments: ", attachmentsArr);
+
+  // Get attachments container.
+  const attachmentsList = document.getElementById('list-container-attachments');
+
+  const ul = document.createElement('ul');
+  ul.setAttribute('class', 'list-attachments');
+
+  // For each comment, create a top-level list item.
+  attachmentsArr.forEach(comment => {
+    const liDate = document.createElement('li');
+    liDate.setAttribute('class', 'list-item-attachments');
+    const txtDate = document.createTextNode(`Comment on: ${comment.created_at}`);
+
+    // Create the icon and append to list item.
+    const i = document.createElement('i');
+    i.setAttribute('class', 'icon-search');
+    i.setAttribute('id', comment.id);
+    liDate.append(i, txtDate);
+
+    // For each attachment, create a list item and append to top-level list item.
+    comment.attachments.forEach(attachment => {
+      const ulAttachment = document.createElement('ul');
+      ulAttachment.setAttribute('class', 'list-attachments');
+      const liAttachment = document.createElement('li');
+      liAttachment.setAttribute('class', 'list-item-attachments');
+      aAttachment = document.createElement('a');
+      aAttachment.setAttribute('target', '_blank');
+      aAttachment.setAttribute('href', attachment.content_url);
+      aAttachment.textContent = attachment.file_name;
+      liAttachment.appendChild(aAttachment);
+      ulAttachment.appendChild(liAttachment);
+      liDate.appendChild(ulAttachment);
+    })
+
+    ul.appendChild(liDate);
+    attachmentsList.appendChild(ul);
+  });
+
+  document.getElementById('list-container-attachments').querySelectorAll('i').forEach(i => {
+    i.addEventListener('click', () => {scrollToComment(i.id)});
+  })
 }
 
 async function filterLinks(linksArr) {
@@ -142,6 +190,7 @@ async function filterLinks(linksArr) {
     }
     return data.options;;
   });
+
   // This is an array of objects with the following structure:
   // {
   //   title: "",
@@ -187,7 +236,8 @@ getCurrentTabURL().then(url => {
         fetchResource(`https://${url.hostname}/api/v2/tickets/${ticketID}/comments`)
         .then(response => response.json())
         .then(data => {
-          searchCommentsJSON(data);
+          displayLinks(data);
+          displayAttachments(data);
         })
         .catch(error => {
           console.error('Request failed:', error);
