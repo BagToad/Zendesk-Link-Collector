@@ -72,12 +72,6 @@ async function displayLinks(commentsJSON) {
     // For each bundle, create a header and the list of links.
     linksBundle.forEach(bundle => {
 
-      // // initialize node types.
-      // let header = '';
-      // let ul = '';
-      // let li = '';
-      // let i = '';
-
       // Create header.
       const header = document.createElement('h3');
       header.setAttribute('class', 'list-header list-header-links');
