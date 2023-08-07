@@ -21,6 +21,7 @@ function scrollToComment(commentId) {
   });
 }
 
+// Code from https://stackoverflow.com/questions/55214828/how-to-make-a-cross-origin-request-in-a-content-script-currently-blocked-by-cor/55215898#55215898
 function fetchResource(input, init) {
     const type = 'fetch';
     return new Promise((resolve, reject) => {
