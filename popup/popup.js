@@ -153,10 +153,11 @@ async function displayAttachments(commentsJSON) {
     i.setAttribute('id', comment.id);
     liDate.append(i, txtDate);
 
+    const ulComment = document.createElement('ul');
+    ulComment.setAttribute('class', 'list-attachments');
+
     // For each attachment, create a list item and append to top-level list item.
     comment.attachments.forEach(attachment => {
-      const ulAttachment = document.createElement('ul');
-      ulAttachment.setAttribute('class', 'list-attachments');
       const liAttachment = document.createElement('li');
       liAttachment.setAttribute('class', 'list-item-attachments');
       const aAttachment = document.createElement('a');
@@ -165,8 +166,8 @@ async function displayAttachments(commentsJSON) {
       aAttachment.textContent = attachment.file_name;
 
       liAttachment.appendChild(aAttachment);
-      ulAttachment.appendChild(liAttachment);
-      liDate.appendChild(ulAttachment);
+      ulComment.appendChild(liAttachment);
+      liDate.appendChild(ulComment);
     });
 
     ul.appendChild(liDate);
