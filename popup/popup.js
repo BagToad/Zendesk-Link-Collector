@@ -107,7 +107,7 @@ async function displayLinks(commentsJSON) {
           // (Parent context is returned from Zendesk API as plain text)
           const parser = new DOMParser();
           const nodes = parser.parseFromString(link.parent_text, "text/html").getElementsByTagName('body')[0].childNodes;
-          li.append(...nodes)
+          li.append(...nodes);
         } else {
           const a = document.createElement('a');
           a.setAttribute('target', '_blank');
@@ -165,14 +165,15 @@ async function displayAttachments(commentsJSON) {
       ulAttachment.setAttribute('class', 'list-attachments');
       const liAttachment = document.createElement('li');
       liAttachment.setAttribute('class', 'list-item-attachments');
-      aAttachment = document.createElement('a');
+      const aAttachment = document.createElement('a');
       aAttachment.setAttribute('target', '_blank');
       aAttachment.setAttribute('href', attachment.content_url);
       aAttachment.textContent = attachment.file_name;
+
       liAttachment.appendChild(aAttachment);
       ulAttachment.appendChild(liAttachment);
       liDate.appendChild(ulAttachment);
-    })
+    });
 
     ul.appendChild(liDate);
     attachmentsList.appendChild(ul);
