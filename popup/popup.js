@@ -76,7 +76,6 @@ async function displayLinks(commentsJSON) {
       let header;
       let ul;
       let foundHeader = false;
-      console.log("title", bundle.title)
 
       if (document.getElementById(`header-${bundle.title}`) != null) {
         header = document.getElementById(`header-${bundle.title}`);
@@ -97,8 +96,6 @@ async function displayLinks(commentsJSON) {
       }
       // For each link in bundle, create a list item.
       bundle.links.forEach(link => {
-        console.log("header", header)
-        console.log("ul", ul)
         // Create the list item.
         const li = document.createElement('li');
         li.setAttribute('class', 'list-item-links');
@@ -129,7 +126,7 @@ async function displayLinks(commentsJSON) {
       if (!foundHeader) {
         linksList.appendChild(ul);
       }
-      
+
       document.getElementById('list-container-links').querySelectorAll('i').forEach(i => {
         i.addEventListener('click', () => {scrollToComment(i.id)});
       })
@@ -149,9 +146,7 @@ async function displayAttachments(commentsJSON) {
     }  
   });
 
-  // TODO Attachments
   // Create and display attachments list.
-  console.log("attachments: ", attachmentsArr);
 
   // Get attachments container.
   const attachmentsList = document.getElementById('list-container-attachments');
@@ -266,8 +261,6 @@ getCurrentTabURL().then(async url => {
           } else {
             nextPage = '';
           }
-
-          console.log(data)
 
           displayLinks(data);
           displayAttachments(data);
