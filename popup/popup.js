@@ -240,7 +240,6 @@ getCurrentTabURL().then(url => {
         });
         return;
     }
-    console.log( ticketURL + " is not a zendesk ticket");
 });
 
 
