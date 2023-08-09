@@ -22,7 +22,7 @@ function scrollToComment(commentId) {
 }
 
 // Code from https://stackoverflow.com/questions/55214828/how-to-make-a-cross-origin-request-in-a-content-script-currently-blocked-by-cor/55215898#55215898
-function fetchResource(input, init) {
+async function fetchResource(input, init) {
     const type = 'fetch';
     return new Promise((resolve, reject) => {
       browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
@@ -72,19 +72,33 @@ async function displayLinks(commentsJSON) {
     // For each bundle, create a header and the list of links.
     linksBundle.forEach(bundle => {
 
-      // Create header.
-      const header = document.createElement('h3');
-      header.setAttribute('class', 'list-header list-header-links');
-      header.textContent = bundle.title;
-      linksList.appendChild(header);
+      //Check for existing header
+      let header;
+      let ul;
+      let foundHeader = false;
+      console.log("title", bundle.title)
 
-      // Create list.
-      const ul = document.createElement('ul');
-      ul.setAttribute('class', 'list-links');
-      ul.setAttribute('id', `list-${bundle.title}`);
+      if (document.getElementById(`header-${bundle.title}`) != null) {
+        header = document.getElementById(`header-${bundle.title}`);
+        ul = document.getElementById(`list-${bundle.title}`);
+        foundHeader = true;
+      } else {
+        // Create header.
+        header = document.createElement('h3');
+        header.setAttribute('class', 'list-header list-header-links');
+        header.setAttribute('id', `header-${bundle.title}`);
+        header.textContent = bundle.title;
+        linksList.appendChild(header);
 
+        // Create list.
+        ul = document.createElement('ul');
+        ul.setAttribute('class', 'list-links');
+        ul.setAttribute('id', `list-${bundle.title}`);
+      }
       // For each link in bundle, create a list item.
       bundle.links.forEach(link => {
+        console.log("header", header)
+        console.log("ul", ul)
         // Create the list item.
         const li = document.createElement('li');
         li.setAttribute('class', 'list-item-links');
@@ -111,7 +125,11 @@ async function displayLinks(commentsJSON) {
         }
         ul.appendChild(li);
       })
-      linksList.appendChild(ul);
+
+      if (!foundHeader) {
+        linksList.appendChild(ul);
+      }
+      
       document.getElementById('list-container-links').querySelectorAll('i').forEach(i => {
         i.addEventListener('click', () => {scrollToComment(i.id)});
       })
@@ -226,18 +244,35 @@ function parseTicketID(url) {
     return stringArr[stringArr.length - 1];
 }
 
-getCurrentTabURL().then(url => {
+getCurrentTabURL().then(async url => {
     if (url.href.search(/^https:\/\/[\-_A-Za-z0-9]+\.zendesk.com\/agent\/tickets\/[0-9]+/i) >= 0) {
-        const ticketID = parseTicketID(url.href)
-        fetchResource(`https://${url.hostname}/api/v2/tickets/${ticketID}/comments`)
-        .then(response => response.json())
-        .then(data => {
+        const rlimit = 100; // Max number of requests to make.
+        const ticketID = parseTicketID(url.href);
+        const firstPage = `https://${url.hostname}/api/v2/tickets/${ticketID}/comments`;
+        let nextPage = firstPage;
+        let r = 0; // Number of requests made.
+
+        while (nextPage != '' && r < rlimit) {
+          r++;
+          let response = await fetchResource(nextPage)
+          .catch(error => {
+            console.error('Request failed:', error);
+          });
+
+          let data = await response.json();
+
+          if (data.next_page != null) {
+            nextPage = data.next_page;
+          } else {
+            nextPage = '';
+          }
+
+          console.log(data)
+
           displayLinks(data);
           displayAttachments(data);
-        })
-        .catch(error => {
-          console.error('Request failed:', error);
-        });
+          
+        }
         return;
     }
 });
