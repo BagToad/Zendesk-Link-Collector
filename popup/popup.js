@@ -73,17 +73,17 @@ async function displayLinks(commentsJSON) {
     linksBundle.forEach(bundle => {
 
       //Check for existing header
-      let header;
+      // let header;
       let ul;
       let foundHeader = false;
 
       if (document.getElementById(`header-${bundle.title}`) != null) {
-        header = document.getElementById(`header-${bundle.title}`);
+        // header = document.getElementById(`header-${bundle.title}`);
         ul = document.getElementById(`list-${bundle.title}`);
         foundHeader = true;
       } else {
         // Create header.
-        header = document.createElement('h3');
+        const header = document.createElement('h3');
         header.setAttribute('class', 'list-header list-header-links');
         header.setAttribute('id', `header-${bundle.title}`);
         header.textContent = bundle.title;
@@ -120,7 +120,6 @@ async function displayLinks(commentsJSON) {
           });
           
           const nodes = doc.getElementsByTagName('body')[0].childNodes;
-          
           li.append(...nodes);
         } else {
           const a = document.createElement('a');
@@ -132,6 +131,7 @@ async function displayLinks(commentsJSON) {
         ul.appendChild(li);
       })
 
+      // Only append the ul to a header if it has not been done previously. 
       if (!foundHeader) {
         linksList.appendChild(ul);
       }
