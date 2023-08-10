@@ -111,7 +111,16 @@ async function displayLinks(commentsJSON) {
           // Parse the parent context as HTML and append to list item.
           // (Parent context is returned from Zendesk API as plain text)
           const parser = new DOMParser();
-          const nodes = parser.parseFromString(link.parent_text, "text/html").getElementsByTagName('body')[0].childNodes;
+          const doc = parser.parseFromString(link.parent_text, "text/html");
+
+          // Need to add `target="_blank"` to all links in the parent context.
+          // Otherwise, they do not open in a tab.
+          doc.querySelectorAll(`a`).forEach(a => {
+            a.setAttribute('target', '_blank');
+          });
+          
+          const nodes = doc.getElementsByTagName('body')[0].childNodes;
+          
           li.append(...nodes);
         } else {
           const a = document.createElement('a');
