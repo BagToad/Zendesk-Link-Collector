@@ -31,62 +31,55 @@ function load() {
             tr.id = option.id;
 
             // Initialize node types.
-            let nodes = [];
-            let td = '';
-            let strong = '';
-            let pre = '';
-            let input = '';
-            let button = '';
+            const nodes = [];
 
             // Create table cells.
             // Create title cell.
-            td = document.createElement('td');
-            strong = document.createElement('strong')
+            const tdTitle = document.createElement('td');
+            const strong = document.createElement('strong')
             strong.textContent = option.title;
-            td.appendChild(strong);
-            nodes.push(td);
+            tdTitle.appendChild(strong);
+            nodes.push(tdTitle);
 
             // Create pattern cell.
-            td = document.createElement('td');
-            pre = document.createElement('pre')
+            const tdPattern = document.createElement('td');
+            const pre = document.createElement('pre')
             pre.textContent = option.pattern;
-            td.appendChild(pre);
-            nodes.push(td);
+            tdPattern.appendChild(pre);
+            nodes.push(tdPattern);
 
             // Create show parent cell.
-            td = document.createElement('td');
-            input = document.createElement('input');
-            input.setAttribute('type', 'checkbox');
-            input.setAttribute('disabled', 'true');
-            input.checked = option.showParent;
-            td.appendChild(input);
-            nodes.push(td);
+            const tdContext = document.createElement('td');
+            const checkboxContext = document.createElement('input');
+            checkboxContext.setAttribute('type', 'checkbox');
+            checkboxContext.setAttribute('disabled', 'true');
+            checkboxContext.checked = option.showParent;
+            tdContext.appendChild(checkboxContext);
+            nodes.push(tdContext);
 
             // Create delete cell.
-            td = document.createElement('td');
-            button = document.createElement('button')
-            button.textContent = 'Delete';
-            td.appendChild(button);
-            nodes.push(td);
+            const tdDelete = document.createElement('td');
+            const buttonDelete = document.createElement('button')
+            buttonDelete.textContent = 'Delete';
+            tdDelete.appendChild(buttonDelete);
+            nodes.push(tdDelete);
 
             // Create reorder cells.
             // Create up button.
-            td = document.createElement('td');
-            button = document.createElement('button')
-            button.setAttribute('class', 'button-reorder-up');
-            button.textContent = 'Up';
-            td.appendChild(button);
+            const tdReorder = document.createElement('td');
+            const buttonReorderUp = document.createElement('button')
+            buttonReorderUp.setAttribute('class', 'button-reorder-up');
+            buttonReorderUp.textContent = 'Up';
+            tdReorder.appendChild(buttonReorderUp);
             // Create down button.
-            button = document.createElement('button')
-            button.setAttribute('class', 'button-reorder-down');
-            button.textContent = 'down';
-            td.appendChild(button);
-            nodes.push(td);
+            const buttonReorderDown = document.createElement('button')
+            buttonReorderDown.setAttribute('class', 'button-reorder-down');
+            buttonReorderDown.textContent = 'down';
+            tdReorder.appendChild(buttonReorderDown);
+            nodes.push(tdReorder);
             
             // Add cells to row.
-            nodes.forEach(node => {
-                tr.appendChild(node);
-            });
+            tr.append(...nodes);
 
             // Add row to table.
             linkTable.appendChild(tr)
