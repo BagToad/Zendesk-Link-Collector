@@ -21,6 +21,10 @@ This is a browser extension that collects links from a Zendesk ticket according 
 
 
 ## Installation
+### FireFox
+
+Download and install [directly from the addons store](https://addons.mozilla.org/en-CA/firefox/addon/zendesk-link-collector/).
+
 ### Chrome
 1.  Clone the repository or download and extract the ZIP file to your local machine.
 2.  Open `chrome://extensions` in your Google Chrome browser.
