@@ -2,6 +2,14 @@
 
 This is a browser extension that collects links from a Zendesk ticket according to custom regex values. This tool's purpose is to help Zendesk users more easily handle _long_ tickets where links and/or attachments are key information.
 
+## Installation
+This extension can be installed from the [FireFox addons store](https://addons.mozilla.org/en-CA/firefox/addon/zendesk-link-collector/) or the [Chrome web store](https://chrome.google.com/webstore/detail/zendesk-link-collector/nckhapficnbbmcpapjnnegpagfcbjpja).
+
+![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/nckhapficnbbmcpapjnnegpagfcbjpja?logo=Google%20Chrome) ![Mozilla Add-on Version](https://img.shields.io/amo/v/zendesk-link-collector?logo=FireFox)
+
+You can also manually [install it from the source code](#chrome-manual-installation).
+
+
 ## Features
 
 ### Links
@@ -18,14 +26,6 @@ This is a browser extension that collects links from a Zendesk ticket according 
 - Scroll to an attachment's source comment by clicking the spyglass icon beside a link.
 
 ![image](https://github.com/BagToad/Zendesk-Link-Collector/assets/47394200/f80331fa-e72a-4df0-8970-ac2e4033c4d4)
-
-
-## Installation
-### FireFox
-Download and install [directly from the addons store](https://addons.mozilla.org/en-CA/firefox/addon/zendesk-link-collector/).
-
-### Chrome
-Download and install [directly from the chrome web store](https://chrome.google.com/webstore/detail/zendesk-link-collector/nckhapficnbbmcpapjnnegpagfcbjpja).
 
 ### Chrome Manual Installation
 1.  Clone the repository or download and extract the ZIP file to your local machine.
