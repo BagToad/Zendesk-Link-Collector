@@ -9,6 +9,21 @@ This extension can be installed from the [FireFox addons store](https://addons.m
 
 You can also manually [install it from the source code](#chrome-manual-installation).
 
+## Configuration
+Access the configuration page to set link RegEx patterns you would like to aggregate from tickets.
+
+### Google Chrome
+- Right-click the extension icon 👉 `options`.
+
+OR
+
+- Visit `chrome://extensions/`
+- Click on the extension's Details.
+- Click on Extension options.
+
+### FireFox
+- Visit `about:addons`
+- Find the extension and click clik `...` 👉 `Preferences`
 
 ## Features
 
