@@ -1,6 +1,6 @@
 # Zendesk Link Collector ![icon](icons/zlc-icon-32x32.png)
 
-This is a browser extension that collects links from a Zendesk ticket according to custom regex values. This tool's purpose is to help Zendesk users more easily handle _long_ tickets where links and/or attachments are key information.
+This is a browser extension that collects links from a Zendesk ticket according to custom Regular Expression (regex) values. This tool's purpose is to help Zendesk users more easily handle _long_ tickets where links and/or attachments are key information.
 
 ## Installation
 This extension can be installed from the [Firefox addons store](https://addons.mozilla.org/en-CA/firefox/addon/zendesk-link-collector/) or the [Chrome web store](https://chrome.google.com/webstore/detail/zendesk-link-collector/nckhapficnbbmcpapjnnegpagfcbjpja).
@@ -10,7 +10,7 @@ This extension can be installed from the [Firefox addons store](https://addons.m
 You can also manually [install it from the source code](#chrome-manual-installation).
 
 ## Configuration
-Access the configuration page to set link RegEx patterns you would like to aggregate from tickets.
+Access the configuration page to set link regex patterns you would like to aggregate from tickets.
 
 ### Google Chrome
 - Right-click the extension icon 👉 `options`.
@@ -18,20 +18,20 @@ Access the configuration page to set link RegEx patterns you would like to aggre
 OR
 
 - Visit `chrome://extensions/`
-- Click on the extension's Details.
-- Click on Extension options.
+- Click on the extension's **Details**.
+- Click on **Extension options**.
 
 ### Firefox
 - Visit `about:addons`
-- Find the extension and click clik `...` 👉 `Preferences`
+- Find the extension and click **`...`** 👉 `Preferences`
 
 ## Features
 
 ### Links
-- Links are aggregated according to custom RegEx patterns.
-- No other chaos from the ticket is included in the link, only actual links are considered (`a` elements).
-    - Links can optionally display "context". This shows the surrounding text beside the link (the context is the parent element of the `a` element).  
-- Scroll to a link's source comment by clicking the spyglass icon beside a link.
+- Links are aggregated according to custom regex patterns.
+- No other chaos from the ticket is included in the link, only actual links are considered (`a` anchor elements).
+    - Links can optionally display "context" when the "Show context?" checkbox option selected. This shows the surrounding text beside the link (the context is the parent HTML element of the `a` element).  
+- Scroll to a link's source comment by clicking the spyglass icon (🔍) beside a link.
 
 ![image](https://github.com/BagToad/Zendesk-Link-Collector/assets/47394200/f3731ef8-83f5-4419-b266-7a51ec70837c)
 
