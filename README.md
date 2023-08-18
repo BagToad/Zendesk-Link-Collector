@@ -3,9 +3,9 @@
 This is a browser extension that collects links from a Zendesk ticket according to custom regex values. This tool's purpose is to help Zendesk users more easily handle _long_ tickets where links and/or attachments are key information.
 
 ## Installation
-This extension can be installed from the [FireFox addons store](https://addons.mozilla.org/en-CA/firefox/addon/zendesk-link-collector/) or the [Chrome web store](https://chrome.google.com/webstore/detail/zendesk-link-collector/nckhapficnbbmcpapjnnegpagfcbjpja).
+This extension can be installed from the [Firefox addons store](https://addons.mozilla.org/en-CA/firefox/addon/zendesk-link-collector/) or the [Chrome web store](https://chrome.google.com/webstore/detail/zendesk-link-collector/nckhapficnbbmcpapjnnegpagfcbjpja).
 
-[![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/nckhapficnbbmcpapjnnegpagfcbjpja?logo=Google%20Chrome)](https://chrome.google.com/webstore/detail/zendesk-link-collector/nckhapficnbbmcpapjnnegpagfcbjpja) [![Mozilla Add-on Version](https://img.shields.io/amo/v/zendesk-link-collector?logo=FireFox)](https://addons.mozilla.org/en-CA/firefox/addon/zendesk-link-collector/)
+[![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/nckhapficnbbmcpapjnnegpagfcbjpja?logo=Google%20Chrome)](https://chrome.google.com/webstore/detail/zendesk-link-collector/nckhapficnbbmcpapjnnegpagfcbjpja) [![Mozilla Add-on Version](https://img.shields.io/amo/v/zendesk-link-collector?logo=Firefox)](https://addons.mozilla.org/en-CA/firefox/addon/zendesk-link-collector/)
 
 You can also manually [install it from the source code](#chrome-manual-installation).
 
@@ -21,7 +21,7 @@ OR
 - Click on the extension's Details.
 - Click on Extension options.
 
-### FireFox
+### Firefox
 - Visit `about:addons`
 - Find the extension and click clik `...` 👉 `Preferences`
 
