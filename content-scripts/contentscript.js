@@ -1,5 +1,5 @@
 console.log("loaded content script");
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type == "scroll") {
         const element = document.querySelector(`[data-comment-id="${request.commentId}"]`);
         if (element) {
@@ -22,3 +22,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       }
       return true;
   });
+
+browser.commands.onCommand.addListener((command) => {
+  console.log(`Command: ${command}`);
+});
