@@ -8,8 +8,8 @@
         "matches": ["https://*.zendesk.com/*"],
         "run_at": "document_start",
         "js": [
-          "content-scripts/contentscript.js",
-          "lib/browser-polyfill.min.js"
+          "lib/browser-polyfill.min.js",
+          "content-scripts/contentscript.js"
         ]
       }
     ],
@@ -27,6 +27,11 @@
     "action": {
         "default_popup": "popup/popup.html"
       },
+    "commands": {
+      "_execute_action": {
+        "description": "Open the extension"
+      }
+    },
       "permissions": [
         "tabs",
         "storage"
