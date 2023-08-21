@@ -22,7 +22,3 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       }
       return true;
   });
-
-browser.commands.onCommand.addListener((command) => {
-  console.log(`Command: ${command}`);
-});
