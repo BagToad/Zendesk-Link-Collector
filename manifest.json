@@ -27,6 +27,11 @@
     "action": {
         "default_popup": "popup/popup.html"
       },
+    "commands": {
+      "_execute_action": {
+        "description": "Open the extension"
+      }
+    },
       "permissions": [
         "tabs",
         "storage"
