@@ -89,6 +89,10 @@ li.list-item-attachments ul li {
     cursor: pointer;
 }
 
+.icon-search:hover {
+    filter: invert(96%) sepia(1%) saturate(4016%) hue-rotate(179deg) brightness(93%) contrast(82%);
+}
+
 .icon-search {
     background-image: url(../icons/search.svg);
     background-repeat: no-repeat;
