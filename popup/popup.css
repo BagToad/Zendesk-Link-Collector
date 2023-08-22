@@ -21,6 +21,10 @@ a {
     text-decoration: none;
 }
 
+a:hover {
+    text-decoration: underline;
+}
+
 .button.checked {
     -webkit-box-shadow: inset -3px -4px 8px -2px #000000; 
     box-shadow: inset -3px -4px 8px -2px #000000;
