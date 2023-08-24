@@ -171,8 +171,10 @@ function importLinkPatternsJSON() {
     const file = inputElement.files[0];
     const fileReader = new FileReader();
 
-    fileReader.readAsText(file, 'UTF-8');
+    // Clear input.
+    document.getElementById('input-link-patterns-import-file').value = "";
 
+    fileReader.readAsText(file, 'UTF-8');
     fileReader.onload = function() {
         const fileContent = fileReader.result;
         const newOptions = JSON.parse(fileContent);
@@ -196,7 +198,8 @@ function importLinkPatternsJSON() {
                 return;
             }
         });
-        
+
+        // Add to existing data.
         if (!overwrite) {
             browser.storage.sync.get('options').then(data => {
                 if (data.options == undefined || data.options.length <= 0) {
