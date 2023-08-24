@@ -144,7 +144,76 @@ function reorder(id, move) {
     });
 }
 
+function downloadLinkPatternsJSON() {
+    browser.storage.sync.get('options').then(data => {
+        if (data.options == undefined || data.options.length <= 0) {
+            return;
+        }
+        const blob = new Blob([JSON.stringify(data.options)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = "link-patterns.json";
+        link.click();
+        URL.revokeObjectURL(url);
+    });
+  }
+
+function importLinkPatternsJSON() {
+    const inputElement = document.getElementById('input-link-patterns-import-file'); 
+    const file = inputElement.files[0];
+    const fileReader = new FileReader();
+
+    fileReader.readAsText(file, 'UTF-8');
+
+    fileReader.onload = function() {
+        const fileContent = fileReader.result;
+        const newOptions = JSON.parse(fileContent);
+        const overwrite = (document.getElementById('input-link-patterns-import-type').value == 'overwrite') ? true : false;
+        // Validate the JSON data.
+
+        let i = Date.now();
+        newOptions.forEach(option => {
+            // Check for missing fields.
+            if (option.id == undefined || option.title == undefined || option.pattern == undefined || option.showParent == undefined) {
+                console.error("Invalid JSON data (missing fields)");
+                return;
+            }
+            // Always set new ID to avoid duplicates.
+            option.id = i++;
+            // Validate RegEx is valid.
+            if (new RegExp(option.pattern) == undefined) {
+                console.error("Invalid JSON data (bad pattern)");
+                return;
+            }
+        });
+        
+        if (!overwrite) {
+            browser.storage.sync.get('options').then(data => {
+                if (data.options == undefined || data.options.length <= 0) {
+                    data.options = [];
+                }
+                data.options.push(...newOptions);
+                browser.storage.sync.set({options: data.options}).then( () => {
+                    load();
+                });
+            });
+            return;
+        }
+
+        browser.storage.sync.set({options: newOptions}).then( () => {
+            load();
+        });
+    };
+
+    fileReader.onerror = function() {
+        console.error('Unable to read file');
+    };
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('save-button').addEventListener('click', () => save());
+    document.getElementById('input-link-patterns-import').addEventListener('click', () => importLinkPatternsJSON());
+    document.getElementById('input-link-patterns-export').addEventListener('click', () => downloadLinkPatternsJSON());
     load();
 });
