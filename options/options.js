@@ -97,6 +97,13 @@ function save() {
         if (data.options == undefined || data.options.length <= 0) {
             data.options = [];
         }
+        // Validate RegEx.
+        try {
+            new RegExp(document.getElementById('pattern').value);
+        } catch (SyntaxError) {
+            console.error("Invalid RegEx");
+            return;
+        }
         data.options.push({
             id: Date.now(),
             title: document.getElementById('title').value,
@@ -181,8 +188,10 @@ function importLinkPatternsJSON() {
             }
             // Always set new ID to avoid duplicates.
             option.id = i++;
-            // Validate RegEx is valid.
-            if (new RegExp(option.pattern) == undefined) {
+            // Validate RegEx.
+            try {
+                new RegExp(option.pattern);
+            } catch (SyntaxError) {
                 console.error("Invalid JSON data (bad pattern)");
                 return;
             }
