@@ -105,7 +105,7 @@ function save() {
             return;
         }
         data.options.push({
-            id: Date.now(),
+            id: crypto.randomUUID(),
             title: document.getElementById('title').value,
             pattern: document.getElementById('pattern').value,
             showParent: document.getElementById('show-parent').checked
@@ -181,7 +181,6 @@ function importLinkPatternsJSON() {
         const overwrite = (document.getElementById('input-link-patterns-import-type').value == 'overwrite') ? true : false;
         // Validate the JSON data.
 
-        let i = Date.now();
         newOptions.forEach(option => {
             // Check for missing fields.
             if (option.id == undefined || option.title == undefined || option.pattern == undefined || option.showParent == undefined) {
@@ -189,7 +188,7 @@ function importLinkPatternsJSON() {
                 return;
             }
             // Always set new ID to avoid duplicates.
-            option.id = i++;
+            option.id = crypto.randomUUID();
             // Validate RegEx.
             try {
                 new RegExp(option.pattern);
