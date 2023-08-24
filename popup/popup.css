@@ -21,6 +21,10 @@ a {
     text-decoration: none;
 }
 
+a:hover {
+    text-decoration: underline;
+}
+
 .button.checked {
     -webkit-box-shadow: inset -3px -4px 8px -2px #000000; 
     box-shadow: inset -3px -4px 8px -2px #000000;
@@ -83,6 +87,10 @@ li.list-item-attachments ul li {
 
 .icon-search:hover {
     cursor: pointer;
+}
+
+.icon-search:hover {
+    filter: invert(96%) sepia(1%) saturate(4016%) hue-rotate(179deg) brightness(93%) contrast(82%);
 }
 
 .icon-search {
