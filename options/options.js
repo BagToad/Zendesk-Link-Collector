@@ -167,18 +167,18 @@ function downloadLinkPatternsJSON() {
   }
 
 function importLinkPatternsJSON() {
-    const inputElement = document.getElementById('input-link-patterns-import-file'); 
+    const inputElement = document.getElementById('link-patterns-import-file'); 
     const file = inputElement.files[0];
     const fileReader = new FileReader();
 
     // Clear input.
-    document.getElementById('input-link-patterns-import-file').value = "";
+    document.getElementById('link-patterns-import-file').value = "";
 
     fileReader.readAsText(file, 'UTF-8');
     fileReader.onload = function() {
         const fileContent = fileReader.result;
         const newOptions = JSON.parse(fileContent);
-        const overwrite = (document.getElementById('input-link-patterns-import-type').value == 'overwrite') ? true : false;
+        const overwrite = (document.getElementById('link-patterns-import-type').value == 'overwrite') ? true : false;
         // Validate the JSON data.
 
         newOptions.forEach(option => {
@@ -224,7 +224,7 @@ function importLinkPatternsJSON() {
 
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('save-button').addEventListener('click', () => save());
-    document.getElementById('input-link-patterns-import').addEventListener('click', () => importLinkPatternsJSON());
-    document.getElementById('input-link-patterns-export').addEventListener('click', () => downloadLinkPatternsJSON());
+    document.getElementById('link-patterns-import').addEventListener('click', () => importLinkPatternsJSON());
+    document.getElementById('link-patterns-export').addEventListener('click', () => downloadLinkPatternsJSON());
     load();
 });

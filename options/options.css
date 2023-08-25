@@ -1,0 +1,54 @@
+body {
+    font-family: sans-serif;
+    color: rgb(201, 209, 217);
+    background-color: rgb(22, 27, 34);
+    color-scheme: dark;
+}
+
+/* Generic Input Styles */
+button:hover,
+input[type="checkbox"]:enabled:hover,
+input[type="file"],
+input[type=file]::-webkit-file-upload-button,
+select {
+    /* Found solution for "Choose File" button not applying styles here:
+    https://stackoverflow.com/questions/1537223/change-cursor-type-on-input-type-file */
+    cursor: pointer;
+    background-color: rgb(39, 44, 51);
+}
+
+button {
+    border-radius: 4px;
+    padding: 2px 12px;
+    background-color: rgb(33, 38, 45);
+    border-color: rgba(240, 246, 252, 0.1);
+    color: rgb(201, 209, 217);
+}
+
+input[type="text"] {
+    cursor: text;
+}
+
+.input-container-import-export label {
+    font-weight: bold;
+}
+
+/* Table Styles */
+table#table-link-patterns {
+    border-collapse: collapse;
+}
+
+table#table-link-patterns td, table#table-link-patterns th {
+    border: 1px solid rgb(201, 209, 217);
+    text-align: center;
+}
+
+table#table-link-patterns td {
+    padding: 5px 10px;
+}
+
+table#table-link-patterns th {
+    font-size: 15px;
+    background-color: rgb(32, 37, 45);
+    padding: 10px;
+}
