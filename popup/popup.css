@@ -5,9 +5,12 @@
 }
 
 body {
-    width: auto;
-    min-width: 300px;
-    height: 500px;
+    width: fit-content;
+    min-width: 350px;
+    max-width: 500px;
+    height: fit-content;
+    min-height: 150px;
+    max-height: 500px;
     border-radius: 0.5em;
     overflow: scroll;
     font-family: sans-serif;
@@ -38,19 +41,25 @@ a:hover {
     flex: 1;
     background-color: rgb(33, 38, 45);
     border-color: rgba(240, 246, 252, 0.1);
-    color: rgb(201, 209, 217);
     border-radius: 6px;
     border-width: 1px;
     border-style: solid;
     text-decoration: none;
+    color: rgb(201, 209, 217);
 }
 
 #container {
     flex-direction: column;
+    overflow-x: auto;
+    height: inherit;
+    width: inherit;
+    max-width: 500px;
 }
 
 .row {
     flex: 1;
+    position: absolute;
+    width: 100%;
 }
 
 h3.list-header {
@@ -79,10 +88,15 @@ li.list-item-attachments ul li {
     flex-direction: column;
     padding: 20px;
     white-space: nowrap;
+    height: inherit;
 }
 
 .list-container.selected {
     display: flex;
+}
+
+#list-container-links h3:nth-child(1), #list-container-attachments ul:nth-child(1) {
+    margin-top: 35px;
 }
 
 .icon-search:hover {
