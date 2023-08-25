@@ -14,7 +14,6 @@
         <button id="save-button">Save</button>
     </div>
     <div id="input-container-attachments" class="input-container"></div>
-    
 
     <div id="table-container-link-patterns">
     <h1>Saved Link Patterns</h1>
@@ -31,6 +30,18 @@
             <tbody>
             </tbody>
         </table>
+    </div>
+    <h2>Import/Export</h2>
+    <div class="input-container input-container-import-export" id="input-container-link-patterns-import-export">
+        <label for="link-patterns-import-file">Import File: </label>
+        <input type="file" id="link-patterns-import-file" name="link-patterns-import-file" accept=".json">
+        <label for="link-patterns-import-type">Import Type: </label>
+        <select id="link-patterns-import-type" name="link-patterns-import-type">
+            <option value="append" selected>Append</option>
+            <option value="overwrite">Overwrite</option>
+        </select>
+        <button type="button" id="link-patterns-import">Import</button>
+        <button type="button" id="link-patterns-export">Export</button>
     </div>
     <script type="application/javascript" src="../lib/browser-polyfill.min.js"></script>
 	<script type="application/javascript" src="options.js"></script>

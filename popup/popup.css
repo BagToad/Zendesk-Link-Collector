@@ -38,11 +38,11 @@ a:hover {
     flex: 1;
     background-color: rgb(33, 38, 45);
     border-color: rgba(240, 246, 252, 0.1);
+    color: rgb(201, 209, 217);
     border-radius: 6px;
     border-width: 1px;
     border-style: solid;
     text-decoration: none;
-    color: rgb(201, 209, 217);
 }
 
 #container {

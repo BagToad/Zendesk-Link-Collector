@@ -97,8 +97,15 @@ function save() {
         if (data.options == undefined || data.options.length <= 0) {
             data.options = [];
         }
+        // Validate RegEx.
+        try {
+            new RegExp(document.getElementById('pattern').value);
+        } catch (SyntaxError) {
+            console.error("Invalid RegEx");
+            return;
+        }
         data.options.push({
-            id: Date.now(),
+            id: crypto.randomUUID(),
             title: document.getElementById('title').value,
             pattern: document.getElementById('pattern').value,
             showParent: document.getElementById('show-parent').checked
@@ -144,7 +151,80 @@ function reorder(id, move) {
     });
 }
 
+function downloadLinkPatternsJSON() {
+    browser.storage.sync.get('options').then(data => {
+        if (data.options == undefined || data.options.length <= 0) {
+            return;
+        }
+        const blob = new Blob([JSON.stringify(data.options)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = "link-patterns.json";
+        link.click();
+        URL.revokeObjectURL(url);
+    });
+  }
+
+function importLinkPatternsJSON() {
+    const inputElement = document.getElementById('link-patterns-import-file'); 
+    const file = inputElement.files[0];
+    const fileReader = new FileReader();
+
+    // Clear input.
+    document.getElementById('link-patterns-import-file').value = "";
+
+    fileReader.readAsText(file, 'UTF-8');
+    fileReader.onload = function() {
+        const fileContent = fileReader.result;
+        const newOptions = JSON.parse(fileContent);
+        const overwrite = (document.getElementById('link-patterns-import-type').value == 'overwrite') ? true : false;
+        // Validate the JSON data.
+
+        newOptions.forEach(option => {
+            // Check for missing fields.
+            if (option.id == undefined || option.title == undefined || option.pattern == undefined || option.showParent == undefined) {
+                console.error("Invalid JSON data (missing fields)");
+                return;
+            }
+            // Always set new ID to avoid duplicates.
+            option.id = crypto.randomUUID();
+            // Validate RegEx.
+            try {
+                new RegExp(option.pattern);
+            } catch (SyntaxError) {
+                console.error("Invalid JSON data (bad pattern)");
+                return;
+            }
+        });
+
+        // Add to existing data.
+        if (!overwrite) {
+            browser.storage.sync.get('options').then(data => {
+                if (data.options == undefined || data.options.length <= 0) {
+                    data.options = [];
+                }
+                data.options.push(...newOptions);
+                browser.storage.sync.set({options: data.options}).then( () => {
+                    load();
+                });
+            });
+            return;
+        }
+
+        browser.storage.sync.set({options: newOptions}).then( () => {
+            load();
+        });
+    };
+
+    fileReader.onerror = function() {
+        console.error('Unable to read file');
+    };
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('save-button').addEventListener('click', () => save());
+    document.getElementById('link-patterns-import').addEventListener('click', () => importLinkPatternsJSON());
+    document.getElementById('link-patterns-export').addEventListener('click', () => downloadLinkPatternsJSON());
     load();
 });
