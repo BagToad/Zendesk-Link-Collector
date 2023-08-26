@@ -276,6 +276,7 @@ getCurrentTabURL().then(async url => {
           displayAttachments(data);
           
         }
+        document.getElementById('loader').classList.remove('loading');
         return;
     }
 });
