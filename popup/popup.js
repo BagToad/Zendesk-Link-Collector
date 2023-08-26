@@ -56,7 +56,7 @@ async function displayLinks(commentsJSON) {
                         id: comments.id,
                         created_at: comments.created_at,
                         parent_text: link.parentElement.innerHTML,
-                        text: link.innerHTML,
+                        text: link.innerText,
                         href: link.href
                       })
             });
@@ -212,6 +212,7 @@ async function filterLinks(linksArr) {
   // This is an array of objects with the following structure:
   // {
   //   title: "",
+  //   showParent: true/false,
   //   links: []
   // }
   const filteredLinks = [];
