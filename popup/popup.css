@@ -115,6 +115,10 @@ li.list-item-attachments ul li {
     height: inherit;
 }
 
+.list-container.wrap {
+    white-space: normal;
+}
+
 .list-container.selected {
     display: flex;
 }

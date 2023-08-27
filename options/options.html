@@ -6,17 +6,25 @@
 </head>
 <body>
 	<h1>Options Page</h1>
-    <div id="input-container-link-patterns" class="input-container">
-        <input type="text" id="title" placeholder="title">
-        <input type="text" id="pattern" placeholder="regex pattern">
-        <label for="show-parent">Show Context?</label>
-        <input type="checkbox" id="show-parent">
-        <button id="save-button">Save</button>
-    </div>
     <div id="input-container-attachments" class="input-container"></div>
-
+    <div class="input-container">
+        <label for="wrap-lists">Wrap long links?</label>
+        <input type="checkbox" id="wrap-lists">
+    </div>
+    <div id="input-container-save-options" class="input-container">
+        <button id="button-save-global-options">Save Options</button>
+    </div>
     <div id="table-container-link-patterns">
-    <h1>Saved Link Patterns</h1>
+        <h1>Saved Link Patterns</h1>
+        <div id="input-container-link-patterns" class="input-container">
+            <label for="title">Title:</label>
+            <input type="text" id="title" placeholder="Title">
+            <label for="pattern">Pattern:</label>
+            <input type="text" id="pattern" placeholder="RegEx Pattern">
+            <label for="show-parent">Show Link Context?</label>
+            <input type="checkbox" id="show-parent">
+            <button id="button-save-link-patterns">Save Link Pattern</button>
+        </div>
         <table id="table-link-patterns">
             <thead>
             <tr>

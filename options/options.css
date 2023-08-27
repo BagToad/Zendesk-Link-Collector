@@ -25,12 +25,31 @@ button {
     color: rgb(201, 209, 217);
 }
 
-input[type="text"] {
-    cursor: text;
+.input-container [type="text"] {
+    width: 200px;
 }
 
-.input-container-import-export label {
+.input-container label {
     font-weight: bold;
+}
+
+/* .input-container input[type="checkbox"],
+.input-container label {
+    vertical-align: middle;
+} */
+
+.input-container {
+    margin-bottom: 15px;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.input-container * {
+    margin: 0 5px;
 }
 
 /* Table Styles */
