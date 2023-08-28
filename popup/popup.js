@@ -120,7 +120,26 @@ async function displayLinks(commentsJSON) {
             a.setAttribute('target', '_blank');
           });
           
-          const nodes = doc.getElementsByTagName('body')[0].childNodes;
+          doc.getElementsByTagName('text')
+          
+          // Get all the body because that's all we care about.
+          const bodyNodes = doc.getElementsByTagName('body')[0].childNodes;
+
+          // Get all the text nodes and wrap them in a span.
+          let nodes = [];
+          bodyNodes.forEach(node => {
+            if (node.nodeType == Node.TEXT_NODE) {
+              console.log(node)
+              const span = document.createElement('span');
+              span.textContent = node.textContent;
+              span.setAttribute('class', 'link-context');
+              nodes.push(span);
+            } else {
+              nodes.push(node);
+            }            
+          });
+
+          // Append all nodes to list item.
           li.append(...nodes);
         } else {
           const a = document.createElement('a');

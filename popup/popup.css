@@ -19,6 +19,14 @@ body {
     text-decoration: none;
 }
 
+#container {
+    flex-direction: column;
+    /* overflow-x: auto; */
+    height: inherit;
+    width: inherit;
+    /* max-width: 500px; */
+}
+
 a {
     color: rgb(47, 129, 247);
     text-decoration: none;
@@ -48,13 +56,6 @@ a:hover {
     color: rgb(201, 209, 217);
 }
 
-#container {
-    flex-direction: column;
-    overflow-x: auto;
-    height: inherit;
-    width: inherit;
-    max-width: 500px;
-}
 
 .row {
     flex: 1;
@@ -91,14 +92,29 @@ h3.list-header {
     margin-bottom: 3px;
 }
 
+/* Add some space between headers and the view buttons */
+#list-container-links h3:nth-child(1), #list-container-attachments ul:nth-child(1) {
+    margin-top: 35px;
+}
+
 ul.list-links, ul.list-attachments {
     display: flex;
     flex-direction: column-reverse;
 }
 
 li.list-item-links, li.list-item-attachments {
+    display: flex;
+    flex-direction: row;
     list-style: none;
     margin-bottom: 2px;
+}
+
+/* Force context to shrink first before shrinking the link text. */
+li.list-item-links .link-context {
+    flex-shrink: 0;
+    flex-grow: 1;
+    flex-basis: 0px;
+    min-width: 0px;
 }
 
 li.list-item-attachments ul li {
@@ -115,19 +131,19 @@ li.list-item-attachments ul li {
     height: inherit;
 }
 
+/* This class is an option and is set on nodes by JavaScript. */
 .list-container.wrap {
     white-space: normal;
 }
 
+/* This class is set by JavaScript in response to user clicking different views. */
 .list-container.selected {
     display: flex;
 }
 
-#list-container-links h3:nth-child(1), #list-container-attachments ul:nth-child(1) {
-    margin-top: 35px;
-}
 
-/* Search icon styles */
+
+/* Search/Scroll-to icon styles */
 .icon-search:hover {
     cursor: pointer;
 }
