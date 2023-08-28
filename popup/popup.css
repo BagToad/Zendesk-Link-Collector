@@ -21,10 +21,8 @@ body {
 
 #container {
     flex-direction: column;
-    /* overflow-x: auto; */
     height: inherit;
     width: inherit;
-    /* max-width: 500px; */
 }
 
 a {
