@@ -21,8 +21,7 @@ body {
 
 #container {
     flex-direction: column;
-    height: inherit;
-    width: inherit;
+    overflow: auto;
 }
 
 a {
