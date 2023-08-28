@@ -1,3 +1,17 @@
+/* Variables */
+:root {
+    --accent: rgb(33 90 48);
+    --accent-hover: rgb(43 100 58);
+    --accent-dark: rgb(22 80 38);
+    --accent-dark-hover: rgb(33 90 48);
+    --accent-light: rgb(98, 163, 75);
+
+    --primary-bg: rgb(22, 27, 34);
+    --primary-bg-light: rgb(33, 38, 45);
+    --primary-bg-light-active: rgb(42, 47, 54);
+    --secondary: rgb(73, 78, 85);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -9,39 +23,47 @@
 /* Firefox */
 * {
     scrollbar-width: thin;
-    scrollbar-color: #494E55 #161B22;
-  }
-  
-  /* Chrome, Edge and Safari */
-  *::-webkit-scrollbar {
+    scrollbar-color: var(--secondary) var(--primary-bg);
+}
+
+/* Chrome, Edge and Safari */
+*::-webkit-scrollbar {
     height: 10px;
     width: 10px;
-  }
-  *::-webkit-scrollbar-track {
+}
+*::-webkit-scrollbar-track {
     border-radius: 0px;
-    background-color: #161B22;
-  }
-  
-  *::-webkit-scrollbar-track:hover {
-    background-color: #20252C;
-  }
-  
-  *::-webkit-scrollbar-track:active {
-    background-color: #2A2F36;
-  }
-  
-  *::-webkit-scrollbar-thumb {
+    background-color: var(--primary-bg);
+}
+
+*::-webkit-scrollbar-track:hover {
+    background-color: var(--primary-bg-light);
+}
+
+*::-webkit-scrollbar-track:active {
+    background-color: var(--primary-bg-light-active);
+}
+
+*::-webkit-scrollbar-thumb {
     border-radius: 0px;
-    background-color: #494E55;
-  }
-  
-  *::-webkit-scrollbar-thumb:hover {
-    background-color: rgb(33 90 48);
-  }
-  
-  *::-webkit-scrollbar-thumb:active {
-    background-color: #62A34B;
-  }
+    background-color: var(--secondary);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent);
+}
+
+*::-webkit-scrollbar-thumb:active {
+    background-color: var(--accent-light);
+}
+
+*::-webkit-scrollbar-corner {
+    background-color: var(--primary-bg);
+}
+
+*::-webkit-scrollbar-corner:hover {
+    background-color: var(--primary-bg-light);
+}
   
 
 body {
@@ -50,7 +72,7 @@ body {
     border-radius: 0.5em;
     font-family: sans-serif;
     color: rgb(201, 209, 217);
-    background-color: rgb(22, 27, 34);
+    background-color: var(--primary-bg);
     text-decoration: none;
 }
 
@@ -73,15 +95,13 @@ a:hover {
 }
 
 .button.checked {
-    /* -webkit-box-shadow: inset -3px -4px 8px -2px #000000; 
-    box-shadow: inset -3px -4px 8px -2px #000000; */
-    background-color: rgb(33 90 48);
-    border-color: rgb(22 80 38);
+    background-color: var(--accent);
+    border-color: var(--accent-dark);
 }
 
 .button.checked:hover {
-    background-color: rgb(43 100 58);
-    border-color: rgb(22 80 38);
+    background-color: var(--accent-hover);
+    border-color: var(--accent-dark-hover);
 }
 
 .button {
@@ -90,9 +110,8 @@ a:hover {
     font-size: 14px;
     text-align: center;
     flex: 1;
-    background-color: rgb(33, 38, 45);
-    border-color: rgba(240, 246, 252, 0.1);
-    /* border-radius: 6px; */
+    background-color: var(--primary-bg-light);
+    border-color: var(--secondary);
     border-width: 2px;
     border-style: solid;
     text-decoration: none;
@@ -100,8 +119,7 @@ a:hover {
 }
 
 .button:hover {
-    background-color: rgb(43 48 55);
-    border-color: rgba(240, 246, 252, 0.1);
+    background-color: var(--primary-bg-light-active);
 }
 
 .row {
