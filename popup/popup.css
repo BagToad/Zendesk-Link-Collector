@@ -100,10 +100,13 @@ ul.list-links, ul.list-attachments {
 }
 
 li.list-item-links, li.list-item-attachments {
-    display: flex;
-    flex-direction: row;
     list-style: none;
     margin-bottom: 2px;
+}
+
+li.list-item-links {
+    display: flex;
+    flex-direction: row;
 }
 
 /* Force context to shrink first before shrinking the link text. */
