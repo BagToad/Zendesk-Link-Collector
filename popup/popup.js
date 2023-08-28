@@ -129,7 +129,6 @@ async function displayLinks(commentsJSON) {
           let nodes = [];
           bodyNodes.forEach(node => {
             if (node.nodeType == Node.TEXT_NODE) {
-              console.log(node)
               const span = document.createElement('span');
               span.textContent = node.textContent;
               span.setAttribute('class', 'link-context');
