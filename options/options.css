@@ -25,30 +25,35 @@ button {
     color: rgb(201, 209, 217);
 }
 
-.input-container [type="text"] {
+.input-container-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-container-row [type="text"] {
     width: 200px;
 }
 
-.input-container label {
+.input-container-row label {
     font-weight: bold;
 }
 
-/* .input-container input[type="checkbox"],
-.input-container label {
+/* .input-container-row input[type="checkbox"],
+.input-container-row label {
     vertical-align: middle;
 } */
 
-.input-container {
+.input-container-row {
     margin-bottom: 15px;
 }
 
-.input-container {
+.input-container-row {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
 
-.input-container * {
+.input-container-row * {
     margin: 0 5px;
 }
 
