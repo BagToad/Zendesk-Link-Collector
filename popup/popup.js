@@ -120,8 +120,6 @@ async function displayLinks(commentsJSON) {
             a.setAttribute('target', '_blank');
           });
           
-          doc.getElementsByTagName('text')
-          
           // Get all the body because that's all we care about.
           const bodyNodes = doc.getElementsByTagName('body')[0].childNodes;
 
