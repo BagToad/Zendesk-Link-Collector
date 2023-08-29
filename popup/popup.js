@@ -68,17 +68,18 @@ async function displayLinks(commentsJSON) {
 
     // Get list container
     const linksList = document.getElementById('list-container-links');
-
+    if (optionsGlobal.wrapLists) {
+      linksList.classList.add('wrap');
+    }
+    
     // For each bundle, create a header and the list of links.
     linksBundle.forEach(bundle => {
 
       //Check for existing header
-      // let header;
       let ul;
       let foundHeader = false;
 
       if (document.getElementById(`header-${bundle.title}`) != null) {
-        // header = document.getElementById(`header-${bundle.title}`);
         ul = document.getElementById(`list-${bundle.title}`);
         foundHeader = true;
       } else {
@@ -119,7 +120,23 @@ async function displayLinks(commentsJSON) {
             a.setAttribute('target', '_blank');
           });
           
-          const nodes = doc.getElementsByTagName('body')[0].childNodes;
+          // Get all the body because that's all we care about.
+          const bodyNodes = doc.getElementsByTagName('body')[0].childNodes;
+
+          // Get all the text nodes and wrap them in a span.
+          let nodes = [];
+          bodyNodes.forEach(node => {
+            if (node.nodeType == Node.TEXT_NODE) {
+              const span = document.createElement('span');
+              span.textContent = node.textContent;
+              span.setAttribute('class', 'link-context');
+              nodes.push(span);
+            } else {
+              nodes.push(node);
+            }            
+          });
+
+          // Append all nodes to list item.
           li.append(...nodes);
         } else {
           const a = document.createElement('a');
@@ -249,6 +266,16 @@ function parseTicketID(url) {
     return stringArr[stringArr.length - 1];
 }
 
+// Global options.
+const optionsGlobal = {};
+browser.storage.sync.get('optionsGlobal').then((data) => {
+  if (data.optionsGlobal == undefined || data.optionsGlobal.length <= 0){
+      data.optionsGlobal = [];
+  }
+  optionsGlobal.wrapLists = data.optionsGlobal.wrapLists;
+});
+
+// Main entrypoint.
 getCurrentTabURL().then(async url => {
     if (url.href.search(/^https:\/\/[\-_A-Za-z0-9]+\.zendesk.com\/agent\/tickets\/[0-9]+/i) >= 0) {
         const rlimit = 25; // Max number of requests to make.

@@ -13,12 +13,12 @@ function deleteLink(id) {
             }
         });
         browser.storage.sync.set({options: data.options}).then( () => {
-            load();
+            loadLinkPatterns();
         });
     });
 }
 
-function load() {
+function loadLinkPatterns() {
     const linkTable = document.getElementById('table-link-patterns').tBodies[0];
     linkTable.innerHTML = '';
     browser.storage.sync.get('options').then(data => {
@@ -86,13 +86,13 @@ function load() {
 
             //Add event listeners to dynamic elements.
             document.querySelector(`[id = '${option.id}'] td button`).addEventListener('click', () => deleteLink(option.id));
-            document.querySelector(`[id = '${option.id}'] td button.button-reorder-up`).addEventListener('click', () => reorder(option.id, -1));
-            document.querySelector(`[id = '${option.id}'] td button.button-reorder-down`).addEventListener('click', () => reorder(option.id, 1));
+            document.querySelector(`[id = '${option.id}'] td button.button-reorder-up`).addEventListener('click', () => reorderLinkPattern(option.id, -1));
+            document.querySelector(`[id = '${option.id}'] td button.button-reorder-down`).addEventListener('click', () => reorderLinkPattern(option.id, 1));
         });
     });
 }
 
-function save() {
+function saveLinkPatterns() {
     browser.storage.sync.get('options').then(data => {
         if (data.options == undefined || data.options.length <= 0) {
             data.options = [];
@@ -111,7 +111,7 @@ function save() {
             showParent: document.getElementById('show-parent').checked
         })
         browser.storage.sync.set({options: data.options}).then( () => {
-            load();
+            loadLinkPatterns();
             document.getElementById('title').value = '';
             document.getElementById('pattern').value = '';
             document.getElementById('show-parent').checked = false;
@@ -120,7 +120,7 @@ function save() {
     
 }
 
-function reorder(id, move) {
+function reorderLinkPattern(id, move) {
     browser.storage.sync.get('options').then(data => {
         if (data.options.length <= 0){
             //Shouldn't happen?
@@ -146,7 +146,7 @@ function reorder(id, move) {
         });
         
         browser.storage.sync.set({options: data.options}).then( () => {
-            load();
+            loadLinkPatterns();
         });
     });
 }
@@ -206,14 +206,14 @@ function importLinkPatternsJSON() {
                 }
                 data.options.push(...newOptions);
                 browser.storage.sync.set({options: data.options}).then( () => {
-                    load();
+                    loadLinkPatterns();
                 });
             });
             return;
         }
 
         browser.storage.sync.set({options: newOptions}).then( () => {
-            load();
+            loadLinkPatterns();
         });
     };
 
@@ -222,9 +222,35 @@ function importLinkPatternsJSON() {
     };
 }
 
+function saveGlobalOptions() {
+    const newOptionsGlobal = {
+        wrapLists: document.getElementById('wrap-lists').checked,
+    };
+    browser.storage.sync.set({
+        optionsGlobal: newOptionsGlobal
+    });
+}
+
+function loadGlobalOptions() {
+    browser.storage.sync.get('optionsGlobal').then(data => {
+        if (data.optionsGlobal == undefined) {
+            data.optionsGlobal = {
+                wrapLists: false,
+            };
+        }
+        document.getElementById('wrap-lists').checked = data.optionsGlobal.wrapLists;
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById('save-button').addEventListener('click', () => save());
+    // Add event listeners to static elements.
+    // Global options event listeners.
+    document.getElementById('button-save-global-options').addEventListener('click', () => saveGlobalOptions());
+    loadGlobalOptions();
+
+    // Link patterns event listeners.
+    document.getElementById('button-save-link-patterns').addEventListener('click', () => saveLinkPatterns());
     document.getElementById('link-patterns-import').addEventListener('click', () => importLinkPatternsJSON());
     document.getElementById('link-patterns-export').addEventListener('click', () => downloadLinkPatternsJSON());
-    load();
+    loadLinkPatterns();
 });

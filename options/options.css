@@ -25,12 +25,31 @@ button {
     color: rgb(201, 209, 217);
 }
 
-input[type="text"] {
-    cursor: text;
+.input-container-column {
+    display: flex;
+    flex-direction: column;
 }
 
-.input-container-import-export label {
+.input-container-row [type="text"] {
+    width: 200px;
+}
+
+.input-container-row label {
     font-weight: bold;
+}
+
+.input-container-row {
+    margin-bottom: 15px;
+}
+
+.input-container-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.input-container-row * {
+    margin: 0 5px;
 }
 
 /* Table Styles */

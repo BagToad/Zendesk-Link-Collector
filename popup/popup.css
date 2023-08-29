@@ -1,22 +1,88 @@
+/* Variables */
+:root {
+    --accent: rgb(33 90 48);
+    --accent-hover: rgb(43 100 58);
+    --accent-dark: rgb(22 80 38);
+    --accent-dark-hover: rgb(33 90 48);
+    --accent-light: rgb(98, 163, 75);
+
+    --primary-bg: rgb(22, 27, 34);
+    --primary-bg-light: rgb(33, 38, 45);
+    --primary-bg-light-active: rgb(42, 47, 54);
+    --secondary: rgb(73, 78, 85);
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+
+/* Scrollbar Styles */
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--secondary) var(--primary-bg);
+}
+
+/* Chrome, Edge and Safari */
+*::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+}
+*::-webkit-scrollbar-track {
+    border-radius: 0px;
+    background-color: var(--primary-bg);
+}
+
+*::-webkit-scrollbar-track:hover {
+    background-color: var(--primary-bg-light);
+}
+
+*::-webkit-scrollbar-track:active {
+    background-color: var(--primary-bg-light-active);
+}
+
+*::-webkit-scrollbar-thumb {
+    border-radius: 0px;
+    background-color: var(--secondary);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent);
+}
+
+*::-webkit-scrollbar-thumb:active {
+    background-color: var(--accent-light);
+}
+
+*::-webkit-scrollbar-corner {
+    background-color: var(--primary-bg);
+}
+
+*::-webkit-scrollbar-corner:hover {
+    background-color: var(--primary-bg-light);
+}
+  
+
 body {
     width: fit-content;
-    min-width: 350px;
-    max-width: 500px;
     height: fit-content;
-    min-height: 150px;
-    max-height: 500px;
     border-radius: 0.5em;
-    overflow: scroll;
     font-family: sans-serif;
     color: rgb(201, 209, 217);
-    background-color: rgb(22, 27, 34);
+    background-color: var(--primary-bg);
     text-decoration: none;
+}
+
+#container {
+    flex-direction: column;
+    overflow: auto;
+    min-width: 350px;
+    max-width: 500px;
+    min-height: 150px;
+    max-height: 500px;
 }
 
 a {
@@ -29,8 +95,13 @@ a:hover {
 }
 
 .button.checked {
-    -webkit-box-shadow: inset -3px -4px 8px -2px #000000; 
-    box-shadow: inset -3px -4px 8px -2px #000000;
+    background-color: var(--accent);
+    border-color: var(--accent-dark);
+}
+
+.button.checked:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-dark-hover);
 }
 
 .button {
@@ -39,26 +110,20 @@ a:hover {
     font-size: 14px;
     text-align: center;
     flex: 1;
-    background-color: rgb(33, 38, 45);
-    border-color: rgba(240, 246, 252, 0.1);
-    border-radius: 6px;
-    border-width: 1px;
+    background-color: var(--primary-bg-light);
+    border-color: var(--secondary);
+    border-width: 2px;
     border-style: solid;
     text-decoration: none;
     color: rgb(201, 209, 217);
 }
 
-#container {
-    flex-direction: column;
-    overflow-x: auto;
-    height: inherit;
-    width: inherit;
-    max-width: 500px;
+.button:hover {
+    background-color: var(--primary-bg-light-active);
 }
 
 .row {
     flex: 1;
-    position: absolute;
     width: 100%;
 }
 
@@ -91,6 +156,11 @@ h3.list-header {
     margin-bottom: 3px;
 }
 
+/* Remove unused space between headers and the view buttons */
+#list-container-links h3:nth-child(1), #list-container-attachments ul:nth-child(1) {
+    margin-top: 0;
+}
+
 ul.list-links, ul.list-attachments {
     display: flex;
     flex-direction: column-reverse;
@@ -99,6 +169,19 @@ ul.list-links, ul.list-attachments {
 li.list-item-links, li.list-item-attachments {
     list-style: none;
     margin-bottom: 2px;
+}
+
+li.list-item-links {
+    display: flex;
+    flex-direction: row;
+}
+
+/* Force context to shrink first before shrinking the link text. */
+li.list-item-links .link-context {
+    flex-shrink: 0;
+    flex-grow: 1;
+    flex-basis: 0px;
+    min-width: 0px;
 }
 
 li.list-item-attachments ul li {
@@ -115,15 +198,19 @@ li.list-item-attachments ul li {
     height: inherit;
 }
 
+/* This class is an option and is set on nodes by JavaScript. */
+.list-container.wrap {
+    white-space: normal;
+}
+
+/* This class is set by JavaScript in response to user clicking different views. */
 .list-container.selected {
     display: flex;
 }
 
-#list-container-links h3:nth-child(1), #list-container-attachments ul:nth-child(1) {
-    margin-top: 35px;
-}
 
-/* Search icon styles */
+
+/* Search/Scroll-to icon styles */
 .icon-search:hover {
     cursor: pointer;
 }

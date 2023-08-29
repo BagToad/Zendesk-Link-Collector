@@ -6,17 +6,27 @@
 </head>
 <body>
 	<h1>Options Page</h1>
-    <div id="input-container-link-patterns" class="input-container">
-        <input type="text" id="title" placeholder="title">
-        <input type="text" id="pattern" placeholder="regex pattern">
-        <label for="show-parent">Show Context?</label>
-        <input type="checkbox" id="show-parent">
-        <button id="save-button">Save</button>
+    <div id="input-container-attachments" class="input-container-row"></div>
+    <div class="input-container-column">
+        <div class="input-container-row">
+            <label for="wrap-lists">Wrap long links?</label>
+            <input type="checkbox" id="wrap-lists">
+        </div>
     </div>
-    <div id="input-container-attachments" class="input-container"></div>
-
+    <div id="input-container-save-options" class="input-container-row">
+        <button id="button-save-global-options">Save Options</button>
+    </div>
     <div id="table-container-link-patterns">
-    <h1>Saved Link Patterns</h1>
+        <h1>Saved Link Patterns</h1>
+        <div id="input-container-link-patterns" class="input-container-row">
+            <label for="title">Title:</label>
+            <input type="text" id="title" placeholder="Title">
+            <label for="pattern">Pattern:</label>
+            <input type="text" id="pattern" placeholder="RegEx Pattern">
+            <label for="show-parent">Show Link Context?</label>
+            <input type="checkbox" id="show-parent">
+            <button id="button-save-link-patterns">Save Link Pattern</button>
+        </div>
         <table id="table-link-patterns">
             <thead>
             <tr>
@@ -32,7 +42,7 @@
         </table>
     </div>
     <h2>Import/Export</h2>
-    <div class="input-container input-container-import-export" id="input-container-link-patterns-import-export">
+    <div class="input-container-row input-container-import-export" id="input-container-link-patterns-import-export">
         <label for="link-patterns-import-file">Import File: </label>
         <input type="file" id="link-patterns-import-file" name="link-patterns-import-file" accept=".json">
         <label for="link-patterns-import-type">Import Type: </label>
