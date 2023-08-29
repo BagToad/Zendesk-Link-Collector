@@ -208,7 +208,18 @@ li.list-item-attachments ul li {
     display: flex;
 }
 
+/* 404 styles */
+.not-found-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 5px;
+}
 
+/* This class is un-set by JavaScript */
+.not-found-container.hidden {
+    display: none;
+}
 
 /* Search/Scroll-to icon styles */
 .icon-search:hover {
