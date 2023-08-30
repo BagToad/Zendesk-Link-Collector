@@ -127,6 +127,15 @@ a:hover {
     width: 100%;
 }
 
+#button-options {
+    flex-grow: 0;
+}
+
+#button-options img {
+    vertical-align: middle;
+    filter: invert(1);
+}
+
 /* Loader Styles */
 #loader {
     display: none;

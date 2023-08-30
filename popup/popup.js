@@ -322,6 +322,7 @@ getCurrentTabURL().then(async url => {
 document.addEventListener("DOMContentLoaded", () => {
   // Add event listeners to static elements.
   document.getElementById('not-found-link-patterns-options').addEventListener('click', () => {browser.runtime.openOptionsPage()});
+  document.getElementById('button-options').addEventListener('click', () => {browser.runtime.openOptionsPage()});
 });
 
 
