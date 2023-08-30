@@ -11,8 +11,19 @@
     </div>
     <div id="container" style="display: flex">
     <div id="loader" class="loading"></div>
-    <div id="list-container-links" class="list-container selected"></div>
-    <div id="list-container-attachments" class="list-container"></div>
+    <div id="list-container-links" class="list-container selected">
+      <div class="not-found-container hidden" id="not-found-container-links">
+        <img src="../icons/bufo-sad-but-ok.png" width="50px" height="50px">
+        <div>There doesn't seem to be any comments matching link patterns!</div>
+        <div>Try adding more link patterns in the <a href="#" id="not-found-link-patterns-options">options page.</a></div>
+      </div>
+    </div>
+    <div id="list-container-attachments" class="list-container">
+      <div class="not-found-container hidden" id="not-found-container-attachments">
+        <img src="../icons/bufo-sad-but-ok.png" width="50px" height="50px">
+        <div>There doesn't seem to be any comments with attachments!</div>
+      </div>
+    </div>
     <script type="application/javascript" src="../lib/browser-polyfill.min.js"></script>
     <script type="application/javascript" src="popup.js"></script>
   </body>

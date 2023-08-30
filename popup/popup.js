@@ -41,7 +41,7 @@ async function fetchResource(input, init) {
         });
       })
     });
-  }
+}
 
 async function displayLinks(commentsJSON) {
     const linksArr = [];
@@ -65,7 +65,13 @@ async function displayLinks(commentsJSON) {
 
     // Filter all the links according to the rules.
     const linksBundle = await filterLinks(linksArr);
-
+  
+    // If there are no attachments, display a message and return.
+    if (linksBundle.length <= 0) {
+      document.getElementById('not-found-container-links').classList.remove('hidden');
+      return;
+    }
+    
     // Get list container
     const linksList = document.getElementById('list-container-links');
     if (optionsGlobal.wrapLists) {
@@ -172,11 +178,15 @@ async function displayAttachments(commentsJSON) {
     }  
   });
 
-  // Create and display attachments list.
+  // If there are no attachments, display a message and return.
+  if (attachmentsArr.length <= 0) {
+    document.getElementById('not-found-container-attachments').classList.remove('hidden');
+    return;
+  }
 
+  // Create and display attachments list.
   // Get attachments container.
   const attachmentsList = document.getElementById('list-container-attachments');
-
   const ul = document.createElement('ul');
   ul.setAttribute('class', 'list-attachments');
 
@@ -308,6 +318,11 @@ getCurrentTabURL().then(async url => {
     }
 });
 
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Add event listeners to static elements.
+  document.getElementById('not-found-link-patterns-options').addEventListener('click', () => {browser.runtime.openOptionsPage()});
+});
 
 
 
