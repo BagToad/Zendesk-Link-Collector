@@ -15,9 +15,9 @@ document.getElementById('button-attachments').addEventListener('click', () => {
 });
 
 
-function scrollToComment(commentId) {
+function scrollToComment(data) {
   browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
-    browser.tabs.sendMessage(tabs[0].id, {type: "scroll", commentId: commentId});
+    browser.tabs.sendMessage(tabs[0].id, {type: "scroll", commentID: data.commentID, auditID: data.auditID});
   });
 }
 
@@ -53,7 +53,8 @@ async function displayLinks(commentsJSON) {
         if (links.length > 0) {
             links.forEach(link => {
                         linksArr.push({
-                        id: comments.id,
+                        commentID: comments.id,
+                        auditID: comments.audit_id,
                         created_at: comments.created_at,
                         parent_text: link.parentElement.innerHTML,
                         text: link.innerText,
@@ -110,7 +111,8 @@ async function displayLinks(commentsJSON) {
         // Create the icon and append to list item.
         const i = document.createElement('i');
         i.setAttribute('class', 'icon-search');
-        i.setAttribute('id', link.id);
+        i.setAttribute('commentID', link.commentID);
+        i.setAttribute('auditID', link.auditID);
         li.appendChild(i);
 
         // Add link content or parent context to list item.
@@ -152,16 +154,23 @@ async function displayLinks(commentsJSON) {
           li.appendChild(a);
         }
         ul.appendChild(li);
-      })
+      });
 
       // Only append the ul to a header if it has not been done previously. 
       if (!foundHeader) {
         linksList.appendChild(ul);
       }
-
-      document.getElementById('list-container-links').querySelectorAll('i').forEach(i => {
-        i.addEventListener('click', () => {scrollToComment(i.id)});
-      })
+    })
+    
+    document.getElementById('list-container-links').querySelectorAll('i').forEach(i => {
+      i.addEventListener('click', () => {
+        scrollToComment(
+          {
+            "commentID": i.getAttribute('commentID'),
+            "auditID": i.getAttribute('auditID')
+          }
+        )
+      });
     })
 }
 
@@ -171,7 +180,8 @@ async function displayAttachments(commentsJSON) {
   commentsJSON.comments.forEach(comments => {
     if (comments.attachments.length > 0) {
       attachmentsArr.push({
-        id: comments.id,
+        commentID: comments.id,
+        auditID: comments.audit_id,
         created_at: comments.created_at,
         attachments: comments.attachments
       })
@@ -199,7 +209,8 @@ async function displayAttachments(commentsJSON) {
     // Create the icon and append to list item.
     const i = document.createElement('i');
     i.setAttribute('class', 'icon-search');
-    i.setAttribute('id', comment.id);
+    i.setAttribute('commentID', comment.commentID);
+    i.setAttribute('auditID', comment.auditID);
     liDate.append(i, txtDate);
 
     const ulComment = document.createElement('ul');
@@ -224,7 +235,14 @@ async function displayAttachments(commentsJSON) {
   });
 
   document.getElementById('list-container-attachments').querySelectorAll('i').forEach(i => {
-    i.addEventListener('click', () => {scrollToComment(i.id)});
+    i.addEventListener('click', () => {
+      scrollToComment(
+        {
+          "commentID": i.getAttribute('commentID'),
+          "auditID": i.getAttribute('auditID')
+        }
+      )
+    });
   })
 }
 
@@ -299,10 +317,8 @@ getCurrentTabURL().then(async url => {
           let response = await fetchResource(nextPage)
           .catch(error => {
             console.error('Request failed:', error);
-          });
-
+          });       
           let data = await response.json();
-
           if (data.next_page != null) {
             nextPage = data.next_page;
           } else {
