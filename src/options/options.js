@@ -74,7 +74,7 @@ function loadLinkPatterns() {
             // Create down button.
             const buttonReorderDown = document.createElement('button')
             buttonReorderDown.setAttribute('class', 'button-reorder-down');
-            buttonReorderDown.textContent = 'down';
+            buttonReorderDown.textContent = 'Down';
             tdReorder.appendChild(buttonReorderDown);
             nodes.push(tdReorder);
             
