@@ -14,40 +14,33 @@ You can also manually [install it from the source code](#chrome-manual-installat
 ## Configuration
 Access the configuration page to set link regex patterns you would like to aggregate from tickets.
 
-### Google Chrome
-- Right-click the extension icon 👉 `options`.
+### Google Chrome and Firefox
 
-OR
+Click the ⚙️ icon in the top-right corner of the extension popup to open the configuration page.
 
-- Visit `chrome://extensions/`
-- Click on the extension's **Details**.
-- Click on **Extension options**.
-
-### Firefox
-- Visit `about:addons`
-- Find the extension and click **`...`** 👉 `Preferences`
+![options-button](samples/options-button-sample.png)
 
 ## Features
 
-### Links
+### Link Aggregation
 - Links are aggregated according to custom regex patterns.
 - No other chaos from the ticket is included in the link, only actual links are considered (`a` anchor elements).
     - Links can optionally display "context" when the "Show context?" checkbox option selected. This shows the surrounding text beside the link (the context is the parent HTML element of the `a` element).  
 - Scroll to a link's source comment by clicking the spyglass icon (🔍) beside a link.
 
-![image](https://github.com/BagToad/Zendesk-Link-Collector/assets/47394200/f3731ef8-83f5-4419-b266-7a51ec70837c)
+![image](samples/links-sample.png)
 
 
-### Attachments
+### Attachment Aggregation
 - Attachments are aggregated.
 - Scroll to an attachment's source comment by clicking the spyglass icon beside a link.
 
-![image](https://github.com/BagToad/Zendesk-Link-Collector/assets/47394200/f80331fa-e72a-4df0-8970-ac2e4033c4d4)
+![image](samples/attachments-sample.png)
 
 ### Chrome Manual Installation
 1.  Clone the repository or download and extract the ZIP file to your local machine.
 2.  Open `chrome://extensions` in your Google Chrome browser.
 3.  Turn on `Developer mode` by clicking the toggle in the top-right corner.
-4.  Click on the `Load unpacked` button and select the folder where you extracted the ZIP file.
+4.  Click on the `Load unpacked` button and select the `src` folder in the directory containing the extracted ZIP file.
 
 
