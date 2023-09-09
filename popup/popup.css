@@ -166,7 +166,7 @@ h3.list-header {
 }
 
 /* Remove unused space between headers and the view buttons */
-#list-container-links h3:nth-child(1), #list-container-attachments ul:nth-child(1) {
+#list-container-links h3:first-of-type, #list-container-attachments ul:first-of-type {
     margin-top: 0;
 }
 
