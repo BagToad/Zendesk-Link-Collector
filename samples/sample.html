@@ -1,0 +1,115 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <div class="row" id="viewOption" style="display: flex;">
+      <a href="#" class="button" id="button-links">Links</a>
+      <a href="#" class="button checked" id="button-attachments">Attachments</a>
+      <a href="#" class="button" id="button-options"><img src="../icons/gear.svg" width="15px" height="15px"></a>
+    </div>
+    <div id="container" style="display: flex">
+      <div id="loader" class=""></div>
+      <div id="list-container-links" class="list-container">
+        <div class="not-found-container hidden" id="not-found-container-links">
+          <img src="../icons/bufo-sad-but-ok.png" width="50px" height="50px">
+          <div>There doesn't seem to be any comments matching link patterns!</div>
+          <div>Try adding more link patterns in the <a href="#" id="not-found-link-patterns-options">options page.</a></div>
+        </div>
+        <h3 class="list-header list-header-links" id="header-">Aggregate hyperlinks in the ticket!</h3>
+        <ul class="list-links" id="list-">
+          <li class="list-item-links">
+            <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i>
+            <a target="_blank" href="#" title="#">This link has "Show Context" disabled.</a>
+          </li>
+          <li class="list-item-links">
+            <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i>
+            <a target="_blank" href="#" title="#">Group links into sections under customizable headings.</a>
+          </li>
+          <li class="list-item-links">
+            <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i>
+            <a target="_blank" href="#" title="#">This is a link found in the ticket.</a>
+          </li>
+        </ul>
+        <h3 class="list-header list-header-links" id="header-">Links can show context!</h3>
+        <ul class="list-links" id="list-">
+          <li class="list-item-links">
+            <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i>
+            <a href="#" rel="noreferrer" target="_blank" title="#">Long links or context&nbsp;</a>
+            <span class="link-context">can be scrolled or wrapped depending on settings.</span>
+          </li>
+          <li class="list-item-links">
+            <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i>
+            <a href="#" rel="noreferrer" target="_blank" title="#">Context can be long:&nbsp;</a>
+            <span class="link-context">Lorem ipsum dolor sit amet. Ex voluptatem praesentium assumenda architecto eum quia sapiente aut laboriosam autem sed animi perferendis non similique quisquam est facere quia. Ex itaque ducimus sed repellendus assumenda aut laboriosam beatae. Hic deleniti accusamus aut ipsum vero nam voluptas iste nam aspernatur doloribus. Aut veniam cupiditate et rerum voluptas et internos corporis non beatae eligendi vel autem corporis.</span>
+          </li>
+          <li class="list-item-links">
+            <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i>
+            <a href="#" rel="noreferrer" target="_blank" title="#">This is a hyperlink,&nbsp;</a>
+            <span class="link-context"> and this is the context (the text surrounding the link)!</span>
+          </li>
+        </ul>
+        <h3 class="list-header list-header-links" id="header-">Other Features...</h3>
+        <ul class="list-links" id="list-">
+          <li class="list-item-links">
+            <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i>
+            <a target="_blank" href="#" title="#">Free and open source!</a>
+          </li>
+          <li class="list-item-links">
+            <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i>
+            <a target="_blank" href="#" title="#">Regular expression settings can be imported/exported.</a>
+          </li>
+          <li class="list-item-links">
+            <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i>
+            <a target="_blank" href="#" title="#">Works with Zendesk's built in tab system.</a>
+          </li>
+          <li class="list-item-links">
+            <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i>
+            <a target="_blank" href="#" title="#">&lt;--- Click the <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i> icon to scroll to the source comment.</a>
+          </li>
+        </ul>
+      </div>
+      <div id="list-container-attachments" class="list-container selected">
+        <div class="not-found-container hidden" id="not-found-container-attachments">
+          <img src="../icons/bufo-sad-but-ok.png" width="50px" height="50px">
+          <div>There doesn't seem to be any comments with attachments!</div>
+        </div>
+        <ul class="list-attachments">
+          <li class="list-item-attachments">
+            <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i>Comment on: 2023-08-15T06:00:42Z
+            <ul class="list-attachments">
+              <li class="list-item-attachments">
+                <a target="_blank" href="#">Just like links, clicking the <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i> icon will scroll to the source comment.zip</a>
+              </li>
+            </ul>
+          </li>
+          <li class="list-item-attachments">
+            <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i>Comment on: 2023-08-17T07:40:05Z
+            <ul class="list-attachments">
+              <li class="list-item-attachments">
+                <a target="_blank" href="#">This comment has a single attachment.txt</a>
+              </li>
+            </ul>
+          </li>
+          <li class="list-item-attachments">
+            <i class="icon-search" commentid="9999999999999" auditid="9999999999999"></i>Comment on: 2023-08-15T06:00:42Z
+            <ul class="list-attachments">
+              <li class="list-item-attachments">
+                <a target="_blank" href="#">This comment has multiple attachments.zip</a>
+              </li>
+              <li class="list-item-attachments">
+                <a target="_blank" href="#">Attachments are grouped by comment.txt</a>
+              </li>
+              <li class="list-item-attachments">
+                <a target="_blank" href="#">Aggregate attachments found in comments.tar</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <script type="application/javascript" src="../lib/browser-polyfill.min.js"></script>
+      <script type="application/javascript" src="popup.js"></script>
+    </div>
+  </body>
+</html>
