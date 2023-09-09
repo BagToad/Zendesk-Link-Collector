@@ -126,6 +126,7 @@ async function displayLinks(commentsJSON) {
           // Otherwise, they do not open in a tab.
           doc.querySelectorAll(`a`).forEach(a => {
             a.setAttribute('target', '_blank');
+            a.setAttribute('title' , a.href);
           });
           
           // Get all the body because that's all we care about.
@@ -150,6 +151,7 @@ async function displayLinks(commentsJSON) {
           const a = document.createElement('a');
           a.setAttribute('target', '_blank');
           a.setAttribute('href', link.href);
+          a.setAttribute('title' , link.href);
           a.textContent = link.text;
           li.appendChild(a);
         }
