@@ -1,20 +1,3 @@
-document.getElementById('button-links').addEventListener('click', () => {
-  document.getElementById('button-links').classList.add('checked');
-  document.getElementById('list-container-links').classList.add('selected');
-
-  document.getElementById('button-attachments').classList.remove('checked');
-  document.getElementById('list-container-attachments').classList.remove('selected');
-});
-
-document.getElementById('button-attachments').addEventListener('click', () => {
-  document.getElementById('button-links').classList.remove('checked');
-  document.getElementById('list-container-links').classList.remove('selected');
-
-  document.getElementById('button-attachments').classList.add('checked');
-  document.getElementById('list-container-attachments').classList.add('selected');
-});
-
-
 function scrollToComment(data) {
   browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
     browser.tabs.sendMessage(tabs[0].id, {type: "scroll", commentID: data.commentID, auditID: data.auditID});
@@ -341,6 +324,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add event listeners to static elements.
   document.getElementById('not-found-link-patterns-options').addEventListener('click', () => {browser.runtime.openOptionsPage()});
   document.getElementById('button-options').addEventListener('click', () => {browser.runtime.openOptionsPage()});
+
+  // Add event listeners to view swap buttons.
+  document.getElementById('button-links').addEventListener('click', () => {
+    document.getElementById('button-links').classList.add('checked');
+    document.getElementById('list-container-links').classList.add('selected');
+  
+    document.getElementById('button-attachments').classList.remove('checked');
+    document.getElementById('list-container-attachments').classList.remove('selected');
+  });
+  
+  document.getElementById('button-attachments').addEventListener('click', () => {
+    document.getElementById('button-links').classList.remove('checked');
+    document.getElementById('list-container-links').classList.remove('selected');
+  
+    document.getElementById('button-attachments').classList.add('checked');
+    document.getElementById('list-container-attachments').classList.add('selected');
+  });
 });
 
 
