@@ -33,7 +33,7 @@
       }
     },
       "permissions": [
-        "tabs",
+        "activeTab",
         "storage"
       ],
     "host_permissions": [
