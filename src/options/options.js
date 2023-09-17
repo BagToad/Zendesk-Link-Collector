@@ -91,10 +91,32 @@ function loadLinkPatterns() {
     });
 }
 
+// Set the error message for the link patterns input. If err is empty, hide the error message.
+function setLinkPatternError(err) {
+    document.getElementById('link-patterns-error').textContent = err;
+    if (err != '' && err != undefined) {
+        document.getElementById('link-patterns-error').classList.remove('hidden');
+        console.log("here")
+        return;
+    }
+    document.getElementById('link-patterns-error').classList.add('hidden');
+}
+
 // Save a new link pattern from user input values.
 function saveLinkPatterns() {
+    if (document.getElementById('title').value == '') {
+        setLinkPatternError("Missing required field: Title");
+        return;
+    }
+    if (document.getElementById('pattern').value == '') {
+        setLinkPatternError("Missing required field: RegEx Pattern");
+        return;
+    }
+
     // Get existing link options to append to.
     browser.storage.sync.get('options').then(data => {
+        // Hide previous error messages.
+        setLinkPatternError("");
         // Initialize options if none exist.
         if (data.options == undefined || data.options.length <= 0) {
             data.options = [];
@@ -103,6 +125,7 @@ function saveLinkPatterns() {
         try {
             new RegExp(document.getElementById('pattern').value);
         } catch (SyntaxError) {
+            setLinkPatternError("Invalid RegEx pattern! - Great work! That's difficult to do! :D");
             console.error("Invalid RegEx");
             return;
         }
