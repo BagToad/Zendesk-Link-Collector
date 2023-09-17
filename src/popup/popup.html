@@ -5,10 +5,19 @@
     <link rel="stylesheet" href="popup.css">
   </head>
   <body>
-    <div class="row" id="viewOption" style="display: flex;">
-      <a href="#" class="button checked" id="button-links">Links</a>
-      <a href="#" class="button" id="button-attachments">Attachments</a>
-      <a href="#" class="button" id="button-options"><img src="../icons/gear.svg" width="15px" height="15px"></a>
+    <div class="row" id="viewOption">
+      <a href="#" class="button button-fill checked" id="button-links">Links</a>
+      <a href="#" class="button button-fill" id="button-attachments">Attachments</a>
+      <a href="#" class="button button-fill" id="button-options">
+        <img class="icon icon-invert" src="../icons/gear.svg" width="15px" height="15px">
+      </a>
+    </div>
+    <div class="row">
+      <a href="#" class="button button-sub" id="button-summary">
+        <img class="icon hidden" id="summary-check" src="../icons/check.svg" width="15px" height="15px">
+        <img class="icon icon-invert" id="summary-copy" src="../icons/copy.svg" width="15px" height="15px">
+        <span id="summary-text">Summary</span>
+      </a>
     </div>
     <div id="container" style="display: flex">
     <div id="loader" class="loading"></div>
