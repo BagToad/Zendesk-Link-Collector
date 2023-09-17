@@ -372,6 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('button-links').addEventListener('click', () => {
     document.getElementById('button-links').classList.add('checked');
     document.getElementById('list-container-links').classList.add('selected');
+    document.querySelectorAll('.row-links').forEach(row => {row.classList.add('selected')});
   
     document.getElementById('button-attachments').classList.remove('checked');
     document.getElementById('list-container-attachments').classList.remove('selected');
@@ -380,7 +381,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('button-attachments').addEventListener('click', () => {
     document.getElementById('button-links').classList.remove('checked');
     document.getElementById('list-container-links').classList.remove('selected');
-  
+    document.querySelectorAll('.row-links').forEach(row => {row.classList.remove('selected')});
+
     document.getElementById('button-attachments').classList.add('checked');
     document.getElementById('list-container-attachments').classList.add('selected');
   });
