@@ -85,7 +85,7 @@ async function displayLinks(commentsJSON) {
     const linksBundle = await filterLinks(linksArr);
   
     // If there are no links, display a message and return.
-    if (linksBundle.length <= 0) {
+    if (linksBundle.length <= 0 && document.querySelectorAll('#list-container-links .list-links').length <= 0) {
       document.getElementById('not-found-container-links').classList.remove('hidden');
       return;
     }
@@ -340,6 +340,7 @@ getCurrentTabURL().then(async url => {
         let r = 0; // Number of requests made.
 
         while (nextPage != '' && r < rlimit) {
+          console.log(`Processing request #${r}`);
           r++;
           let response = await fetchResource(nextPage)
           .catch(error => {
