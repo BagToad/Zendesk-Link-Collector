@@ -94,22 +94,20 @@ a:hover {
     text-decoration: underline;
 }
 
-.button.checked {
+.button-fill.checked {
     background-color: var(--accent);
     border-color: var(--accent-dark);
 }
 
-.button.checked:hover {
+.button-fill.checked:hover {
     background-color: var(--accent-hover);
     border-color: var(--accent-dark-hover);
 }
 
 .button {
-    flex-direction: row;
     padding: 10px;
     font-size: 14px;
     text-align: center;
-    flex: 1;
     background-color: var(--primary-bg-light);
     border-color: var(--secondary);
     border-width: 2px;
@@ -118,13 +116,51 @@ a:hover {
     color: rgb(201, 209, 217);
 }
 
+/* This class is un-set by JavaScript */
+.icon.hidden {
+    display: none;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.icon {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.icon-invert {
+    filter: invert(1);
+}
+
+.button-fill {
+    flex: 1;
+}
+
+.button-sub {
+    display: flex;
+    justify-content: flex-start;
+    column-gap: 10px;
+    padding: 0.5em;
+    font-size: 1em;
+    flex-basis: 93px;
+    border-width: 1px;
+}
+
 .button:hover {
     background-color: var(--primary-bg-light-active);
 }
 
 .row {
-    flex: 1;
+    display: flex;
+    flex-direction: row;
     width: 100%;
+}
+
+.row-links {
+    display: none;
+}
+
+.row-links.selected {
+    display: flex;
 }
 
 #button-options {
@@ -133,7 +169,6 @@ a:hover {
 
 #button-options img {
     vertical-align: middle;
-    filter: invert(1);
 }
 
 /* Loader Styles */

@@ -33,8 +33,9 @@
       }
     },
       "permissions": [
-        "tabs",
-        "storage"
+        "activeTab",
+        "storage",
+        "clipboardWrite"
       ],
     "host_permissions": [
         "https://*.zendesk.com/*"

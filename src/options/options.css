@@ -52,6 +52,16 @@ button {
     margin: 0 5px;
 }
 
+#link-patterns-error {
+    background-color: rgb(179 0 0 / 18%);
+    padding: 10px;
+    border: 2px solid rgb(179 0 0 / 18%);
+}
+
+.hidden {
+    display: none;
+}
+
 /* Table Styles */
 table#table-link-patterns {
     border-collapse: collapse;

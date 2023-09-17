@@ -1,25 +1,42 @@
-document.getElementById('button-links').addEventListener('click', () => {
-  document.getElementById('button-links').classList.add('checked');
-  document.getElementById('list-container-links').classList.add('selected');
-
-  document.getElementById('button-attachments').classList.remove('checked');
-  document.getElementById('list-container-attachments').classList.remove('selected');
-});
-
-document.getElementById('button-attachments').addEventListener('click', () => {
-  document.getElementById('button-links').classList.remove('checked');
-  document.getElementById('list-container-links').classList.remove('selected');
-
-  document.getElementById('button-attachments').classList.add('checked');
-  document.getElementById('list-container-attachments').classList.add('selected');
-});
-
-
 function scrollToComment(data) {
   browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
     browser.tabs.sendMessage(tabs[0].id, {type: "scroll", commentID: data.commentID, auditID: data.auditID});
   });
 }
+
+function writeSummaryClipboard() {
+  let summary = "";
+  document.querySelectorAll('.list-links').forEach(list => {
+    // If "all" summary type, add all to summary.
+    if (list.getAttribute('data-summary-type') == "all") {
+      summary += `### ${list.getAttribute('data-title')}\n\n`;
+      list.childNodes.forEach(li => {
+        summary += `- [${li.textContent}](${li.querySelector('a').href}) - _${li.getAttribute('data-created-at')}_\n`;
+      });
+      summary += "\n";
+    // If "latest" summary type, add only the latest to summary.
+    } else if (list.getAttribute('data-summary-type') == "latest") {
+      summary += `### ${list.getAttribute('data-title')} (Latest)\n\n`;
+      const latest = list.childNodes[list.childNodes.length - 1];
+      summary += `- [${latest.textContent}](${latest.querySelector('a').href}) - _${latest.getAttribute('data-created-at')}_\n`;
+      summary += "\n";
+    }
+
+  });
+  if (summary != "") {
+    navigator.clipboard.writeText(summary);
+    document.getElementById('summary-copy').classList.add('hidden');
+    document.getElementById('summary-check').classList.remove('hidden');
+    document.getElementById('summary-text').textContent = "Copied!";
+    // Hide the checkmark after 2 seconds.
+    setTimeout(() => {
+      document.getElementById('summary-check').classList.add('hidden');
+      document.getElementById('summary-copy').classList.remove('hidden');
+      document.getElementById('summary-text').textContent = "Summary";
+    }, 2000);
+  }
+}
+
 
 // Code from https://stackoverflow.com/questions/55214828/how-to-make-a-cross-origin-request-in-a-content-script-currently-blocked-by-cor/55215898#55215898
 async function fetchResource(input, init) {
@@ -55,7 +72,7 @@ async function displayLinks(commentsJSON) {
                         linksArr.push({
                         commentID: comments.id,
                         auditID: comments.audit_id,
-                        created_at: comments.created_at,
+                        createdAt: comments.created_at,
                         parent_text: link.parentElement.innerHTML,
                         text: link.innerText,
                         href: link.href
@@ -67,14 +84,16 @@ async function displayLinks(commentsJSON) {
     // Filter all the links according to the rules.
     const linksBundle = await filterLinks(linksArr);
   
-    // If there are no attachments, display a message and return.
-    if (linksBundle.length <= 0) {
+    // If there are no links, display a message and return.
+    if (linksBundle.length <= 0 && document.querySelectorAll('#list-container-links .list-links').length <= 0) {
       document.getElementById('not-found-container-links').classList.remove('hidden');
       return;
     }
     
     // Get list container
     const linksList = document.getElementById('list-container-links');
+
+    // Add wrap class if option is set.
     if (optionsGlobal.wrapLists) {
       linksList.classList.add('wrap');
     }
@@ -87,6 +106,7 @@ async function displayLinks(commentsJSON) {
       let foundHeader = false;
 
       if (document.getElementById(`header-${bundle.title}`) != null) {
+        // Header already exists, so list should already exist. 
         ul = document.getElementById(`list-${bundle.title}`);
         foundHeader = true;
       } else {
@@ -101,12 +121,16 @@ async function displayLinks(commentsJSON) {
         ul = document.createElement('ul');
         ul.setAttribute('class', 'list-links');
         ul.setAttribute('id', `list-${bundle.title}`);
+        ul.setAttribute('data-title', bundle.title);
+        ul.setAttribute('data-summary-type', bundle.links[0].summaryType);
       }
       // For each link in bundle, create a list item.
       bundle.links.forEach(link => {
         // Create the list item.
         const li = document.createElement('li');
         li.setAttribute('class', 'list-item-links');
+        li.setAttribute('data-created-at', link.createdAt);
+        li.setAttribute('data-summary-type', link.summaryType);
 
         // Create the icon and append to list item.
         const i = document.createElement('i');
@@ -253,7 +277,7 @@ async function filterLinks(linksArr) {
     if (data.options == undefined || data.options.length <= 0){
         data.options = [];
     }
-    return data.options;;
+    return data.options;
   });
 
   // This is an array of objects with the following structure:
@@ -271,6 +295,7 @@ async function filterLinks(linksArr) {
     linksArr.forEach(link => {
       const re = new RegExp(filter.pattern)
       if (re.test(link.href)) {
+        link.summaryType = filter.summaryType === undefined ? "all" : filter.summaryType;
         filteredLinksArr.push(link);
       }
     })
@@ -315,6 +340,7 @@ getCurrentTabURL().then(async url => {
         let r = 0; // Number of requests made.
 
         while (nextPage != '' && r < rlimit) {
+          console.log(`Processing request #${r}`);
           r++;
           let response = await fetchResource(nextPage)
           .catch(error => {
@@ -341,6 +367,26 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add event listeners to static elements.
   document.getElementById('not-found-link-patterns-options').addEventListener('click', () => {browser.runtime.openOptionsPage()});
   document.getElementById('button-options').addEventListener('click', () => {browser.runtime.openOptionsPage()});
+  document.getElementById('button-summary').addEventListener('click', () => {writeSummaryClipboard()});
+
+  // Add event listeners to view swap buttons.
+  document.getElementById('button-links').addEventListener('click', () => {
+    document.getElementById('button-links').classList.add('checked');
+    document.getElementById('list-container-links').classList.add('selected');
+    document.querySelectorAll('.row-links').forEach(row => {row.classList.add('selected')});
+  
+    document.getElementById('button-attachments').classList.remove('checked');
+    document.getElementById('list-container-attachments').classList.remove('selected');
+  });
+  
+  document.getElementById('button-attachments').addEventListener('click', () => {
+    document.getElementById('button-links').classList.remove('checked');
+    document.getElementById('list-container-links').classList.remove('selected');
+    document.querySelectorAll('.row-links').forEach(row => {row.classList.remove('selected')});
+
+    document.getElementById('button-attachments').classList.add('checked');
+    document.getElementById('list-container-attachments').classList.add('selected');
+  });
 });
 
 

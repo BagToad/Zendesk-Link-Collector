@@ -23,16 +23,26 @@
             <input type="text" id="title" placeholder="Title">
             <label for="pattern">Pattern:</label>
             <input type="text" id="pattern" placeholder="RegEx Pattern">
-            <label for="show-parent">Show Link Context?</label>
+            <label for="show-parent">Show Context:</label>
             <input type="checkbox" id="show-parent">
+            <label for="summary-type">Summary Type:</label>
+            <select id="summary-type">
+                <option value="none" selected>None</option>
+                <option value="latest">Latest</option>
+                <option value="all">All</option>
+            </select>
             <button id="button-save-link-patterns">Save Link Pattern</button>
+        </div>
+        <div id="container-link-patterns-error" class="input-container-row">
+            <div class="hidden" id="link-patterns-error">Error: this is an error</div>
         </div>
         <table id="table-link-patterns">
             <thead>
             <tr>
                 <th>Title</th>
                 <th>Pattern</th>
-                <th>Show Context?</th>
+                <th>Show Context</th>
+                <th>Summary Type</th>
                 <th>Delete</th>
                 <th>Reorder</th>
             </tr>
