@@ -9,7 +9,7 @@
     <div id="input-container-attachments" class="input-container-row"></div>
     <div class="input-container-column">
         <div class="input-container-row">
-            <label for="wrap-lists">Wrap long links?</label>
+            <label class="input-label" title="How to handle links that are too long to be displayed in the extension.&#13&#13Enabled = wrap long links.&#13Disabled = scroll long links." for="wrap-lists">Wrap long links?</label>
             <input type="checkbox" id="wrap-lists">
         </div>
     </div>
@@ -19,13 +19,13 @@
     <div id="table-container-link-patterns">
         <h1>Saved Link Patterns</h1>
         <div id="input-container-link-patterns" class="input-container-row">
-            <label for="title">Title:</label>
+            <label class="input-label" title="The heading to group links that match the pattern.&#13&#13This is a required field" for="title">Title:</label>
             <input type="text" id="title" placeholder="Title">
-            <label for="pattern">Pattern:</label>
+            <label class="input-label" title="The regex pattern to use for matching links in the ticket. Links matching this pattern will be collected and displayed in the extension.&#13&#13This is a required field." for="pattern">Pattern:</label>
             <input type="text" id="pattern" placeholder="RegEx Pattern">
-            <label for="show-parent">Show Context:</label>
+            <label class="input-label" title="Show the context surrounding the link.&#13&#13Disabled = only the link is collected and displayed in the extension.&#13Enabled = the plain text surrounding the link will also be displayed in the extension." for="show-parent">Show Context:</label>
             <input type="checkbox" id="show-parent">
-            <label for="summary-type">Summary Type:</label>
+            <label class="input-label" title="How to summarize links found by this pattern when copying the markdown summary to clipboard.&#13&#13All = all links found will by copied.&#13Latest = only the most recent links will be copied&#13None = no links under this heading are copied (the heading will also be excluded)." for="summary-type">Summary Type:</label>
             <select id="summary-type">
                 <option value="none" selected>None</option>
                 <option value="latest">Latest</option>
@@ -55,7 +55,7 @@
     <div class="input-container-row input-container-import-export" id="input-container-link-patterns-import-export">
         <label for="link-patterns-import-file">Import File: </label>
         <input type="file" id="link-patterns-import-file" name="link-patterns-import-file" accept=".json">
-        <label for="link-patterns-import-type">Import Type: </label>
+        <label class="input-label" title="How to import link patterns and options.&#13&#13Append = keep all existing data add add patterns to the end.&#13Overwrite = delete all link patterns and load only the patterns in the import file." for="link-patterns-import-type">Import Type: </label>
         <select id="link-patterns-import-type" name="link-patterns-import-type">
             <option value="append" selected>Append</option>
             <option value="overwrite">Overwrite</option>
