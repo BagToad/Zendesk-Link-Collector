@@ -255,7 +255,7 @@ async function displayAttachments(commentsJSON) {
 
     // Create the icon and append to list item.
     const i = document.createElement('i');
-    i.setAttribute('class', 'icon-search');
+    i.setAttribute('class', 'icon-invert icon-li icon-search');
     i.setAttribute('commentID', comment.commentID);
     i.setAttribute('auditID', comment.auditID);
     liDate.append(i, txtDate);
