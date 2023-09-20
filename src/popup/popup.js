@@ -320,11 +320,29 @@ async function filterLinks(linksArr) {
         filteredLinksArr.push(link);
       }
     })
-    if (filteredLinksArr.length > 0) {
+
+    // Remove duplicates. Keep the latest.
+    const filteredLinksArrUnique = [];
+    filteredLinksArr.forEach(link => {
+      const found = filteredLinksArrUnique.find(l => l.href == link.href);
+      // If not found, add to uniques array.
+      if (found == undefined) {
+        filteredLinksArrUnique.push(link);
+      // If found, compare createdAt dates and keep the latest.
+      } else 
+      if (link.createdAt > found.createdAt) {
+        filteredLinksArrUnique.push(link);
+        filteredLinksArrUnique.splice(filteredLinksArrUnique.indexOf(found), 1);
+        console.log("Removing duplicate link: " + link.href);
+      }
+    });
+
+    
+    if (filteredLinksArrUnique.length > 0) {
       filteredLinks.push({
         title: filter.title,
         showParent: filter.showParent,
-        links: filteredLinksArr
+        links: filteredLinksArrUnique
       });
     }
   })
