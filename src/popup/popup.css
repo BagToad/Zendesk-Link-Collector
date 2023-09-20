@@ -117,12 +117,12 @@ a:hover {
 }
 
 /* This class is un-set by JavaScript */
-.icon.hidden {
+.icon-button.hidden {
     display: none;
     transition: opacity 0.3s ease-in-out;
 }
 
-.icon {
+.icon-button {
     opacity: 1;
     transition: opacity 0.3s ease-in-out;
 }
@@ -266,20 +266,27 @@ li.list-item-attachments ul li {
 }
 
 /* Search/Scroll-to icon styles */
-.icon-search:hover {
+.icon-li:hover {
     cursor: pointer;
 }
 
-.icon-search:hover {
+.icon-li:hover {
     filter: invert(96%) sepia(1%) saturate(4016%) hue-rotate(179deg) brightness(93%) contrast(82%);
 }
 
-.icon-search {
-    background-image: url(../icons/search.svg);
+.icon-li {
     background-repeat: no-repeat;
     filter: invert(1);
     display: inline-block;
     padding: 6px;
     margin-right: 4px;
     vertical-align: middle;
+}
+
+.icon-copy {
+    background-image: url(../icons/copy.svg);
+}
+
+.icon-search {
+    background-image: url(../icons/search.svg);
 }

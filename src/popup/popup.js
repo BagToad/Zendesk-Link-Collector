@@ -4,6 +4,7 @@ function scrollToComment(data) {
   });
 }
 
+// Write the configurable summary to the clipboard.
 function writeSummaryClipboard() {
   let summary = "";
   document.querySelectorAll('.list-links').forEach(list => {
@@ -11,14 +12,14 @@ function writeSummaryClipboard() {
     if (list.getAttribute('data-summary-type') == "all") {
       summary += `### ${list.getAttribute('data-title')}\n\n`;
       list.childNodes.forEach(li => {
-        summary += `- [${li.textContent}](${li.querySelector('a').href}) - _${li.getAttribute('data-created-at')}_\n`;
+        summary += `- [${li.textContent}](${li.querySelector('a').href}) - ${li.getAttribute('data-created-at')}\n`;
       });
       summary += "\n";
     // If "latest" summary type, add only the latest to summary.
     } else if (list.getAttribute('data-summary-type') == "latest") {
       summary += `### ${list.getAttribute('data-title')} (Latest)\n\n`;
       const latest = list.childNodes[list.childNodes.length - 1];
-      summary += `- [${latest.textContent}](${latest.querySelector('a').href}) - _${latest.getAttribute('data-created-at')}_\n`;
+      summary += `- [${latest.textContent}](${latest.querySelector('a').href}) - ${latest.getAttribute('data-created-at')}\n`;
       summary += "\n";
     }
 
@@ -37,6 +38,11 @@ function writeSummaryClipboard() {
   }
 }
 
+//Write a link to the clipboard in markdown format.
+function writeLinkClipboard(text, href) {
+  const link = `[${text}](${href})`;
+  navigator.clipboard.writeText(link);
+}
 
 // Code from https://stackoverflow.com/questions/55214828/how-to-make-a-cross-origin-request-in-a-content-script-currently-blocked-by-cor/55215898#55215898
 async function fetchResource(input, init) {
@@ -132,12 +138,19 @@ async function displayLinks(commentsJSON) {
         li.setAttribute('data-created-at', link.createdAt);
         li.setAttribute('data-summary-type', link.summaryType);
 
-        // Create the icon and append to list item.
-        const i = document.createElement('i');
-        i.setAttribute('class', 'icon-search');
-        i.setAttribute('commentID', link.commentID);
-        i.setAttribute('auditID', link.auditID);
-        li.appendChild(i);
+        // Create the scroll icon and append to list item.
+        const iScroll = document.createElement('i');
+        iScroll.setAttribute('class', 'icon-invert icon-li icon-search');
+        iScroll.setAttribute('commentID', link.commentID);
+        iScroll.setAttribute('auditID', link.auditID);
+        iScroll.setAttribute('title', 'Scroll to link\'s source comment.');
+        li.appendChild(iScroll);
+
+        // Create the copy to markdown icon and append to list item.
+        const iCopy = document.createElement('i');
+        iCopy.setAttribute('class', 'icon-invert icon-li icon-copy');
+        iCopy.setAttribute('title', 'Copy link to markdown.');
+        li.appendChild(iCopy);
 
         // Add link content or parent context to list item.
         if (bundle.showParent) {
@@ -188,7 +201,7 @@ async function displayLinks(commentsJSON) {
       }
     })
     
-    document.getElementById('list-container-links').querySelectorAll('i').forEach(i => {
+    document.getElementById('list-container-links').querySelectorAll('i.icon-search').forEach(i => {
       i.addEventListener('click', () => {
         scrollToComment(
           {
@@ -197,7 +210,15 @@ async function displayLinks(commentsJSON) {
           }
         )
       });
-    })
+    });
+
+    document.getElementById('list-container-links').querySelectorAll('i.icon-copy').forEach(i => {
+      i.addEventListener('click', () => {
+        const href = i.parentElement.querySelector('a').href;
+        const text = i.parentElement.textContent;
+        writeLinkClipboard(text, href);
+      });
+    });
 }
 
 async function displayAttachments(commentsJSON) {
