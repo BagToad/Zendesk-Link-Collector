@@ -175,15 +175,18 @@ async function displayLinks(commentsJSON) {
             if (node.nodeType == Node.TEXT_NODE) {
               const span = document.createElement('span');
               span.textContent = node.textContent;
-              span.setAttribute('class', 'link-context');
+              // span.setAttribute('class', 'link-context');
               nodes.push(span);
             } else {
               nodes.push(node);
-            }            
+            }
           });
 
           // Append all nodes to list item.
-          li.append(...nodes);
+          const spanContext = document.createElement('span');
+          spanContext.setAttribute('class', 'link-context');
+          spanContext.append(...nodes);
+          li.append(spanContext);
         } else {
           const a = document.createElement('a');
           a.setAttribute('target', '_blank');
