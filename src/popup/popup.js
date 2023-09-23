@@ -138,14 +138,16 @@ async function displayLinks(commentsJSON) {
         li.setAttribute('data-created-at', link.createdAt);
         li.setAttribute('data-summary-type', link.summaryType);
 
-        // Create the scroll icon and append to list item.
-        const iScroll = document.createElement('i');
-        iScroll.setAttribute('class', 'icon-invert icon-li icon-search');
-        iScroll.setAttribute('commentID', link.commentID);
-        iScroll.setAttribute('auditID', link.auditID);
-        iScroll.setAttribute('title', 'Scroll to link\'s source comment.');
-        li.appendChild(iScroll);
-
+        // Create the scroll icon and append to list item, if there is a comment to scroll to.
+        if (link.commentID != undefined || link.auditID != undefined) {
+          const iScroll = document.createElement('i');
+          iScroll.setAttribute('class', 'icon-invert icon-li icon-search');
+          iScroll.setAttribute('commentID', link.commentID);
+          iScroll.setAttribute('auditID', link.auditID);
+          iScroll.setAttribute('title', 'Scroll to link\'s source comment.');
+          li.appendChild(iScroll);
+        }
+        
         // Create the copy to markdown icon and append to list item.
         const iCopy = document.createElement('i');
         iCopy.setAttribute('class', 'icon-invert icon-li icon-copy');
