@@ -48,7 +48,7 @@ build-chrome:
 lint-firefox:
 	$(WE) lint --source-dir=$(FIREFOX_BUILD_DIR)
 
-# Lint for Chrome with web-ext
+# Lint for Chrome with web-ext (will produce warnings)
 lint-chrome:
 	$(WE) lint --source-dir=$(CHROME_BUILD_DIR)
 

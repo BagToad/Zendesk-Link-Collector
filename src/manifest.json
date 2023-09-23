@@ -41,10 +41,5 @@
       ],
     "host_permissions": [
         "https://*.zendesk.com/*"
-    ],
-    "browser_specific_settings": {
-      "gecko": {
-        "id": "{e4a90df4-3bc1-11ee-be56-0242ac120002}"
-      }
-    }
+    ]
   }
