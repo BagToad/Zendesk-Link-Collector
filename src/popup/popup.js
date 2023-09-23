@@ -66,29 +66,10 @@ async function fetchResource(input, init) {
     });
 }
 
-async function displayLinks(commentsJSON) {
-    const linksArr = [];
-    const parser = new DOMParser();
-
-    commentsJSON.comments.forEach(comments => {
-        const doc = parser.parseFromString(comments.html_body, "text/html");
-        const links = doc.querySelectorAll(`a`)
-        if (links.length > 0) {
-            links.forEach(link => {
-                        linksArr.push({
-                        commentID: comments.id,
-                        auditID: comments.audit_id,
-                        createdAt: comments.created_at,
-                        parent_text: link.parentElement.innerHTML,
-                        text: link.innerText,
-                        href: link.href
-                      })
-            });
-        }
-    });
+async function displayLinks(links) {
 
     // Filter all the links according to the rules.
-    const linksBundle = await filterLinks(linksArr);
+    const linksBundle = await filterLinks(links);
   
     // If there are no links, display a message and return.
     if (linksBundle.length <= 0 && document.querySelectorAll('#list-container-links .list-links').length <= 0) {
@@ -147,7 +128,7 @@ async function displayLinks(commentsJSON) {
           iScroll.setAttribute('title', 'Scroll to link\'s source comment.');
           li.appendChild(iScroll);
         }
-        
+
         // Create the copy to markdown icon and append to list item.
         const iCopy = document.createElement('i');
         iCopy.setAttribute('class', 'icon-invert icon-li icon-copy');
@@ -298,6 +279,7 @@ async function displayAttachments(commentsJSON) {
   })
 }
 
+
 async function filterLinks(linksArr) {
   let filters = await browser.storage.sync.get('options').then((data) => {
     if (data.options == undefined || data.options.length <= 0){
@@ -324,9 +306,10 @@ async function filterLinks(linksArr) {
         link.summaryType = filter.summaryType === undefined ? "all" : filter.summaryType;
         filteredLinksArr.push(link);
       }
-    })
+    });
 
     // Remove duplicates. Keep the latest.
+    
     const filteredLinksArrUnique = [];
     filteredLinksArr.forEach(link => {
       const found = filteredLinksArrUnique.find(l => l.href == link.href);
@@ -334,14 +317,12 @@ async function filterLinks(linksArr) {
       if (found == undefined) {
         filteredLinksArrUnique.push(link);
       // If found, compare createdAt dates and keep the latest.
-      } else 
-      if (link.createdAt > found.createdAt) {
+      } else if (link.createdAt > found.createdAt && found.createdAt != null) {
         filteredLinksArrUnique.push(link);
         filteredLinksArrUnique.splice(filteredLinksArrUnique.indexOf(found), 1);
         console.log("Removing duplicate link: " + link.href);
       }
     });
-
     
     if (filteredLinksArrUnique.length > 0) {
       filteredLinks.push({
@@ -377,31 +358,87 @@ browser.storage.sync.get('optionsGlobal').then((data) => {
 // Main entrypoint.
 getCurrentTabURL().then(async url => {
     if (url.href.search(/^https:\/\/[\-_A-Za-z0-9]+\.zendesk.com\/agent\/tickets\/[0-9]+/i) >= 0) {
+        document.getElementById('list-container-links').classList.add('hidden');
+
+        // Comment filtering loop section
+        // ******************************
         const rlimit = 25; // Max number of requests to make.
         const ticketID = parseTicketID(url.href);
         const firstPage = `https://${url.hostname}/api/v2/tickets/${ticketID}/comments`;
         let nextPage = firstPage;
         let r = 0; // Number of requests made.
 
+        const linksArr = []; // Array of link objects to be displayed.
+
         while (nextPage != '' && r < rlimit) {
           console.log(`Processing request #${r}`);
           r++;
-          let response = await fetchResource(nextPage)
+          const response = await fetchResource(nextPage)
           .catch(error => {
             console.error('Request failed:', error);
           });       
-          let data = await response.json();
+          const data = await response.json();
           if (data.next_page != null) {
             nextPage = data.next_page;
           } else {
             nextPage = '';
           }
 
-          displayLinks(data);
+          //Grab only the required fields from the JSON.
+          const parser = new DOMParser();
+      
+          data.comments.forEach(comments => {
+              const doc = parser.parseFromString(comments.html_body, "text/html");
+              const links = doc.querySelectorAll(`a`)
+              if (links.length > 0) {
+                  links.forEach(link => {
+                              linksArr.push({
+                              commentID: comments.id,
+                              auditID: comments.audit_id,
+                              createdAt: comments.created_at,
+                              parent_text: link.parentElement.innerHTML,
+                              text: link.innerText,
+                              href: link.href
+                            })
+                  });
+              }
+          });
+
           displayAttachments(data);
-          
         }
+
+        // Custom field link filtering section.
+        // ******************************
+        // Get the ticket's custom fields.
+        const response = await fetchResource(`https://${url.hostname}/api/v2/tickets/${ticketID}`)
+        .catch(error => {
+          console.error('Request failed:', error);
+        });
+        const data = await response.json();
+        const customFields = data.ticket.custom_fields;
+
+        // For each custom field, check if it is a string and if it contains a link.
+        customFields.forEach(field => {
+          if (field.value != null && typeof field.value == 'string') {
+            field.value.split(/[\n\s]/g).forEach(valueArrItem => {
+              // If the value is a link, add it to the linksArr for filtering.
+              if (valueArrItem.search(/^https?:\/\//i) >= 0) {
+                console.log(`found link in custom field: ${valueArrItem}`)
+                linksArr.push({
+                  createdAt: null,
+                  text: valueArrItem,
+                  href: valueArrItem
+                });
+              }
+            });
+          }
+        });
+
+        // Display all the links.
+        displayLinks(linksArr);
+
         document.getElementById('loader').classList.remove('loading');
+        document.getElementById('list-container-links').classList.remove('hidden');
         return;
     }
 });
