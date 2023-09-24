@@ -1,5 +1,3 @@
-// This is manifest for Chrome for development purposes.
-
 {
     "manifest_version": 3,
     "name": "Zendesk Link Collector",
