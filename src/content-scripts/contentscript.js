@@ -1,4 +1,6 @@
 console.log("Zendesk Link Collector - loaded content script");
+
+// Message handler for messages from the background script.
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   // Scroll to the comment.
   if (request.type == "scroll") {
@@ -32,6 +34,7 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     });
   });
 }
+
 // Code from https://stackoverflow.com/questions/55214828/how-to-make-a-cross-origin-request-in-a-content-script-currently-blocked-by-cor/55215898#55215898
 if (request.type == 'fetch') {
   fetch(request.input, request.init).then(function(response) {
@@ -47,6 +50,7 @@ if (request.type == 'fetch') {
   });
 }
 
+// Background script does not have a DOM, so when it needs to parse links from HTML, it sends this message. 
 if (request.type == 'parse-html-a') {
   const parser = new DOMParser();
   const doc = parser.parseFromString(request.htmlText, "text/html");
