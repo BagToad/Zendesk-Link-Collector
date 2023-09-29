@@ -216,6 +216,7 @@ browser.tabs.onActivated.addListener((activeTab) => {
             browser.action.setIcon({path: '../icons/zlc-icon-disabled-16x16.png'});
             return;
         }
+        filterTicket();
         browser.action.setIcon({path: '../icons/zlc-icon-16x16.png'});
         browser.action.enable(tab.id);
     });
