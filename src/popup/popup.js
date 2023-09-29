@@ -66,19 +66,24 @@ async function fetchResource(input, init) {
     });
 }
 
-async function displayLinks(links) {
-
+async function displayLinks(linksBundle) {
     // Filter all the links according to the rules.
-    const linksBundle = await filterLinks(links);
+    // const linksBundle = await filterLinks(links);
   
     // If there are no links, display a message and return.
     if (linksBundle.length <= 0 && document.querySelectorAll('#list-container-links .list-links').length <= 0) {
       document.getElementById('not-found-container-links').classList.remove('hidden');
       return;
     }
+    document.getElementById('not-found-container-links').classList.add('hidden');
     
     // Get list container
     const linksList = document.getElementById('list-container-links');
+
+    //Clear the list container of headers and lists from a potential previous run.
+    document.querySelectorAll('#list-container-links h3, #list-container-links ul').forEach(element => {
+      element.parentNode.removeChild(element);
+    });
 
     // Add wrap class if option is set.
     if (optionsGlobal.wrapLists) {
@@ -207,29 +212,37 @@ async function displayLinks(links) {
     });
 }
 
-async function displayAttachments(commentsJSON) {
+async function displayAttachments(attachmentsArr) {
 
-  const attachmentsArr = [];
-  commentsJSON.comments.forEach(comments => {
-    if (comments.attachments.length > 0) {
-      attachmentsArr.push({
-        commentID: comments.id,
-        auditID: comments.audit_id,
-        created_at: comments.created_at,
-        attachments: comments.attachments
-      })
-    }  
-  });
+  // const attachmentsArr = [];
+  // commentsJSON.comments.forEach(comments => {
+  //   if (comments.attachments.length > 0) {
+  //     attachmentsArr.push({
+  //       commentID: comments.id,
+  //       auditID: comments.audit_id,
+  //       created_at: comments.created_at,
+  //       attachments: comments.attachments
+  //     })
+  //   }  
+  // });
 
   // If there are no attachments, display a message and return.
   if (attachmentsArr.length <= 0) {
     document.getElementById('not-found-container-attachments').classList.remove('hidden');
     return;
   }
+  document.getElementById('not-found-container-attachments').classList.add('hidden');
 
   // Create and display attachments list.
   // Get attachments container.
   const attachmentsList = document.getElementById('list-container-attachments');
+
+  //Clear the attachments container of headers and lists from a potential previous run.
+  document.querySelectorAll('#list-container-attachments h3, #list-container-attachments ul').forEach(element => {
+    element.parentNode.removeChild(element);
+  });
+  
+
   const ul = document.createElement('ul');
   ul.setAttribute('class', 'list-attachments');
 
@@ -280,71 +293,71 @@ async function displayAttachments(commentsJSON) {
 }
 
 
-async function filterLinks(linksArr) {
-  let filters = await browser.storage.sync.get('options').then((data) => {
-    if (data.options == undefined || data.options.length <= 0){
-        data.options = [];
-    }
-    return data.options;
-  });
+// async function filterLinks(linksArr) {
+//   let filters = await browser.storage.sync.get('options').then((data) => {
+//     if (data.options == undefined || data.options.length <= 0){
+//         data.options = [];
+//     }
+//     return data.options;
+//   });
 
-  // This is an array of objects with the following structure:
-  // {
-  //   title: "",
-  //   showParent: true/false,
-  //   links: []
-  // }
-  const filteredLinks = [];
+//   // This is an array of objects with the following structure:
+//   // {
+//   //   title: "",
+//   //   showParent: true/false,
+//   //   links: []
+//   // }
+//   const filteredLinks = [];
 
-  // For each filter, check if any of the links in the linksArr match
-  // the filter pattern. If they do, add them to the filteredLinks array
-  filters.forEach(filter => {
-    const filteredLinksArr = [];
-    linksArr.forEach(link => {
-      const re = new RegExp(filter.pattern)
-      if (re.test(link.href)) {
-        link.summaryType = filter.summaryType === undefined ? "all" : filter.summaryType;
-        filteredLinksArr.push(link);
-      }
-    });
+//   // For each filter, check if any of the links in the linksArr match
+//   // the filter pattern. If they do, add them to the filteredLinks array
+//   filters.forEach(filter => {
+//     const filteredLinksArr = [];
+//     linksArr.forEach(link => {
+//       const re = new RegExp(filter.pattern)
+//       if (re.test(link.href)) {
+//         link.summaryType = filter.summaryType === undefined ? "all" : filter.summaryType;
+//         filteredLinksArr.push(link);
+//       }
+//     });
 
-    // Remove duplicates. Keep the latest.
+//     // Remove duplicates. Keep the latest.
     
-    const filteredLinksArrUnique = [];
-    filteredLinksArr.forEach(link => {
-      const found = filteredLinksArrUnique.find(l => l.href == link.href);
-      // If not found, add to uniques array.
-      if (found == undefined) {
-        filteredLinksArrUnique.push(link);
-      // If found, compare createdAt dates and keep the latest.
-      } else if (link.createdAt > found.createdAt && found.createdAt != null) {
-        filteredLinksArrUnique.push(link);
-        filteredLinksArrUnique.splice(filteredLinksArrUnique.indexOf(found), 1);
-        console.log("Removing duplicate link: " + link.href);
-      }
-    });
+//     const filteredLinksArrUnique = [];
+//     filteredLinksArr.forEach(link => {
+//       const found = filteredLinksArrUnique.find(l => l.href == link.href);
+//       // If not found, add to uniques array.
+//       if (found == undefined) {
+//         filteredLinksArrUnique.push(link);
+//       // If found, compare createdAt dates and keep the latest.
+//       } else if (link.createdAt > found.createdAt && found.createdAt != null) {
+//         filteredLinksArrUnique.push(link);
+//         filteredLinksArrUnique.splice(filteredLinksArrUnique.indexOf(found), 1);
+//         console.log("Removing duplicate link: " + link.href);
+//       }
+//     });
     
-    if (filteredLinksArrUnique.length > 0) {
-      filteredLinks.push({
-        title: filter.title,
-        showParent: filter.showParent,
-        links: filteredLinksArrUnique
-      });
-    }
-  })
-  return filteredLinks;
-}
+//     if (filteredLinksArrUnique.length > 0) {
+//       filteredLinks.push({
+//         title: filter.title,
+//         showParent: filter.showParent,
+//         links: filteredLinksArrUnique
+//       });
+//     }
+//   })
+//   return filteredLinks;
+// }
 
-async function getCurrentTabURL() {
-    let queryOptions = { active: true, currentWindow: true };
-    let [tab] = await browser.tabs.query(queryOptions);
-    return new URL(tab.url);
-}
+// async function getCurrentTabURL() {
+//     let queryOptions = { active: true, currentWindow: true };
+//     let [tab] = await browser.tabs.query(queryOptions);
+//     return new URL(tab.url);
+// }
 
-function parseTicketID(url) {
-    const stringArr = url.split('/')
-    return stringArr[stringArr.length - 1];
-}
+// function parseTicketID(url) {
+//     const stringArr = url.split('/')
+//     return stringArr[stringArr.length - 1];
+// }
 
 // Global options.
 const optionsGlobal = {};
@@ -355,96 +368,127 @@ browser.storage.sync.get('optionsGlobal').then((data) => {
   optionsGlobal.wrapLists = data.optionsGlobal.wrapLists;
 });
 
-// Main entrypoint.
-getCurrentTabURL().then(async url => {
-    if (url.href.search(/^https:\/\/[\-_A-Za-z0-9]+\.zendesk.com\/agent\/tickets\/[0-9]+/i) >= 0) {
-        document.getElementById('list-container-links').classList.add('hidden');
-
-        // Comment filtering loop section
-        // ******************************
-        const rlimit = 25; // Max number of requests to make.
-        const ticketID = parseTicketID(url.href);
-        const firstPage = `https://${url.hostname}/api/v2/tickets/${ticketID}/comments`;
-        let nextPage = firstPage;
-        let r = 0; // Number of requests made.
-
-        const linksArr = []; // Array of link objects to be displayed.
-
-        while (nextPage != '' && r < rlimit) {
-          console.log(`Processing request #${r}`);
-          r++;
-          const response = await fetchResource(nextPage)
-          .catch(error => {
-            console.error('Request failed:', error);
-          });       
-          const data = await response.json();
-          if (data.next_page != null) {
-            nextPage = data.next_page;
-          } else {
-            nextPage = '';
-          }
-
-          //Grab only the required fields from the JSON.
-          const parser = new DOMParser();
-      
-          data.comments.forEach(comments => {
-              const doc = parser.parseFromString(comments.html_body, "text/html");
-              const links = doc.querySelectorAll(`a`)
-              if (links.length > 0) {
-                  links.forEach(link => {
-                              linksArr.push({
-                              commentID: comments.id,
-                              auditID: comments.audit_id,
-                              createdAt: comments.created_at,
-                              parent_text: link.parentElement.innerHTML,
-                              text: link.innerText,
-                              href: link.href
-                            })
-                  });
-              }
-          });
-
-          displayAttachments(data);
-        }
-
-        // Custom field link filtering section.
-        // ******************************
-        // Get the ticket's custom fields.
-        const response = await fetchResource(`https://${url.hostname}/api/v2/tickets/${ticketID}`)
-        .catch(error => {
-          console.error('Request failed:', error);
-        });
-        const data = await response.json();
-        const customFields = data.ticket.custom_fields;
-
-        // For each custom field, check if it is a string and if it contains a link.
-        customFields.forEach(field => {
-          if (field.value != null && typeof field.value == 'string') {
-            field.value.split(/[\n\s]/g).forEach(valueArrItem => {
-              // If the value is a link, add it to the linksArr for filtering.
-              if (valueArrItem.search(/^https?:\/\//i) >= 0) {
-                console.log(`found link in custom field: ${valueArrItem}`)
-                linksArr.push({
-                  createdAt: null,
-                  text: valueArrItem,
-                  href: valueArrItem
-                });
-              }
-            });
-          }
-        });
-
-        // Display all the links.
-        displayLinks(linksArr);
-
-        document.getElementById('loader').classList.remove('loading');
-        document.getElementById('list-container-links').classList.remove('hidden');
+function start() {
+  browser.storage.local.get('ticketStorage').then((data) => {
+    // Something is wrong?
+    if (data.ticketStorage == undefined || data.ticketStorage.length <= 0){
+        console.error("Ticket storage doesn't look expected: ", data.ticketStorage);
         return;
     }
+    console.log("Received ticket from storage: ", data.ticketStorage);
+    document.getElementById('loader').classList.add('loading');
+    document.getElementById('list-container-links').classList.add('hidden');
+
+    // Display the links.
+    displayLinks(data.ticketStorage.links);
+    displayAttachments(data.ticketStorage.attachments);
+  
+    document.getElementById('loader').classList.remove('loading');
+    document.getElementById('list-container-links').classList.remove('hidden');
+  });
+}
+
+browser.storage.onChanged.addListener((changed) => {
+  if (changed.ticketStorage.newValue.state == "complete") {
+    start();
+  } else if (changed.ticketStorage.newValue.state == "loading") {
+    document.getElementById('loader').classList.add('loading');
+    document.getElementById('list-container-links').classList.add('hidden');
+  }
 });
+
+// Main entrypoint.
+// getCurrentTabURL().then(async url => {
+//     if (url.href.search(/^https:\/\/[\-_A-Za-z0-9]+\.zendesk.com\/agent\/tickets\/[0-9]+/i) >= 0) {
+//         document.getElementById('list-container-links').classList.add('hidden');
+
+//         // Comment filtering loop section
+//         // ******************************
+//         const rlimit = 25; // Max number of requests to make.
+//         const ticketID = parseTicketID(url.href);
+//         const firstPage = `https://${url.hostname}/api/v2/tickets/${ticketID}/comments`;
+//         let nextPage = firstPage;
+//         let r = 0; // Number of requests made.
+
+//         const linksArr = []; // Array of link objects to be displayed.
+
+//         while (nextPage != '' && r < rlimit) {
+//           console.log(`Processing request #${r}`);
+//           r++;
+//           const response = await fetchResource(nextPage)
+//           .catch(error => {
+//             console.error('Request failed:', error);
+//           });       
+//           const data = await response.json();
+//           if (data.next_page != null) {
+//             nextPage = data.next_page;
+//           } else {
+//             nextPage = '';
+//           }
+
+//           //Grab only the required fields from the JSON.
+//           const parser = new DOMParser();
+      
+//           data.comments.forEach(comments => {
+//               const doc = parser.parseFromString(comments.html_body, "text/html");
+//               const links = doc.querySelectorAll(`a`)
+//               if (links.length > 0) {
+//                   links.forEach(link => {
+//                               linksArr.push({
+//                               commentID: comments.id,
+//                               auditID: comments.audit_id,
+//                               createdAt: comments.created_at,
+//                               parent_text: link.parentElement.innerHTML,
+//                               text: link.innerText,
+//                               href: link.href
+//                             })
+//                   });
+//               }
+//           });
+
+//           displayAttachments(data);
+//         }
+
+//         // Custom field link filtering section.
+//         // ******************************
+//         // Get the ticket's custom fields.
+//         const response = await fetchResource(`https://${url.hostname}/api/v2/tickets/${ticketID}`)
+//         .catch(error => {
+//           console.error('Request failed:', error);
+//         });
+//         const data = await response.json();
+//         const customFields = data.ticket.custom_fields;
+
+//         // For each custom field, check if it is a string and if it contains a link.
+//         customFields.forEach(field => {
+//           if (field.value != null && typeof field.value == 'string') {
+//             field.value.split(/[\n\s]/g).forEach(valueArrItem => {
+//               // If the value is a link, add it to the linksArr for filtering.
+//               if (valueArrItem.search(/^https?:\/\//i) >= 0) {
+//                 console.log(`found link in custom field: ${valueArrItem}`)
+//                 linksArr.push({
+//                   createdAt: null,
+//                   text: valueArrItem,
+//                   href: valueArrItem
+//                 });
+//               }
+//             });
+//           }
+//         });
+
+//         // Display all the links.
+//         displayLinks(linksArr);
+
+//         document.getElementById('loader').classList.remove('loading');
+//         document.getElementById('list-container-links').classList.remove('hidden');
+//         return;
+//     }
+// });
 
 
 document.addEventListener("DOMContentLoaded", () => {
+  start();
+
   // Add event listeners to static elements.
   document.getElementById('not-found-link-patterns-options').addEventListener('click', () => {browser.runtime.openOptionsPage()});
   document.getElementById('button-options').addEventListener('click', () => {browser.runtime.openOptionsPage()});
