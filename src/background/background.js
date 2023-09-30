@@ -219,6 +219,7 @@ browser.tabs.onActivated.addListener((activeTab) => {
             browser.action.setIcon({path: '../icons/zlc-icon-disabled-16x16.png'});
             return;
         }
+        // A new ticket is being viewed, so process it and enable the extension.
         filterTicket();
         browser.action.setIcon({path: '../icons/zlc-icon-16x16.png'});
         browser.action.enable(tab.id);
@@ -229,12 +230,22 @@ browser.tabs.onActivated.addListener((activeTab) => {
 // This is used to detect when a new ticket is being viewed.
 // Filter out events from tabs that are not active, or are not ticket pages.
 browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status != 'complete' || ! tab.active || ! tab.url || tab.url.search(/^https:\/\/[\-_A-Za-z0-9]+\.zendesk.com\/agent\/tickets\/[0-9]+/i) == -1) {
+    // Could be a ticket, but it's still loading or is not an active tab.
+    if (changeInfo.status != 'complete' || ! tab.active) {
         return;
     }
 
-    // A new ticket is being viewed, so process it.
+    // This is likely not a ticket, so disable the extension and return.
+    if (! tab.url || tab.url.search(/^https:\/\/[\-_A-Za-z0-9]+\.zendesk.com\/agent\/tickets\/[0-9]+/i) == -1) {
+        browser.action.disable(tab.id);
+        browser.action.setIcon({path: '../icons/zlc-icon-disabled-16x16.png'});
+        return;
+    }
+    
+    // A new ticket is being viewed, so process it and enable the extension.
     filterTicket();
+    browser.action.setIcon({path: '../icons/zlc-icon-16x16.png'});
+    browser.action.enable(tab.id);
 });
 
 // Monitor settings changes in the options storage, then reprocess the ticket.
