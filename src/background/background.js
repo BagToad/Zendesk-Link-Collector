@@ -61,8 +61,8 @@ async function filterTicket() {
     // Comment collecting loop section
     // *******************************
     const rlimit = 25; // Max number of requests to make.
-    const firstPage = `https://${url.hostname}/api/v2/tickets/${ticketID}/comments`;
-    let nextPage = firstPage;
+    const firstPage = `https://${url.hostname}/api/v2/tickets/${ticketID}/comments`; // URL of the first page of comments.
+    let nextPage = firstPage; // URL of the next page of comments.
     let r = 1; // Number of requests made.
     
     const linksArr = []; // Array of link objects to be displayed.
@@ -207,6 +207,9 @@ async function filterTicket() {
     );
 }
 
+// A new browser tab is active.
+// This is used to detect when a new ticket is being viewed.
+// Filter out events from active tabs that are not ticket pages.
 browser.tabs.onActivated.addListener((activeTab) => {
     browser.tabs.get(activeTab.tabId).then((tab) => {
         // Only process ticket pages.
@@ -222,6 +225,9 @@ browser.tabs.onActivated.addListener((activeTab) => {
     });
 });
 
+// A browser tab is updated. 
+// This is used to detect when a new ticket is being viewed.
+// Filter out events from tabs that are not active, or are not ticket pages.
 browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status != 'complete' || ! tab.active || ! tab.url || tab.url.search(/^https:\/\/[\-_A-Za-z0-9]+\.zendesk.com\/agent\/tickets\/[0-9]+/i) == -1) {
         return;
