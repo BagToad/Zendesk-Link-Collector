@@ -1,4 +1,6 @@
-importScripts("../lib/browser-polyfill.min.js");
+if (typeof importScripts === "function") {
+  importScripts("../lib/browser-polyfill.min.js");
+}
 
 // Code from https://stackoverflow.com/questions/55214828/how-to-make-a-cross-origin-request-in-a-content-script-currently-blocked-by-cor/55215898#55215898
 async function fetchResource(input, init) {
