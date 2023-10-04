@@ -272,13 +272,16 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 // Monitor settings changes in the options storage, then reprocess the ticket.
 browser.storage.onChanged.addListener((changed) => {
-  // If the link patterns have changed, reprocess the ticket.
-  if (changed.status == "complete") {
-    console.log("Settings changed, reprocessing ticket");
-    filterTicket();
+  console.log(changed);
+
+  // If the options have not changed, return.
+  if (!changed.options) {
+    return;
   }
+
+  // If the link patterns have changed, reprocess the ticket.
+  console.log("Options changed, reprocessing ticket");
+  filterTicket();
 });
 
 // Listen for ticket changed messages from the content script
-
-//
