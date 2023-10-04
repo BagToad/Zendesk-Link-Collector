@@ -3,6 +3,9 @@
     "name": "Zendesk Link Collector",
     "version": "1.1.0",
     "description": "Summarize links and attachments",
+    "background": {
+      "scripts": ["background/background.js"]
+    },
     "content_scripts": [
       {
         "matches": ["https://*.zendesk.com/*"],
