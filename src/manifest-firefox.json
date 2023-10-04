@@ -1,51 +1,51 @@
 {
-    "manifest_version": 3,
-    "name": "Zendesk Link Collector",
-    "version": "1.1.0",
-    "description": "Summarize links and attachments",
-    "background": {
-      "scripts": ["background/background.js"]
+  "manifest_version": 3,
+  "name": "Zendesk Link Collector",
+  "version": "1.1.0",
+  "description": "Summarize links and attachments",
+  "background": {
+    "scripts": ["background/background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.zendesk.com/*"],
+      "run_at": "document_start",
+      "js": [
+        "lib/browser-polyfill.min.js",
+        "content-scripts/contentscript.js"
+      ]
+    }
+  ],
+  "icons": {
+    "128": "icons/zlc-icon-128x128.png",
+    "48": "icons/zlc-icon-48x48.png",
+    "32": "icons/zlc-icon-32x32.png",
+    "16": "icons/zlc-icon-16x16.png"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "browser_style": false,
+    "open_in_tab": true
+  },
+  "action": {
+      "default_popup": "popup/popup.html"
     },
-    "content_scripts": [
-      {
-        "matches": ["https://*.zendesk.com/*"],
-        "run_at": "document_start",
-        "js": [
-          "lib/browser-polyfill.min.js",
-          "content-scripts/contentscript.js"
-        ]
-      }
+  "commands": {
+    "_execute_action": {
+      "description": "Open the extension"
+    }
+  },
+    "permissions": [
+      "activeTab",
+      "storage",
+      "clipboardWrite"
     ],
-    "icons": {
-      "128": "icons/zlc-icon-128x128.png",
-      "48": "icons/zlc-icon-48x48.png",
-      "32": "icons/zlc-icon-32x32.png",
-      "16": "icons/zlc-icon-16x16.png"
-    },
-    "options_ui": {
-      "page": "options/options.html",
-      "browser_style": false,
-      "open_in_tab": true
-    },
-    "action": {
-        "default_popup": "popup/popup.html"
-      },
-    "commands": {
-      "_execute_action": {
-        "description": "Open the extension"
-      }
-    },
-      "permissions": [
-        "activeTab",
-        "storage",
-        "clipboardWrite"
-      ],
-    "host_permissions": [
-        "https://*.zendesk.com/*"
-    ],
-    "browser_specific_settings": {
-      "gecko": {
-        "id": "{e4a90df4-3bc1-11ee-be56-0242ac120002}"
-      }
+  "host_permissions": [
+      "https://*.zendesk.com/*"
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{e4a90df4-3bc1-11ee-be56-0242ac120002}"
     }
   }
+}
