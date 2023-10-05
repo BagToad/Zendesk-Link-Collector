@@ -78,9 +78,6 @@ async function fetchResource(input, init) {
 }
 
 async function displayLinks(linksBundle) {
-  // Filter all the links according to the rules.
-  // const linksBundle = await filterLinks(links);
-
   // If there are no links, display a message and return.
   if (
     linksBundle.length <= 0 &&
@@ -219,6 +216,7 @@ async function displayLinks(linksBundle) {
     }
   });
 
+  // Add event listeners to icon for scrolling.
   document
     .getElementById("list-container-links")
     .querySelectorAll("i.icon-search")
@@ -231,6 +229,7 @@ async function displayLinks(linksBundle) {
       });
     });
 
+  // Add event listeners to icon for copy.
   document
     .getElementById("list-container-links")
     .querySelectorAll("i.icon-copy")
@@ -244,18 +243,6 @@ async function displayLinks(linksBundle) {
 }
 
 async function displayAttachments(attachmentsArr) {
-  // const attachmentsArr = [];
-  // commentsJSON.comments.forEach(comments => {
-  //   if (comments.attachments.length > 0) {
-  //     attachmentsArr.push({
-  //       commentID: comments.id,
-  //       auditID: comments.audit_id,
-  //       created_at: comments.created_at,
-  //       attachments: comments.attachments
-  //     })
-  //   }
-  // });
-
   // If there are no attachments, display a message and return.
   if (attachmentsArr.length <= 0) {
     document
@@ -319,6 +306,7 @@ async function displayAttachments(attachmentsArr) {
     attachmentsList.appendChild(ul);
   });
 
+  // Add event listeners to icon for scrolling.
   document
     .getElementById("list-container-attachments")
     .querySelectorAll("i")
@@ -341,6 +329,7 @@ browser.storage.sync.get("optionsGlobal").then((data) => {
   optionsGlobal.wrapLists = data.optionsGlobal.wrapLists;
 });
 
+// Start the popup.
 function start() {
   browser.storage.local.get("ticketStorage").then((data) => {
     // Something is wrong?
@@ -374,6 +363,7 @@ browser.storage.onChanged.addListener((changed) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Start the popup.
   start();
 
   // Add event listeners to static elements.
