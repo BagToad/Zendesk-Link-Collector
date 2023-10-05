@@ -1,3 +1,5 @@
+// Scroll to the comment with the given commentID or auditID.
+// Actual scrolling is done in the content script.
 function scrollToComment(data) {
   browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
     browser.tabs.sendMessage(tabs[0].id, {
@@ -353,6 +355,8 @@ function start() {
   });
 }
 
+// Listen for changes to the ticketStorage.
+// This means the background script has finished collecting links.
 browser.storage.onChanged.addListener((changed) => {
   if (changed.ticketStorage.newValue.state == "complete") {
     start();
@@ -362,6 +366,7 @@ browser.storage.onChanged.addListener((changed) => {
   }
 });
 
+// Main entry point.
 document.addEventListener("DOMContentLoaded", () => {
   // Start the popup.
   start();

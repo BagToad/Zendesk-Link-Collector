@@ -1,3 +1,4 @@
+// "importScripts" is only supported in chrome. Firefox loads the polyfill from the manifest.json file.
 if (typeof importScripts === "function") {
   importScripts("../lib/browser-polyfill.min.js");
 }
@@ -199,6 +200,7 @@ async function filterTicket() {
       }
     });
 
+    // Add the unique links to the filteredLinks array.
     if (filteredLinksArrUnique.length > 0) {
       filteredLinks.push({
         title: filter.title,
