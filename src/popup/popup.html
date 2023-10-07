@@ -18,6 +18,14 @@
         <img class="icon-button icon-invert" id="summary-copy" src="../icons/copy.svg" width="15px" height="15px">
         <span id="summary-text">Summary</span>
       </a>
+      <a href="#" title="Fetch and process ticket data in the background any time a new ticket is viewed, when a zendesk ticket browser tab is opened, and when link patterns change.&#13&#13This can result in better perceived load times, but can also result in more calls to Zendesk depending on your usage patterns." class="button button-sub" id="button-background-processing">
+        <input type="checkbox" id="background-processing">
+        <span for="background-processing">Run in Background</span>
+      </a>
+      <a href="#" title="" class="button button-sub" id="button-refresh">
+        <img class="icon-button" id="refresh" src="../icons/loader.svg" width="15px" height="15px">
+        <span for="refresh">Refresh</span>
+      </a>
     </div>
     <div id="container" style="display: flex">
     <div id="loader" class="loading"></div>

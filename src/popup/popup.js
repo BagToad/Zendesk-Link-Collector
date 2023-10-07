@@ -329,6 +329,7 @@ browser.storage.sync.get("optionsGlobal").then((data) => {
     data.optionsGlobal = [];
   }
   optionsGlobal.wrapLists = data.optionsGlobal.wrapLists;
+  optionsGlobal.backgroundProcessing = data.optionsGlobal.backgroundProcessing;
 });
 
 // Start the popup.
@@ -349,15 +350,49 @@ function start() {
     // Display the links.
     displayLinks(data.ticketStorage.links);
     displayAttachments(data.ticketStorage.attachments);
+    console.log(data.ticketStorage.updatedAt);
+    document
+      .getElementById("button-refresh")
+      .setAttribute(
+        "title",
+        `Refresh the ticket data immediately.` +
+          `\n\nComments processed: ${data.ticketStorage.count}` +
+          `\nTicket ID: ${data.ticketStorage.ticketID}` +
+          `\nLast updated: ${new Date(data.ticketStorage.updatedAt)}`
+      );
 
     document.getElementById("loader").classList.remove("loading");
     document.getElementById("list-container-links").classList.remove("hidden");
   });
 }
 
+// Send message to background script requesting refresh of ticketStorage.
+function refresh() {
+  //Clear the list container of headers and lists from a potential previous run.
+  document
+    .querySelectorAll("#list-container-links h3, #list-container-links ul")
+    .forEach((element) => {
+      element.parentNode.removeChild(element);
+    });
+
+  //Clear the attachments container of headers and lists from a potential previous run.
+  document
+    .querySelectorAll(
+      "#list-container-attachments h3, #list-container-attachments ul"
+    )
+    .forEach((element) => {
+      element.parentNode.removeChild(element);
+    });
+
+  browser.runtime.sendMessage({ type: "refresh" });
+}
+
 // Listen for changes to the ticketStorage.
 // This means the background script has finished collecting links.
 browser.storage.onChanged.addListener((changed) => {
+  if (changed.ticketStorage == undefined) {
+    return;
+  }
   if (changed.ticketStorage.newValue.state == "complete") {
     start();
   } else if (changed.ticketStorage.newValue.state == "loading") {
@@ -366,22 +401,88 @@ browser.storage.onChanged.addListener((changed) => {
   }
 });
 
-// Main entry point.
+/*
+ * ********************
+ * * MAIN ENTRY POINT *
+ * ********************
+ * */
 document.addEventListener("DOMContentLoaded", () => {
   // Start the popup.
-  start();
+  // If background processing is disabled, we have to also send a refresh request to get the current ticket.
+  // Otherwise, the background script will have the new ticket already and we can directly start.
+  browser.storage.sync.get("optionsGlobal").then((data) => {
+    if (data.optionsGlobal.backgroundProcessing) {
+      // Show that background processing is enabled.
+      // Directly load from ticket storage.
+      document.getElementById("background-processing").checked = true;
+      start();
+    } else {
+      // Show that background processing is disabled.
+      // Send refresh request to background script.
+      document.getElementById("background-processing").checked = false;
+      refresh();
+    }
+  });
 
   // Add event listeners to static elements.
+
+  // Event listener for the open options link in the "not found" message.
   document
     .getElementById("not-found-link-patterns-options")
     .addEventListener("click", () => {
       browser.runtime.openOptionsPage();
     });
+
+  // Event listener to open options when options button is clicked.
   document.getElementById("button-options").addEventListener("click", () => {
     browser.runtime.openOptionsPage();
   });
+
+  // Event listener to copy summary to clipboard when summary button is clicked.
   document.getElementById("button-summary").addEventListener("click", () => {
     writeSummaryClipboard();
+  });
+
+  // Event listeners to toggle background processing.
+  //
+  // Prevent different behavior for the checkbox.
+  document
+    .getElementById("background-processing")
+    .addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
+
+  // Add event listener to the label.
+  document
+    .getElementById("button-background-processing")
+    .addEventListener("click", () => {
+      const checkbox = document.getElementById("background-processing");
+      // If run in background is enabled, then disable it.
+      if (checkbox.checked) {
+        console.log("Disable background processing.");
+        browser.storage.sync.get("optionsGlobal").then((data) => {
+          data.optionsGlobal.backgroundProcessing = false;
+          browser.storage.sync.set({
+            optionsGlobal: data.optionsGlobal,
+          });
+        });
+        checkbox.checked = false;
+        return;
+      }
+      // If run in background is disabled, then enable it.
+      browser.storage.sync.get("optionsGlobal").then((data) => {
+        console.log("Enable background processing.");
+        data.optionsGlobal.backgroundProcessing = true;
+        browser.storage.sync.set({
+          optionsGlobal: data.optionsGlobal,
+        });
+      });
+      checkbox.checked = true;
+    });
+
+  // Add event listener to the refresh button.
+  document.getElementById("button-refresh").addEventListener("click", () => {
+    refresh();
   });
 
   // Add event listeners to view swap buttons.

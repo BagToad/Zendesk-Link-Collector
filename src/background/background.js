@@ -50,6 +50,7 @@ async function parseAElementsFromHTMLText(htmlText) {
 // 2. Custom field link collecting section - collects all links from custom fields.
 // 3. Link filtering section - filters the links based on the settings.
 async function filterTicket() {
+  // Reset the ticketStorage to loading.
   await browser.storage.local.set({
     ticketStorage: {
       links: [],
@@ -76,13 +77,15 @@ async function filterTicket() {
   let nextPage = firstPage; // URL of the next page of comments.
   let r = 1; // Number of requests made.
 
+  let numComments = 0; // Number of comments received from Zendesk.
   const linksArr = []; // Array of link objects to be displayed.
   const attachmentsArr = []; // Array of attachment objects to be displayed.
 
   // Loop through all pages of comments until there are no more pages.
   while (nextPage != "" && r <= rlimit) {
     console.log(`Processing request #${r}`);
-    r++;
+
+    // Get the next page of comments data.
     const response = await fetchResource(nextPage).catch((error) => {
       console.error("Request failed:", error);
     });
@@ -92,6 +95,16 @@ async function filterTicket() {
     } else {
       nextPage = "";
     }
+
+    // If this is the first request, get the number of comments.
+    // (the number of comments doesn't change between requests)
+    if (r == 1 && commentData.count > 0) {
+      console.log(`Received ${commentData.count} comments`);
+      numComments = commentData.count;
+    }
+
+    // Increment the request counter.
+    r++;
 
     //Grab only the required fields from the JSON.
     await commentData.comments.forEach(async (comments) => {
@@ -219,8 +232,18 @@ async function filterTicket() {
       links: filteredLinks,
       attachments: attachmentsArr,
       state: "complete",
+      count: numComments,
+      ticketID: ticketID,
+      updatedAt: Date.now(),
     },
   });
+}
+
+// Check if background processing is enabled.
+// This is used to control whether event listeners that indicate a new ticket is being viewed should do anything.
+async function isBackgroundProcessingEnabled() {
+  const data = await browser.storage.sync.get("optionsGlobal");
+  return data.optionsGlobal.backgroundProcessing;
 }
 
 // A new browser tab is active.
@@ -241,7 +264,13 @@ browser.tabs.onActivated.addListener((activeTab) => {
       return;
     }
     // A new ticket is being viewed, so process it and enable the extension.
-    filterTicket();
+    isBackgroundProcessingEnabled().then((status) => {
+      console.log("background processing status: ", status);
+      if (status) {
+        filterTicket();
+      }
+    });
+
     browser.action.setIcon({ path: "../icons/zlc-icon-16x16.png" });
     browser.action.enable(tab.id);
   });
@@ -269,15 +298,17 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 
   // A new ticket is being viewed, so process it and enable the extension.
-  filterTicket();
+  isBackgroundProcessingEnabled().then((status) => {
+    if (status) {
+      filterTicket();
+    }
+  });
   browser.action.setIcon({ path: "../icons/zlc-icon-16x16.png" });
   browser.action.enable(tab.id);
 });
 
 // Monitor settings changes in the options storage, then reprocess the ticket.
 browser.storage.onChanged.addListener((changed) => {
-  console.log(changed);
-
   // If the options have not changed, return.
   if (!changed.options) {
     return;
@@ -285,7 +316,19 @@ browser.storage.onChanged.addListener((changed) => {
 
   // If the link patterns have changed, reprocess the ticket.
   console.log("Options changed, reprocessing ticket");
-  filterTicket();
+  isBackgroundProcessingEnabled().then((status) => {
+    if (status) {
+      filterTicket();
+    }
+  });
 });
 
-// Listen for ticket changed messages from the content script
+// Listen for messages from the popup
+browser.runtime.onMessage.addListener((message) => {
+  console.log(message);
+  if (message.type == "refresh") {
+    filterTicket();
+  }
+});
+
+// TODO: Listen for ticket changed messages from the content script

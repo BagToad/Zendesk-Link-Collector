@@ -141,12 +141,16 @@ a:hover {
     column-gap: 10px;
     padding: 0.5em;
     font-size: 1em;
-    flex-basis: 93px;
     border-width: 1px;
+}
+
+.button-sub label:hover, .button-sub input:hover {
+    cursor: pointer;
 }
 
 .button:hover {
     background-color: var(--primary-bg-light-active);
+    cursor: pointer;
 }
 
 .row {
