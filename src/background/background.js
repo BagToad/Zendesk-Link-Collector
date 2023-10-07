@@ -265,7 +265,6 @@ browser.tabs.onActivated.addListener((activeTab) => {
     }
     // A new ticket is being viewed, so process it and enable the extension.
     isBackgroundProcessingEnabled().then((status) => {
-      console.log("background processing status: ", status);
       if (status) {
         filterTicket();
       }
@@ -315,7 +314,6 @@ browser.storage.onChanged.addListener((changed) => {
   }
 
   // If the link patterns have changed, reprocess the ticket.
-  console.log("Options changed, reprocessing ticket");
   isBackgroundProcessingEnabled().then((status) => {
     if (status) {
       filterTicket();
@@ -325,7 +323,6 @@ browser.storage.onChanged.addListener((changed) => {
 
 // Listen for messages from the popup
 browser.runtime.onMessage.addListener((message) => {
-  console.log(message);
   if (message.type == "refresh") {
     filterTicket();
   }
