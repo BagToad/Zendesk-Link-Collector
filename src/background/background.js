@@ -3,6 +3,7 @@ if (typeof importScripts === "function") {
   importScripts("../lib/browser-polyfill.min.js");
 }
 
+// Sends a message to the content script to execute a fetch.
 // Code from https://stackoverflow.com/questions/55214828/how-to-make-a-cross-origin-request-in-a-content-script-currently-blocked-by-cor/55215898#55215898
 async function fetchResource(input, init) {
   const type = "fetch";
@@ -287,6 +288,7 @@ browser.runtime.onInstalled.addListener((data) => {
       "Zendesk Link Collector - updated from version " + previousVersion
     );
     // Check that all currently expected storage values are set.
+    // If not, set them to default.
     browser.storage.sync.get("optionsGlobal").then((data) => {
       browser.storage.sync.set({
         optionsGlobal: {
