@@ -290,6 +290,9 @@ browser.runtime.onInstalled.addListener((data) => {
     // Check that all currently expected storage values are set.
     // If not, set them to default.
     browser.storage.sync.get("optionsGlobal").then((data) => {
+      if (data.optionsGlobal == undefined) {
+        data.optionsGlobal = {};
+      }
       browser.storage.sync.set({
         optionsGlobal: {
           wrapLists:
