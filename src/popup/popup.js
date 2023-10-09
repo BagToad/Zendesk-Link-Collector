@@ -350,7 +350,6 @@ function start() {
     // Display the links.
     displayLinks(data.ticketStorage.links);
     displayAttachments(data.ticketStorage.attachments);
-    console.log(data.ticketStorage.updatedAt);
     document
       .getElementById("button-refresh")
       .setAttribute(
