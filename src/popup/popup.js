@@ -443,41 +443,36 @@ document.addEventListener("DOMContentLoaded", () => {
     writeSummaryClipboard();
   });
 
-  // Event listeners to toggle background processing.
-  //
-  // Prevent different behavior for the checkbox.
-  document
-    .getElementById("background-processing")
-    .addEventListener("click", (event) => {
-      event.stopPropagation();
-    });
-
-  // Add event listener to the label.
+  // Event listener to toggle background processing.
   document
     .getElementById("button-background-processing")
-    .addEventListener("click", () => {
+    .addEventListener("click", (event) => {
       const checkbox = document.getElementById("background-processing");
-      // If run in background is enabled, then disable it.
-      if (checkbox.checked) {
-        console.log("Disable background processing.");
-        browser.storage.sync.get("optionsGlobal").then((data) => {
-          data.optionsGlobal.backgroundProcessing = false;
-          browser.storage.sync.set({
-            optionsGlobal: data.optionsGlobal,
-          });
-        });
-        checkbox.checked = false;
-        return;
-      }
-      // If run in background is disabled, then enable it.
       browser.storage.sync.get("optionsGlobal").then((data) => {
-        console.log("Enable background processing.");
-        data.optionsGlobal.backgroundProcessing = true;
-        browser.storage.sync.set({
-          optionsGlobal: data.optionsGlobal,
-        });
+        // If run in background is disabled, then enable it.
+        if (!data.optionsGlobal.backgroundProcessing) {
+          console.log("Enable background processing.");
+          data.optionsGlobal.backgroundProcessing = true;
+          browser.storage.sync
+            .set({
+              optionsGlobal: data.optionsGlobal,
+            })
+            .then(() => {
+              checkbox.checked = true;
+            });
+          return;
+        }
+        // If run in background is enabled, then disable it.
+        console.log("Disable background processing.");
+        data.optionsGlobal.backgroundProcessing = false;
+        browser.storage.sync
+          .set({
+            optionsGlobal: data.optionsGlobal,
+          })
+          .then(() => {
+            checkbox.checked = false;
+          });
       });
-      checkbox.checked = true;
     });
 
   // Add event listener to the refresh button.
