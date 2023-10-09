@@ -239,10 +239,95 @@ async function filterTicket() {
   });
 }
 
+// Compare two version strings.
+// Return 1 if version1 is greater than version2.
+// Return -1 if version1 is less than version2.
+// Return 0 if version1 is equal to version2.
+function compareVersions(version1, version2) {
+  var v1parts = version1.split(".");
+  var v2parts = version2.split(".");
+
+  for (var i = 0; i < v1parts.length; ++i) {
+    if (v2parts.length === i) {
+      return 1;
+    }
+
+    if (v1parts[i] === v2parts[i]) {
+      continue;
+    }
+    if (v1parts[i] > v2parts[i]) {
+      return 1;
+    }
+    return -1;
+  }
+
+  if (v1parts.length != v2parts.length) {
+    return -1;
+  }
+
+  return 0;
+}
+
+// Extension has been updated or initially installed.
+// Handles setting default options and updating storage based on previous version.
+browser.runtime.onInstalled.addListener((data) => {
+  const reason = data.reason;
+  const previousVersion = data.previousVersion;
+  if (reason === "install") {
+    console.log("Zendesk Link Collector - installed");
+    // Set the default options.
+    browser.storage.sync.set({
+      optionsGlobal: {
+        wrapLists: false,
+        backgroundProcessing: false,
+      },
+    });
+  } else if (reason === "update") {
+    console.log(
+      "Zendesk Link Collector - updated from version " + previousVersion
+    );
+    // Check that all currently expected storage values are set.
+    browser.storage.sync.get("optionsGlobal").then((data) => {
+      browser.storage.sync.set({
+        optionsGlobal: {
+          wrapLists:
+            data.optionsGlobal.wrapLists === undefined
+              ? false
+              : data.optionsGlobal.wrapLists,
+          backgroundProcessing:
+            data.optionsGlobal.backgroundProcessing === undefined
+              ? false
+              : data.optionsGlobal.backgroundProcessing,
+        },
+      });
+    });
+
+    // EXAMPLE: Update storage based on previous version. For when that might be needed.
+    //
+    // if (compareVersions(previousVersion, "1.1.0") == -1) {
+    //   browser.storage.sync.get("optionsGlobal").then((data) => {
+    //     browser.storage.sync.set({
+    //       optionsGlobal: {
+    //         wrapLists: data.optionsGlobal.wrapLists,
+    //         backgroundProcessing: false,
+    //       },
+    //     });
+    //   });
+    // }
+  }
+});
+
 // Check if background processing is enabled.
 // This is used to control whether event listeners that indicate a new ticket is being viewed should do anything.
 async function isBackgroundProcessingEnabled() {
   const data = await browser.storage.sync.get("optionsGlobal");
+  // Just in case the options are not set, return false.
+  if (
+    data.optionsGlobal == undefined ||
+    data.optionsGlobal.backgroundProcessing == undefined
+  ) {
+    return false;
+  }
   return data.optionsGlobal.backgroundProcessing;
 }
 
