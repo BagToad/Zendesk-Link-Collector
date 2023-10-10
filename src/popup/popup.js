@@ -139,6 +139,7 @@ async function displayLinks(linksBundle) {
       li.setAttribute("class", "list-item-links");
       li.setAttribute("data-created-at", link.createdAt);
       li.setAttribute("data-summary-type", link.summaryType);
+      li.setAttribute("data-source", link.source);
 
       // Create the scroll icon and append to list item, if there is a comment to scroll to.
       if (link.commentID != undefined || link.auditID != undefined) {
@@ -171,7 +172,7 @@ async function displayLinks(linksBundle) {
             "title",
             `URL: ${a.href}\n\nComment created at: ${li.getAttribute(
               "data-created-at"
-            )}`
+            )}\nLink source: ${li.getAttribute("data-source")}`
           );
         });
 
@@ -204,7 +205,7 @@ async function displayLinks(linksBundle) {
           "title",
           `URL: ${a.href}\n\nComment created at: ${li.getAttribute(
             "data-created-at"
-          )}`
+          )}\nLink source: ${li.getAttribute("data-source")}`
         );
         a.textContent = link.text;
         li.appendChild(a);
@@ -241,6 +242,13 @@ async function displayLinks(linksBundle) {
         const text = i.parentElement.textContent;
         writeLinkClipboard(text, href);
       });
+    });
+
+  // Add title attribute to custom field field icons.
+  document
+    .querySelectorAll('.list-item-links[data-source="custom field"]')
+    .forEach((elem) => {
+      elem.setAttribute("title", "This link was found in a custom field.");
     });
 }
 

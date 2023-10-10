@@ -46,7 +46,7 @@ async function parseAElementsFromHTMLText(htmlText) {
 
 // Fetch ticket data, fetch settings, process the ticket, then store the result.
 // This function is called when the extension is first loaded, when the ticket is changed, and when the settings are changed.
-// There are three sections to this function:
+// There are three sections of this function:
 // 1. Comment collecting loop section - collects all comments from the ticket.
 // 2. Custom field link collecting section - collects all links from custom fields.
 // 3. Link filtering section - filters the links based on the settings.
@@ -121,6 +121,7 @@ async function filterTicket() {
             parent_text: link.parent_text,
             text: link.text,
             href: link.href,
+            source: "comment",
           });
         });
       }
@@ -158,6 +159,7 @@ async function filterTicket() {
             createdAt: null,
             text: valueArrItem,
             href: valueArrItem,
+            source: "custom field",
           });
         }
       });
