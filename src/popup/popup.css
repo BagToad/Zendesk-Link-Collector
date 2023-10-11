@@ -16,6 +16,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    accent-color: var(--accent-light);
 }
 
 
@@ -141,12 +142,16 @@ a:hover {
     column-gap: 10px;
     padding: 0.5em;
     font-size: 1em;
-    flex-basis: 93px;
     border-width: 1px;
+}
+
+.button-sub label:hover, .button-sub input:hover {
+    cursor: pointer;
 }
 
 .button:hover {
     background-color: var(--primary-bg-light-active);
+    cursor: pointer;
 }
 
 .row {
@@ -198,6 +203,20 @@ a:hover {
 h3.list-header {
     margin-top: 15px;
     margin-bottom: 3px;
+}
+
+.list-item-links[data-source="custom field"]::before {
+    content: "";
+    position: relative;
+    margin-right: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgb(124 11 11);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: help;
 }
 
 /* Remove unused space between headers and the view buttons */
