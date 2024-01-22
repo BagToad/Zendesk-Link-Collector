@@ -74,7 +74,7 @@ async function filterTicket() {
   // Comment collecting loop section
   // *******************************
   const rlimit = 25; // Max number of requests to make.
-  const firstPage = `https://${url.hostname}/api/v2/tickets/${ticketID}/comments`; // URL of the first page of comments.
+  const firstPage = `https://${url.hostname}/api/v2/tickets/${ticketID}/comments?sort_order=desc`; // URL of the first page of comments.
   let nextPage = firstPage; // URL of the next page of comments.
   let r = 1; // Number of requests made.
 
