@@ -226,7 +226,7 @@ h3.list-header {
 
 ul.list-links, ul.list-attachments {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
 }
 
 li.list-item-links, li.list-item-attachments {
