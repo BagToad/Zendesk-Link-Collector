@@ -56,7 +56,7 @@ async function filterTicket() {
     ticketStorage: {
       links: [],
       attachments: [],
-      images: [], // Add images array to ticket data storage
+      images: [],
       state: "loading",
     },
   });
