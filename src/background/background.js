@@ -130,7 +130,7 @@ async function filterTicket() {
 
       // Push the required attachment information to the attachmentsArr.
       if (comment.attachments.length > 0) {
-        tempArr = [];
+        const tempArr = [];
         comment.attachments.forEach((attachment) => {
           if (!attachment.content_type.startsWith("image/")) {
             tempArr.push(attachment);
