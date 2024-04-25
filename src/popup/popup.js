@@ -330,6 +330,80 @@ async function displayAttachments(attachmentsArr) {
     });
 }
 
+// Implement logic to populate the "Images" tab with image previews
+async function displayImages(imagesArr) {
+  // If there are no images, display a message and return.
+  if (imagesArr.length <= 0) {
+    document
+      .getElementById("not-found-container-images")
+      .classList.remove("hidden");
+    return;
+  }
+  document.getElementById("not-found-container-images").classList.add("hidden");
+
+  // Get images container
+  const imagesList = document.getElementById("list-container-images");
+
+  // Clear the images container of previous content
+  imagesList.innerHTML = "";
+
+  const ul = document.createElement("ul");
+  ul.setAttribute("class", "list-images");
+
+  // For each image, create an image element and append to the container
+  imagesArr.forEach((image) => {
+    const li = document.createElement("li");
+    li.setAttribute("class", "list-item-images");
+    li.setAttribute("data-created-at", image.createdAt);
+    li.setAttribute("data-summary-type", image.summaryType);
+    li.setAttribute("data-source", image.source);
+
+    // Create the scroll icon and append to list item, if there is a comment to scroll to.
+    if (image.commentID != undefined || image.auditID != undefined) {
+      const iScroll = document.createElement("i");
+      iScroll.setAttribute("class", "icon-invert icon-li icon-search");
+      iScroll.setAttribute("commentID", image.commentID);
+      iScroll.setAttribute("auditID", image.auditID);
+      iScroll.setAttribute("title", "Scroll to image's source comment.");
+      li.appendChild(iScroll);
+    }
+
+    const img = document.createElement("img");
+    img.src = image.url;
+    img.alt = image.fileName;
+    img.title = `Click to open in new tab\n\nFile: ${image.fileName}\nComment created at: ${image.createdAt}`;
+    img.addEventListener("click", () => {
+      // Send a message to the contentscript to click Zendesk's image preview button
+      browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+        browser.tabs.sendMessage(tabs[0].id, {
+          type: "image-preview",
+          imageTitle: image.fileName,
+          imageURL: image.mappedURL,
+        });
+      });
+    });
+
+    li.appendChild(img);
+    ul.appendChild(li);
+  });
+
+  // Append the list of images to the images container
+  imagesList.appendChild(ul);
+
+  // Add event listener to scroll to comment when scroll icon is clicked
+  document
+    .getElementById("list-container-images")
+    .querySelectorAll("i.icon-search")
+    .forEach((i) => {
+      i.addEventListener("click", () => {
+        scrollToComment({
+          commentID: i.getAttribute("commentID"),
+          auditID: i.getAttribute("auditID"),
+        });
+      });
+    });
+}
+
 // Global options.
 const optionsGlobal = {};
 browser.storage.sync.get("optionsGlobal").then((data) => {
@@ -358,6 +432,7 @@ function start() {
     // Display the links.
     displayLinks(data.ticketStorage.links);
     displayAttachments(data.ticketStorage.attachments);
+    displayImages(data.ticketStorage.images);
     document
       .getElementById("button-refresh")
       .setAttribute(
@@ -488,6 +563,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Add event listeners to view swap buttons.
+  // Links tab is clicked.
   document.getElementById("button-links").addEventListener("click", () => {
     document.getElementById("button-links").classList.add("checked");
     document.getElementById("list-container-links").classList.add("selected");
@@ -496,17 +572,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.getElementById("button-attachments").classList.remove("checked");
+    document.getElementById("button-images").classList.remove("checked");
     document
       .getElementById("list-container-attachments")
       .classList.remove("selected");
+    document
+      .getElementById("list-container-images")
+      .classList.remove("selected");
   });
 
+  // Attachment tab is clicked.
   document
     .getElementById("button-attachments")
     .addEventListener("click", () => {
       document.getElementById("button-links").classList.remove("checked");
+      document.getElementById("button-images").classList.remove("checked");
       document
         .getElementById("list-container-links")
+        .classList.remove("selected");
+      document
+        .getElementById("list-container-images")
         .classList.remove("selected");
       document.querySelectorAll(".row-links").forEach((row) => {
         row.classList.remove("selected");
@@ -518,14 +603,16 @@ document.addEventListener("DOMContentLoaded", () => {
         .classList.add("selected");
     });
 
-  // Add event listener for the new "Images" tab button to toggle the view
+  // Image tab is clicked.
   document.getElementById("button-images").addEventListener("click", () => {
     document.getElementById("button-images").classList.add("checked");
     document.getElementById("list-container-images").classList.add("selected");
 
     // Deselect other tabs
     document.getElementById("button-links").classList.remove("checked");
-    document.getElementById("list-container-links").classList.remove("selected");
+    document
+      .getElementById("list-container-links")
+      .classList.remove("selected");
     document.getElementById("button-attachments").classList.remove("checked");
     document
       .getElementById("list-container-attachments")
@@ -535,52 +622,5 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".row-links").forEach((row) => {
       row.classList.remove("selected");
     });
-
-    // Adjust the extension window size to 70% of the user's screen when the image tab is selected
-    if (window.screen.width) {
-      const newWidth = Math.floor(window.screen.width * 0.7);
-      const newHeight = Math.floor(window.screen.height * 0.7);
-      window.resizeTo(newWidth, newHeight);
-    }
-  });
-
-  // Implement logic to populate the "Images" tab with image previews
-  async function displayImages(imagesArr) {
-    // If there are no images, display a message and return.
-    if (imagesArr.length <= 0) {
-      document
-        .getElementById("not-found-container-images")
-        .classList.remove("hidden");
-      return;
-    }
-    document.getElementById("not-found-container-images").classList.add("hidden");
-
-    // Get images container
-    const imagesList = document.getElementById("list-container-images");
-
-    // Clear the images container of previous content
-    imagesList.innerHTML = "";
-
-    // For each image, create an image element and append to the container
-    imagesArr.forEach((image) => {
-      const img = document.createElement("img");
-      img.src = image.url;
-      img.alt = image.fileName;
-      img.title = `Click to open in new tab\n\nFile: ${image.fileName}\nComment created at: ${image.createdAt}`;
-      img.style.maxWidth = "100%";
-      img.style.marginBottom = "10px";
-      img.addEventListener("click", () => {
-        // Implement functionality to open images in a new tab when clicked
-        window.open(image.url, '_blank').focus();
-      });
-      imagesList.appendChild(img);
-    });
-  }
-
-  // Use new image array in ticket data storage to populate the images tab data
-  browser.storage.local.get("ticketStorage").then((data) => {
-    if (data.ticketStorage && data.ticketStorage.images) {
-      displayImages(data.ticketStorage.images);
-    }
   });
 });

@@ -110,16 +110,16 @@ async function filterTicket() {
     r++;
 
     //Grab only the required fields from the JSON.
-    await commentData.comments.forEach(async (comments) => {
+    await commentData.comments.forEach(async (comment) => {
       // Parse the HTML text and return an array of links.
-      const links = await parseAElementsFromHTMLText(comments.html_body);
+      const links = await parseAElementsFromHTMLText(comment.html_body);
       // Push the required link information to the linksArr.
       if (links.length > 0) {
         links.forEach((link) => {
           linksArr.push({
-            commentID: comments.id,
-            auditID: comments.audit_id,
-            createdAt: comments.created_at,
+            commentID: comment.id,
+            auditID: comment.audit_id,
+            createdAt: comment.created_at,
             parent_text: link.parent_text,
             text: link.text,
             href: link.href,
@@ -129,23 +129,32 @@ async function filterTicket() {
       }
 
       // Push the required attachment information to the attachmentsArr.
-      if (comments.attachments.length > 0) {
-        attachmentsArr.push({
-          commentID: comments.id,
-          auditID: comments.audit_id,
-          created_at: comments.created_at,
-          attachments: comments.attachments,
+      if (comment.attachments.length > 0) {
+        tempArr = [];
+        comment.attachments.forEach((attachment) => {
+          if (!attachment.content_type.startsWith("image/")) {
+            tempArr.push(attachment);
+          }
         });
+        if (tempArr.length > 0) {
+          attachmentsArr.push({
+            commentID: comment.id,
+            auditID: comment.audit_id,
+            created_at: comment.created_at,
+            attachments: tempArr,
+          });
+        }
       }
 
       // Filter images out of attachments data and push to imagesArr
-      comments.attachments.forEach((attachment) => {
+      comment.attachments.forEach((attachment) => {
         if (attachment.content_type.startsWith("image/")) {
           imagesArr.push({
-            commentID: comments.id,
-            auditID: comments.audit_id,
-            createdAt: comments.created_at,
+            commentID: comment.id,
+            auditID: comment.audit_id,
+            createdAt: comment.created_at,
             url: attachment.content_url,
+            mappedURL: attachment.mapped_content_url,
             fileName: attachment.file_name,
           });
         }
