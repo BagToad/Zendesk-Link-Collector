@@ -535,6 +535,13 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".row-links").forEach((row) => {
       row.classList.remove("selected");
     });
+
+    // Adjust the extension window size to 70% of the user's screen when the image tab is selected
+    if (window.screen.width) {
+      const newWidth = Math.floor(window.screen.width * 0.7);
+      const newHeight = Math.floor(window.screen.height * 0.7);
+      window.resizeTo(newWidth, newHeight);
+    }
   });
 
   // Implement logic to populate the "Images" tab with image previews
