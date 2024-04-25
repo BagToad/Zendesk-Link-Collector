@@ -56,6 +56,7 @@ async function filterTicket() {
     ticketStorage: {
       links: [],
       attachments: [],
+      images: [], // Add images array to ticket data storage
       state: "loading",
     },
   });
@@ -81,6 +82,7 @@ async function filterTicket() {
   let numComments = 0; // Number of comments received from Zendesk.
   const linksArr = []; // Array of link objects to be displayed.
   const attachmentsArr = []; // Array of attachment objects to be displayed.
+  const imagesArr = []; // Array of image objects to be displayed.
 
   // Loop through all pages of comments until there are no more pages.
   while (nextPage != "" && r <= rlimit) {
@@ -135,6 +137,19 @@ async function filterTicket() {
           attachments: comments.attachments,
         });
       }
+
+      // Filter images out of attachments data and push to imagesArr
+      comments.attachments.forEach((attachment) => {
+        if (attachment.content_type.startsWith("image/")) {
+          imagesArr.push({
+            commentID: comments.id,
+            auditID: comments.audit_id,
+            createdAt: comments.created_at,
+            url: attachment.content_url,
+            fileName: attachment.file_name,
+          });
+        }
+      });
     });
   }
 
@@ -228,12 +243,14 @@ async function filterTicket() {
 
   console.log("filtered links: ", filteredLinks);
   console.log("attachments: ", attachmentsArr);
+  console.log("images: ", imagesArr); // Log the images array
 
-  // Store the filtered links and attachments for the current ticket in the browser storage.
+  // Store the filtered links, attachments, and images for the current ticket in the browser storage.
   browser.storage.local.set({
     ticketStorage: {
       links: filteredLinks,
       attachments: attachmentsArr,
+      images: imagesArr, // Store the images array
       state: "complete",
       count: numComments,
       ticketID: ticketID,

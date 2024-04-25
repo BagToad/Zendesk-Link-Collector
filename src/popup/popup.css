@@ -309,3 +309,26 @@ li.list-item-attachments ul li {
 .icon-search {
     background-image: url(../icons/search.svg);
 }
+
+/* New styles for the "Images" tab */
+.button-images.checked {
+    background-color: var(--accent);
+    border-color: var(--accent-dark);
+}
+
+.button-images.checked:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-dark-hover);
+}
+
+#list-container-images {
+    display: none;
+    flex-direction: column;
+    padding: 20px;
+    white-space: nowrap;
+    height: inherit;
+}
+
+#list-container-images.selected {
+    display: flex;
+}

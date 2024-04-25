@@ -517,4 +517,63 @@ document.addEventListener("DOMContentLoaded", () => {
         .getElementById("list-container-attachments")
         .classList.add("selected");
     });
+
+  // Add event listener for the new "Images" tab button to toggle the view
+  document.getElementById("button-images").addEventListener("click", () => {
+    document.getElementById("button-images").classList.add("checked");
+    document.getElementById("list-container-images").classList.add("selected");
+
+    // Deselect other tabs
+    document.getElementById("button-links").classList.remove("checked");
+    document.getElementById("list-container-links").classList.remove("selected");
+    document.getElementById("button-attachments").classList.remove("checked");
+    document
+      .getElementById("list-container-attachments")
+      .classList.remove("selected");
+
+    // Hide summary and background processing options for images tab
+    document.querySelectorAll(".row-links").forEach((row) => {
+      row.classList.remove("selected");
+    });
+  });
+
+  // Implement logic to populate the "Images" tab with image previews
+  async function displayImages(imagesArr) {
+    // If there are no images, display a message and return.
+    if (imagesArr.length <= 0) {
+      document
+        .getElementById("not-found-container-images")
+        .classList.remove("hidden");
+      return;
+    }
+    document.getElementById("not-found-container-images").classList.add("hidden");
+
+    // Get images container
+    const imagesList = document.getElementById("list-container-images");
+
+    // Clear the images container of previous content
+    imagesList.innerHTML = "";
+
+    // For each image, create an image element and append to the container
+    imagesArr.forEach((image) => {
+      const img = document.createElement("img");
+      img.src = image.url;
+      img.alt = image.fileName;
+      img.title = `Click to open in new tab\n\nFile: ${image.fileName}\nComment created at: ${image.createdAt}`;
+      img.style.maxWidth = "100%";
+      img.style.marginBottom = "10px";
+      img.addEventListener("click", () => {
+        // Implement functionality to open images in a new tab when clicked
+        window.open(image.url, '_blank').focus();
+      });
+      imagesList.appendChild(img);
+    });
+  }
+
+  // Use new image array in ticket data storage to populate the images tab data
+  browser.storage.local.get("ticketStorage").then((data) => {
+    if (data.ticketStorage && data.ticketStorage.images) {
+      displayImages(data.ticketStorage.images);
+    }
+  });
 });
