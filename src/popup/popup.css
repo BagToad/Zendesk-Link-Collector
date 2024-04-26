@@ -80,7 +80,7 @@ body {
 #container {
     flex-direction: column;
     overflow: auto;
-    min-width: 350px;
+    min-width: 450px;
     max-width: 800px;
     min-height: 150px;
     max-height: 500px;
@@ -152,6 +152,10 @@ a:hover {
 .button:hover {
     background-color: var(--primary-bg-light-active);
     cursor: pointer;
+}
+
+#button-whats-new {
+    margin-left: auto;
 }
 
 .row {
@@ -318,7 +322,6 @@ li.list-item-attachments ul li {
     background-image: url(../icons/search.svg);
 }
 
-/* New styles for the "Images" tab */
 .button-images.checked {
     background-color: var(--accent);
     border-color: var(--accent-dark);
