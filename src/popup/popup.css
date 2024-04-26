@@ -352,3 +352,19 @@ li.list-item-attachments ul li {
 #list-container-images.selected {
     display: flex;
 }
+
+/* New styles for the "What's new?" button */
+#button-whats-new {
+    background-color: var(--accent);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    text-align: center;
+    display: inline-block;
+    margin-left: auto;
+}
+
+#button-whats-new:hover {
+    background-color: var(--accent-hover);
+}
