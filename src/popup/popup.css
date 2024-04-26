@@ -80,7 +80,7 @@ body {
 #container {
     flex-direction: column;
     overflow: auto;
-    min-width: 350px;
+    min-width: 450px;
     max-width: 800px;
     min-height: 150px;
     max-height: 500px;
