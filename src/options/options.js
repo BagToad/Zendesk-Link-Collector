@@ -331,53 +331,6 @@ function loadGlobalOptions() {
   });
 }
 
-/// Might use this eventually somewhere to update the schema in a more robust way.
-
-// async function updateSchema() {
-//     browser.storage.sync.get('schema').then(async data => {
-//         // Schema version is out of date.
-//         if (data.schemaVersion == undefined || data.schemaVersion < browser.runtime.getManifest().version) {
-//             // Update schema version.
-//             data.schemaVersion = browser.runtime.getManifest().version;
-//             browser.storage.sync.set({schemaVersion: data.schemaVersion});
-
-//             // Migrate naming (options -> optionsLinks)
-//             if (data.schemaVersion < "1.0.2") {
-//                 const optionsLinks = await browser.sync.get('optionsLinks');
-//                 //Check if migration somehow already occurred. Don't want to overwrite data.
-//                 if (optionsLinks.optionsLinks == undefined) {
-//                     // Migrate data.
-//                     browser.storage.sync.get('options').then(data => {
-//                         // This means the user is upgrading, but they don't have any data? :thinking:
-//                         if (data.options == undefined) {
-//                             data.options = [];
-//                         }
-//                         browser.storage.sync.set({optionsLinks: data.options});
-//                     });
-//                 }
-//             }
-
-//             // Update/validate stored options data.
-//             browser.storage.sync.get('optionsLinks').then(data => {
-//                 if (data.optionsLinks == undefined) {
-//                     data.optionsLinks = [];
-//                 }
-//                 data.optionsLinks.forEach(link => {
-//                     // Check for missing fields.
-//                     if (link.id == undefined || link.title == undefined) {
-//                         console.error(`Invalid JSON data (missing fields: ${link.id}, ${link.title})`);
-//                         // return;
-//                     }
-//                     // Always set new ID to avoid duplicates.
-//                     link.id = crypto.randomUUID();
-//                 });
-//                 browser.storage.sync.set({optionsLinks: data.optionsLinks});
-//             });
-//         }
-//     });
-//     return;
-// }
-
 document.addEventListener("DOMContentLoaded", () => {
   // Add event listeners to static elements.
   // Global options event listeners.

@@ -38,7 +38,8 @@
     "permissions": [
       "activeTab",
       "storage",
-      "clipboardWrite"
+      "clipboardWrite",
+      "tabs"
     ],
   "host_permissions": [
       "https://*.zendesk.com/*"

@@ -447,3 +447,38 @@ browser.runtime.onMessage.addListener((message) => {
 });
 
 // TODO: Listen for ticket changed messages from the content script
+
+// Add logic to calculate the badge count based on selected link patterns and update the extension icon
+async function updateBadgeCount() {
+  const { ticketStorage } = await browser.storage.local.get("ticketStorage");
+  const { options } = await browser.storage.sync.get("options");
+  if (!ticketStorage || !options) {
+    return;
+  }
+
+  // Calculate the badge count based on selected link patterns
+  let badgeCount = 0;
+  options.forEach((option) => {
+    if (option.includeInBadgeCount) {
+      ticketStorage.links.forEach((bundle) => {
+        if (bundle.title === option.title) {
+          badgeCount += bundle.links.length;
+        }
+      });
+    }
+  });
+
+  // Update the extension icon with the badge count
+  browser.browserAction.setBadgeText({ text: badgeCount.toString() });
+  browser.browserAction.setBadgeBackgroundColor({ color: '#FF0000' });
+}
+
+// Listen for changes in the options and update the badge count accordingly
+browser.storage.onChanged.addListener((changes, area) => {
+  if (area === "sync" && changes.options) {
+    updateBadgeCount();
+  }
+});
+
+// Initial update of the badge count when the extension is loaded
+updateBadgeCount();

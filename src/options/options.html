@@ -12,6 +12,11 @@
             <label class="input-label" title="How to handle links that are too long to be displayed in the extension.&#13&#13Enabled = wrap long links.&#13Disabled = scroll long links." for="wrap-lists">Wrap long links?</label>
             <input type="checkbox" id="wrap-lists">
         </div>
+        <!-- Add a new checkbox input for enabling/disabling the badge count feature -->
+        <div class="input-container-row">
+            <label class="input-label" title="Enable or disable the badge count feature on the extension icon." for="badge-count">Enable Badge Count:</label>
+            <input type="checkbox" id="badge-count">
+        </div>
     </div>
     <div id="input-container-save-options" class="input-container-row">
         <button id="button-save-global-options">Save Options</button>
@@ -32,6 +37,13 @@
                 <option value="all">All</option>
             </select>
             <button id="button-save-link-patterns">Save Link Pattern</button>
+        </div>
+        <!-- Add a new section for selecting link patterns to include in the badge count -->
+        <div id="input-container-badge-count-patterns" class="input-container-row">
+            <label class="input-label" title="Select which link patterns to include in the badge count on the extension icon." for="badge-count-patterns">Badge Count Patterns:</label>
+            <select id="badge-count-patterns" multiple size="5">
+                <!-- Options will be populated dynamically -->
+            </select>
         </div>
         <div id="container-link-patterns-error" class="input-container-row">
             <div class="hidden" id="link-patterns-error">Error: this is an error</div>
