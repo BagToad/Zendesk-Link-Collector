@@ -4,16 +4,13 @@
   "version": "1.2.0",
   "description": "Summarize links and attachments",
   "background": {
-    "scripts": ["lib/browser-polyfill.min.js","background/background.js"]
+    "scripts": ["lib/browser-polyfill.min.js", "background/background.js"]
   },
   "content_scripts": [
     {
       "matches": ["https://*.zendesk.com/*"],
       "run_at": "document_start",
-      "js": [
-        "lib/browser-polyfill.min.js",
-        "content-scripts/contentscript.js"
-      ]
+      "js": ["lib/browser-polyfill.min.js", "content-scripts/contentscript.js"]
     }
   ],
   "icons": {
@@ -28,21 +25,21 @@
     "open_in_tab": true
   },
   "action": {
-      "default_popup": "popup/popup.html"
-    },
+    "default_popup": "popup/popup.html"
+  },
   "commands": {
     "_execute_action": {
       "description": "Open the extension"
+    },
+    "copy-ticket-id": {
+      "description": "Copy ticket ID to clipboard"
+    },
+    "copy-ticket-id-md": {
+      "description": "Copy ticket ID to clipboard in markdown"
     }
   },
-    "permissions": [
-      "activeTab",
-      "storage",
-      "clipboardWrite"
-    ],
-  "host_permissions": [
-      "https://*.zendesk.com/*"
-  ],
+  "permissions": ["activeTab", "storage", "clipboardWrite"],
+  "host_permissions": ["https://*.zendesk.com/*"],
   "browser_specific_settings": {
     "gecko": {
       "id": "{e4a90df4-3bc1-11ee-be56-0242ac120002}"
