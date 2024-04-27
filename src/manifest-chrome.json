@@ -33,14 +33,35 @@
   "commands": {
     "_execute_action": {
       "description": "Open the extension"
+    },
+    "copy-ticket-id": {
+      "suggested_key": {
+        "default": "Alt+C",
+        "mac": "Command+C"
+      },
+      "description": "Copy ticket ID to clipboard"
+    },
+    "open-ui": {
+      "suggested_key": {
+        "default": "Alt+U",
+        "mac": "Command+U"
+      },
+      "description": "Open extension UI"
+    },
+    "open-attachments": {
+      "suggested_key": {
+        "default": "Alt+A",
+        "mac": "Command+A"
+      },
+      "description": "Navigate to attachments tab"
     }
   },
-    "permissions": [
-      "activeTab",
-      "storage",
-      "clipboardWrite"
-    ],
+  "permissions": [
+    "activeTab",
+    "storage",
+    "clipboardWrite"
+  ],
   "host_permissions": [
-      "https://*.zendesk.com/*"
+    "https://*.zendesk.com/*"
   ]
 }

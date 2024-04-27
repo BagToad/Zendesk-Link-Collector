@@ -446,4 +446,21 @@ browser.runtime.onMessage.addListener((message) => {
   }
 });
 
+// Listen for keyboard shortcuts
+browser.commands.onCommand.addListener((command) => {
+  switch (command) {
+    case "copy-ticket-id":
+      // Logic to copy the ticket ID to the clipboard
+      break;
+    case "open-ui":
+      // Logic to open the extension UI
+      break;
+    case "open-attachments":
+      // Logic to navigate to the attachments tab within the extension UI
+      break;
+    default:
+      console.log(`Command ${command} not recognized.`);
+  }
+});
+
 // TODO: Listen for ticket changed messages from the content script
