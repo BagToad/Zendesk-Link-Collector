@@ -95,5 +95,38 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     });
   }
 
+  // Copying to clipboard not possible
+  if (request.type == "copy-not-possible") {
+    navigator.clipboard.writeText("ZLC - Background processing disabled.");
+  }
+
+  // Copy ticket ID to clipboard.
+  if (request.type == "copy-ticket-id") {
+    browser.storage.local.get("ticketStorage").then((data) => {
+      if (
+        data.ticketStorage == undefined ||
+        data.ticketStorage.ticketID == undefined
+      ) {
+        return;
+      }
+      navigator.clipboard.writeText(data.ticketStorage.ticketID);
+    });
+  }
+
+  // Copy ticket ID to clipboard in markdown.
+  if (request.type == "copy-ticket-id-md") {
+    browser.storage.local.get("ticketStorage").then((data) => {
+      if (
+        data.ticketStorage == undefined ||
+        data.ticketStorage.ticketID == undefined
+      ) {
+        return;
+      }
+      navigator.clipboard.writeText(
+        `[ZD#${data.ticketStorage.ticketID}](${document.URL})`
+      );
+    });
+  }
+
   return true;
 });

@@ -10,10 +10,7 @@
     {
       "matches": ["https://*.zendesk.com/*"],
       "run_at": "document_start",
-      "js": [
-        "lib/browser-polyfill.min.js",
-        "content-scripts/contentscript.js"
-      ]
+      "js": ["lib/browser-polyfill.min.js", "content-scripts/contentscript.js"]
     }
   ],
   "icons": {
@@ -28,40 +25,19 @@
     "open_in_tab": true
   },
   "action": {
-      "default_popup": "popup/popup.html"
-    },
+    "default_popup": "popup/popup.html"
+  },
   "commands": {
     "_execute_action": {
       "description": "Open the extension"
     },
     "copy-ticket-id": {
-      "suggested_key": {
-        "default": "Alt+C",
-        "mac": "Command+C"
-      },
       "description": "Copy ticket ID to clipboard"
     },
-    "open-ui": {
-      "suggested_key": {
-        "default": "Alt+U",
-        "mac": "Command+U"
-      },
-      "description": "Open extension UI"
-    },
-    "open-attachments": {
-      "suggested_key": {
-        "default": "Alt+A",
-        "mac": "Command+A"
-      },
-      "description": "Navigate to attachments tab"
+    "copy-ticket-id-md": {
+      "description": "Copy ticket ID to clipboard in markdown"
     }
   },
-  "permissions": [
-    "activeTab",
-    "storage",
-    "clipboardWrite"
-  ],
-  "host_permissions": [
-    "https://*.zendesk.com/*"
-  ]
+  "permissions": ["activeTab", "storage", "clipboardWrite"],
+  "host_permissions": ["https://*.zendesk.com/*"]
 }

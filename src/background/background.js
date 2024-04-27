@@ -450,13 +450,46 @@ browser.runtime.onMessage.addListener((message) => {
 browser.commands.onCommand.addListener((command) => {
   switch (command) {
     case "copy-ticket-id":
-      // Logic to copy the ticket ID to the clipboard
+      // Logic to send a message to the contentscript to copy the ticket ID to the clipboard.
+      // If background processing is disabled, send a message to the contentscript to indicate that copying is not possible.
+      isBackgroundProcessingEnabled().then((status) => {
+        if (!status) {
+          browser.tabs
+            .query({ active: true, currentWindow: true })
+            .then((tabs) => {
+              browser.tabs.sendMessage(tabs[0].id, {
+                type: "copy-not-possible",
+              });
+            });
+          return;
+        }
+        browser.tabs
+          .query({ active: true, currentWindow: true })
+          .then((tabs) => {
+            browser.tabs.sendMessage(tabs[0].id, { type: "copy-ticket-id" });
+          });
+      });
       break;
-    case "open-ui":
-      // Logic to open the extension UI
-      break;
-    case "open-attachments":
-      // Logic to navigate to the attachments tab within the extension UI
+    case "copy-ticket-id-md":
+      // Logic to send a message to the contentscript to copy the ticket ID to the clipboard in markdown.
+      // If background processing is disabled, send a message to the contentscript to indicate that copying is not possible.
+      isBackgroundProcessingEnabled().then((status) => {
+        if (!status) {
+          browser.tabs
+            .query({ active: true, currentWindow: true })
+            .then((tabs) => {
+              browser.tabs.sendMessage(tabs[0].id, {
+                type: "copy-not-possible",
+              });
+            });
+          return;
+        }
+        browser.tabs
+          .query({ active: true, currentWindow: true })
+          .then((tabs) => {
+            browser.tabs.sendMessage(tabs[0].id, { type: "copy-ticket-id-md" });
+          });
+      });
       break;
     default:
       console.log(`Command ${command} not recognized.`);
