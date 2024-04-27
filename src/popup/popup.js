@@ -623,4 +623,14 @@ document.addEventListener("DOMContentLoaded", () => {
       row.classList.remove("selected");
     });
   });
+
+  // Dynamically retrieve the version number from manifest.json and insert it into the "What's new?" button text.
+  const manifestData = browser.runtime.getManifest();
+  const version = manifestData.version;
+  const whatsNewButton = document.getElementById("button-whats-new");
+  whatsNewButton.textContent = `v${version}`;
+  whatsNewButton.setAttribute(
+    "href",
+    `https://github.com/bagtoad/zendesk-link-collector/releases/tag/v${version}`
+  );
 });
