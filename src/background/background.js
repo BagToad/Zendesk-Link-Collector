@@ -273,10 +273,10 @@ async function filterTicket() {
 // Return -1 if version1 is less than version2.
 // Return 0 if version1 is equal to version2.
 function compareVersions(version1, version2) {
-  var v1parts = version1.split(".");
-  var v2parts = version2.split(".");
+  const v1parts = version1.split(".");
+  const v2parts = version2.split(".");
 
-  for (var i = 0; i < v1parts.length; ++i) {
+  for (let i = 0; i < v1parts.length; ++i) {
     if (v2parts.length === i) {
       return 1;
     }
