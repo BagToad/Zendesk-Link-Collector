@@ -219,9 +219,12 @@ async function filterTicket() {
     linksArr.forEach((link) => {
       const re = new RegExp(filter.pattern);
       if (re.test(link.href)) {
-        link.summaryType =
+        link2Push = Object.assign({}, link);
+        link2Push.summaryType =
           filter.summaryType === undefined ? "all" : filter.summaryType;
-        filteredLinksArr.push(link);
+        link2Push.showDate =
+          filter.showDate === undefined ? false : filter.showDate;
+        filteredLinksArr.push(link2Push);
       }
     });
 
