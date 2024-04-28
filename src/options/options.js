@@ -56,6 +56,15 @@ function loadLinkPatterns() {
       }
       nodes.push(tdSummaryType);
 
+      // Create show parent cell.
+      const tdDate = document.createElement("td");
+      const checkboxDate = document.createElement("input");
+      checkboxDate.setAttribute("type", "checkbox");
+      checkboxDate.setAttribute("disabled", "true");
+      checkboxDate.checked = option.showDate;
+      tdDate.appendChild(checkboxDate);
+      nodes.push(tdDate);
+
       // Create delete cell.
       const tdDelete = document.createElement("td");
       const buttonDelete = document.createElement("button");
@@ -144,6 +153,7 @@ function saveLinkPatterns() {
       pattern: document.getElementById("pattern").value,
       showParent: document.getElementById("show-parent").checked,
       summaryType: document.getElementById("summary-type").value,
+      showDate: document.getElementById("show-date").checked,
     });
     // Save new link pattern to disk.
     browser.storage.sync.set({ options: data.options }).then(() => {
@@ -154,6 +164,7 @@ function saveLinkPatterns() {
       document.getElementById("pattern").value = "";
       document.getElementById("show-parent").checked = false;
       document.getElementById("summary-type").value = "none";
+      document.getElementById("show-date").checked = false;
     });
   });
 }

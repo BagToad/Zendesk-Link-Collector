@@ -210,6 +210,34 @@ async function displayLinks(linksBundle) {
         a.textContent = link.text;
         li.appendChild(a);
       }
+
+      if (link.showDate) {
+        // Append the date to the list item.
+        const spanDate = document.createElement("span");
+        const spaceNode = document.createTextNode(" ");
+        spanDate.setAttribute("class", "link-date");
+        const date = new Date(link.createdAt);
+        const year = date.getFullYear().toString().slice(-2);
+        const time = date.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
+
+        spanDate.textContent = `\u00A0- ${date.toLocaleString("en-US", {
+          month: "short",
+        })} ${date.getDate()}, '${year} at ${time}`;
+        spanDate.setAttribute(
+          "title",
+          `Click to copy time in UTC\n\n${link.createdAt}`
+        );
+        li.appendChild(spaceNode);
+        li.appendChild(spanDate);
+        spanDate.addEventListener("click", () => {
+          navigator.clipboard.writeText(link.createdAt);
+        });
+      }
+
       ul.appendChild(li);
     });
 

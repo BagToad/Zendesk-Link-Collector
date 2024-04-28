@@ -252,11 +252,24 @@ li.list-item-links {
 }
 
 /* Force context to shrink first before shrinking the link text. */
-li.list-item-links .link-context {
+/* li.list-item-links .link-context {
     flex-shrink: 0;
     flex-grow: 1;
     flex-basis: 0px;
     min-width: 0px;
+} */
+
+li .link-date {
+    color: var(--accent-light);
+    font-size: 0.80em;
+    display: flex;
+    align-items: center; /* This will align the item vertically */
+}
+
+li .link-date:hover {
+    cursor: pointer;
+    font-size: 1em;
+    text-decoration: underline;
 }
 
 li.list-item-attachments ul li {
@@ -349,7 +362,7 @@ li.list-item-attachments ul li {
 }
 
 #list-container-images img:hover {
-    cursor: pointer;
+    cursor: zoom-in;
 }
 
 #list-container-images.selected {
