@@ -361,7 +361,7 @@ li.list-item-attachments ul li {
 }
 
 #list-container-images img:hover {
-    cursor: pointer;
+    cursor: zoom-in;
 }
 
 #list-container-images.selected {
