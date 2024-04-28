@@ -253,6 +253,43 @@ async function filterTicket() {
     }
   });
 
+  // Alternative implementation of the previous algorithm for future thought:
+  /*
+const filteredLinks = filters.flatMap((filter) => {
+  const re = new RegExp(filter.pattern);
+  const filteredLinksArr = linksArr
+    .filter((link) => re.test(link.href))
+    .map((link) => {
+      return {
+        ...link,
+        summaryType: filter.summaryType === undefined ? "all" : filter.summaryType,
+        showDate: filter.showDate === undefined ? false : filter.showDate,
+      };
+    });
+
+  const filteredLinksArrUnique = filteredLinksArr.reduce((unique, link) => {
+    const found = unique.find((l) => l.href == link.href);
+    if (!found) {
+      return [...unique, link];
+    } else if (link.createdAt > found.createdAt && found.createdAt != null) {
+      return [...unique.filter((l) => l.href !== link.href), link];
+    } else {
+      return unique;
+    }
+  }, []);
+
+  if (filteredLinksArrUnique.length > 0) {
+    return {
+      title: filter.title,
+      showParent: filter.showParent,
+      links: filteredLinksArrUnique,
+    };
+  } else {
+    return [];
+  }
+});
+*/
+
   console.log("filtered links: ", filteredLinks);
   console.log("attachments: ", attachmentsArr);
   console.log("images: ", imagesArr); // Log the images array
