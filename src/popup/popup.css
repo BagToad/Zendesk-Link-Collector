@@ -269,6 +269,7 @@ li .link-date {
 li .link-date:hover {
     cursor: pointer;
     font-size: 1em;
+    text-decoration: underline;
 }
 
 li.list-item-attachments ul li {
