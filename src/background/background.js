@@ -219,7 +219,7 @@ async function filterTicket() {
     linksArr.forEach((link) => {
       const re = new RegExp(filter.pattern);
       if (re.test(link.href)) {
-        link2Push = Object.assign({}, link);
+        const link2Push = Object.assign({}, link);
         link2Push.summaryType =
           filter.summaryType === undefined ? "all" : filter.summaryType;
         link2Push.showDate =
