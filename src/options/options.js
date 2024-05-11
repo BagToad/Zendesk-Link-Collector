@@ -76,6 +76,7 @@ function loadLinkPatterns() {
       // Create delete cell.
       const tdDelete = document.createElement("td");
       const buttonDelete = document.createElement("button");
+      buttonDelete.setAttribute("class", "button-delete");
       buttonDelete.textContent = "Delete";
       tdDelete.appendChild(buttonDelete);
       nodes.push(tdDelete);
@@ -102,7 +103,7 @@ function loadLinkPatterns() {
 
       //Add event listeners to dynamic elements.
       document
-        .querySelector(`[id = '${option.id}'] td button`)
+        .querySelector(`[id = '${option.id}'] td button.button-delete`)
         .addEventListener("click", () => deleteLink(option.id));
       document
         .querySelector(`[id = '${option.id}'] td button.button-reorder-up`)
@@ -177,8 +178,45 @@ function saveLinkPatterns() {
   });
 }
 
-// Edit a link pattern from the link patterns table.
-function editLinkPattern(id) {
+// Reorder link patterns in the link patterns table.
+// id = ID of the link pattern to move.
+// move = Number of positions to move the link pattern. Negative numbers move up, positive numbers move down.
+function reorderLinkPattern(id, move) {
+  browser.storage.sync.get("options").then((data) => {
+    if (data.options.length <= 0) {
+      //Shouldn't happen?
+      return;
+    }
+    if (move == 0 || move == undefined) {
+      //No move.
+      return;
+    }
+    let found = false;
+    data.options.forEach((option) => {
+      if (option.id == id && !found) {
+        found = true;
+        let pOptionIndex = data.options.indexOf(option) + move;
+        if (pOptionIndex < 0 || pOptionIndex >= data.options.length) {
+          //OOB array.
+          console.error("OOB array");
+          return;
+        }
+        let option2Move = data.options.splice(
+          data.options.indexOf(option),
+          1
+        )[0];
+        data.options.splice(pOptionIndex, 0, option2Move);
+      }
+    });
+
+    browser.storage.sync.set({ options: data.options }).then(() => {
+      loadLinkPatterns();
+    });
+  });
+}
+
+// Delete a link pattern from the link patterns table.
+function deleteLink(id) {
   browser.storage.sync.get("options").then((data) => {
     if (data.options.length <= 0) {
       //Shouldn't happen?
@@ -186,70 +224,115 @@ function editLinkPattern(id) {
     }
     data.options.forEach((option) => {
       if (option.id == id) {
-        // Fill the input fields with the selected link pattern's current values.
-        document.getElementById("title").value = option.title;
-        document.getElementById("pattern").value = option.pattern;
-        document.getElementById("show-parent").checked = option.showParent;
-        document.getElementById("summary-type").value = option.summaryType;
-        document.getElementById("show-date").checked = option.showDate;
-
-        // Disable all edit buttons except for the current editing one.
-        document.querySelectorAll("button").forEach((button) => {
-          if (button.textContent == "Edit" && button.parentElement.parentElement.id != id) {
-            button.disabled = true;
-          }
-        });
-
-        // Change the save button text to indicate editing is occurring.
-        document.getElementById("button-save-link-patterns").textContent = "Save Edit";
-
-        // Add an event listener to the save button to handle saving the edit.
-        document.getElementById("button-save-link-patterns").addEventListener("click", () => saveEdit(id));
+        data.options.splice(data.options.indexOf(option), 1);
       }
+    });
+    browser.storage.sync.set({ options: data.options }).then(() => {
+      loadLinkPatterns();
     });
   });
 }
 
-// Save the edited link pattern.
-function saveEdit(id) {
+// Edit a link pattern from the link patterns table.
+function editLinkPattern(id) {
+  // Disable all buttons except the one being edited.
+  document
+    .querySelectorAll("#table-link-patterns td button")
+    .forEach((button) => {
+      button.disabled = true;
+    });
+
+  // Fill the input fields with the selected link pattern's current values.
   browser.storage.sync.get("options").then((data) => {
-    if (data.options.length <= 0) {
-      //Shouldn't happen?
-      return;
+    const option = data.options.find((option) => option.id === id);
+    if (option) {
+      document.getElementById("title").value = option.title;
+      document.getElementById("pattern").value = option.pattern;
+      document.getElementById("show-parent").checked = option.showParent;
+      document.getElementById("summary-type").value =
+        option.summaryType || "none";
+      document.getElementById("show-date").checked = option.showDate || false;
+
+      // Post a message that we are editing.
+      setLinkPatternError(
+        `You are editing the "${option.title}" link pattern!`
+      );
+
+      document.getElementById(id).classList.add("editing");
+
+      // Change the Save button to an Update button.
+      const saveButton = document.getElementById("button-save-link-patterns");
+      saveButton.textContent = "Update Link Pattern";
+      saveButton.removeEventListener("click", saveLinkPatterns);
+      saveButton.setAttribute("editing", id);
+      saveButton.onclick = updateLinkPattern;
     }
-    data.options.forEach((option, index) => {
-      if (option.id == id) {
-        // Update the link pattern with the new values from the input fields.
-        data.options[index].title = document.getElementById("title").value;
-        data.options[index].pattern = document.getElementById("pattern").value;
-        data.options[index].showParent = document.getElementById("show-parent").checked;
-        data.options[index].summaryType = document.getElementById("summary-type").value;
-        data.options[index].showDate = document.getElementById("show-date").checked;
+  });
+}
 
-        // Save the updated link pattern to disk.
-        browser.storage.sync.set({ options: data.options }).then(() => {
-          // Load the updated patterns table.
-          loadLinkPatterns();
+// Update an existing link pattern with the values from the input fields.
+function updateLinkPattern() {
+  const id = document
+    .getElementById("button-save-link-patterns")
+    .getAttribute("editing");
+  browser.storage.sync.get("options").then((data) => {
+    const optionIndex = data.options.findIndex((option) => option.id === id);
+    if (optionIndex !== -1) {
+      // Validate RegEx.
+      try {
+        new RegExp(document.getElementById("pattern").value);
+      } catch (SyntaxError) {
+        setLinkPatternError(
+          "Invalid RegEx pattern! - Great work! That's difficult to do! :D"
+        );
+        console.error("Invalid RegEx");
+        return;
+      }
 
-          // Reset input fields.
-          document.getElementById("title").value = "";
-          document.getElementById("pattern").value = "";
-          document.getElementById("show-parent").checked = false;
-          document.getElementById("summary-type").value = "none";
-          document.getElementById("show-date").checked = false;
+      // Update the link pattern with the new values.
+      data.options[optionIndex].title = document.getElementById("title").value;
+      data.options[optionIndex].pattern =
+        document.getElementById("pattern").value;
+      data.options[optionIndex].showParent =
+        document.getElementById("show-parent").checked;
+      data.options[optionIndex].summaryType =
+        document.getElementById("summary-type").value;
+      data.options[optionIndex].showDate =
+        document.getElementById("show-date").checked;
 
-          // Re-enable all edit buttons.
-          document.querySelectorAll("button").forEach((button) => {
-            if (button.textContent == "Edit") {
+      // Save the updated link patterns to storage.
+      browser.storage.sync.set({ options: data.options }).then(() => {
+        // Load the updated patterns table.
+        loadLinkPatterns();
+
+        // Reset input fields.
+        document.getElementById("title").value = "";
+        document.getElementById("pattern").value = "";
+        document.getElementById("show-parent").checked = false;
+        document.getElementById("summary-type").value = "none";
+        document.getElementById("show-date").checked = false;
+
+        // Change the Update button back to a Save button.
+        const saveButton = document.getElementById("button-save-link-patterns");
+        saveButton.textContent = "Save Link Pattern";
+        saveButton.removeEventListener("click", updateLinkPattern);
+        saveButton.addEventListener("click", saveLinkPatterns);
+
+        //Clear the message that we are editing.
+        setLinkPatternError("");
+
+        //saveButton.onclick = saveLinkPatterns;
+
+        // Re-enable all edit buttons.
+        /* document
+          .querySelectorAll("#table-link-patterns td button")
+          .forEach((button) => {
+            if (button.textContent === "Edit") {
               button.disabled = false;
             }
-          });
-
-          // Change the save button text back to its original state.
-          document.getElementById("button-save-link-patterns").textContent = "Save Link Pattern";
-        });
-      }
-    });
+          }); */
+      });
+    }
   });
 }
 
@@ -376,18 +459,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // Global options event listeners.
   document
     .getElementById("button-save-global-options")
-    .addEventListener("click", () => saveGlobalOptions());
+    .addEventListener("click", saveGlobalOptions);
   loadGlobalOptions();
 
   // Link patterns event listeners.
   document
     .getElementById("button-save-link-patterns")
-    .addEventListener("click", () => saveLinkPatterns());
+    .addEventListener("click", saveLinkPatterns);
   document
     .getElementById("link-patterns-import")
-    .addEventListener("click", () => importLinkPatternsJSON());
+    .addEventListener("click", importLinkPatternsJSON);
   document
     .getElementById("link-patterns-export")
-    .addEventListener("click", () => downloadLinkPatternsJSON());
+    .addEventListener("click", downloadLinkPatternsJSON);
   loadLinkPatterns();
 });
