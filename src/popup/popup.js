@@ -11,7 +11,7 @@ function scrollToComment(data) {
 }
 
 // Write the configurable summary to the clipboard.
-function writeSummaryClipboard() {
+async function writeSummaryClipboard() {
   let summary = "";
   document.querySelectorAll(".list-links").forEach((list) => {
     // If "all" summary type, add all to summary.
@@ -33,6 +33,52 @@ function writeSummaryClipboard() {
       summary += "\n";
     }
   });
+
+  // Include attachments and images in the markdown summary if the respective global options are enabled.
+  // Fallback to enabled if the options are not set or null.
+  await browser.storage.sync.get("optionsGlobal").then(async (data) => {
+    const includeAttachments = data.optionsGlobal?.includeAttachments ?? true;
+    const includeImages = data.optionsGlobal?.includeImages ?? true;
+
+    console.log(includeAttachments, includeImages);
+
+    if (includeAttachments) {
+      summary += "### Attachments\n\n";
+      await browser.storage.local.get("ticketStorage").then(async (data) => {
+        if (data.ticketStorage && data.ticketStorage.attachments.length > 0) {
+          const markdownLinks = data.ticketStorage.attachments
+            .map((attachment) =>
+              attachment.attachments
+                .map(
+                  (file) =>
+                    `[${file.file_name}](${file.content_url}) - ${attachment.created_at}`
+                )
+                .join("\n")
+            )
+            .join("\n\n");
+          summary += markdownLinks;
+        }
+      });
+      summary += "\n";
+    }
+
+    if (includeImages) {
+      summary += "### Images\n\n";
+      await browser.storage.local.get("ticketStorage").then((data) => {
+        if (data.ticketStorage && data.ticketStorage.images.length > 0) {
+          const markdownImages = data.ticketStorage.images
+            .map(
+              (image) =>
+                `_${image.fileName}_ - ${image.createdAt}\n\n![${image.fileName}](${image.url})`
+            )
+            .join("\n\n");
+          summary += markdownImages;
+        }
+      });
+      summary += "\n";
+    }
+  });
+
   if (summary != "") {
     navigator.clipboard.writeText(summary);
     document.getElementById("summary-copy").classList.add("hidden");
@@ -441,7 +487,7 @@ function copyAttachmentsMarkdown() {
           attachment.attachments
             .map(
               (file) =>
-                `[${file.file_name}](${file.content_url}) - Comment on: ${attachment.created_at}`
+                `[${file.file_name}](${file.content_url}) - ${attachment.created_at}`
             )
             .join("\n")
         )
@@ -471,7 +517,8 @@ function copyImagesMarkdown() {
     if (data.ticketStorage && data.ticketStorage.images.length > 0) {
       const markdownImages = data.ticketStorage.images
         .map(
-          (image) => `_${image.fileName}_\n![${image.fileName}](${image.url})`
+          (image) =>
+            `_${image.fileName}_ - ${image.createdAt}\n\n![${image.fileName}](${image.url})`
         )
         .join("\n\n");
       navigator.clipboard.writeText(markdownImages).then(() => {
