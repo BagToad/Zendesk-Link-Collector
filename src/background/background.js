@@ -464,21 +464,6 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   browser.action.enable(tab.id);
 });
 
-// Monitor settings changes in the options storage, then reprocess the ticket.
-browser.storage.onChanged.addListener((changed) => {
-  // If the options have not changed, return.
-  if (!changed.options) {
-    return;
-  }
-
-  // If the link patterns have changed, reprocess the ticket.
-  isBackgroundProcessingEnabled().then((status) => {
-    if (status) {
-      filterTicket();
-    }
-  });
-});
-
 // Listen for messages from the popup
 browser.runtime.onMessage.addListener((message) => {
   if (message.type == "refresh") {
