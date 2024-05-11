@@ -11,7 +11,7 @@ function scrollToComment(data) {
 }
 
 // Write the configurable summary to the clipboard.
-function writeSummaryClipboard() {
+async function writeSummaryClipboard() {
   let summary = "";
   document.querySelectorAll(".list-links").forEach((list) => {
     // If "all" summary type, add all to summary.
@@ -36,9 +36,11 @@ function writeSummaryClipboard() {
 
   // Include attachments and images in the markdown summary if the respective global options are enabled.
   // Fallback to enabled if the options are not set or null.
-  browser.storage.sync.get("optionsGlobal").then((data) => {
+  await browser.storage.sync.get("optionsGlobal").then((data) => {
     const includeAttachments = data.optionsGlobal?.includeAttachments ?? true;
     const includeImages = data.optionsGlobal?.includeImages ?? true;
+
+    console.log(includeAttachments, includeImages);
 
     if (includeAttachments) {
       summary += "### Attachments\n\n";
