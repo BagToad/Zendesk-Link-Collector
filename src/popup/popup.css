@@ -164,11 +164,15 @@ a:hover {
     width: 100%;
 }
 
-.row-links {
+.row-sub {
     display: none;
 }
 
-.row-links.selected {
+/* .row-links {
+    display: none;
+} */
+
+.row-sub.selected {
     display: flex;
 }
 

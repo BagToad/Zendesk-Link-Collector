@@ -432,6 +432,64 @@ async function displayImages(imagesArr) {
     });
 }
 
+// Function to copy all attachments in markdown format to clipboard
+function copyAttachmentsMarkdown() {
+  browser.storage.local.get("ticketStorage").then((data) => {
+    if (data.ticketStorage && data.ticketStorage.attachments.length > 0) {
+      const markdownLinks = data.ticketStorage.attachments
+        .map((attachment) =>
+          attachment.attachments
+            .map(
+              (file) =>
+                `[${file.file_name}](${file.content_url}) - Comment on: ${attachment.created_at}`
+            )
+            .join("\n")
+        )
+        .join("\n\n");
+      navigator.clipboard.writeText(markdownLinks).then(() => {
+        document.getElementById("attachments-copy").classList.add("hidden");
+        document.getElementById("attachments-check").classList.remove("hidden");
+        document.getElementById("attachments-text").textContent = "Copied!";
+        // Hide the checkmark after 2 seconds.
+        setTimeout(() => {
+          document.getElementById("attachments-check").classList.add("hidden");
+          document
+            .getElementById("attachments-copy")
+            .classList.remove("hidden");
+          document.getElementById("attachments-text").textContent =
+            "Attachments";
+        }, 2000);
+        console.log("Attachments copied to clipboard in markdown format.");
+      });
+    }
+  });
+}
+
+// Function to copy all images in markdown format to clipboard
+function copyImagesMarkdown() {
+  browser.storage.local.get("ticketStorage").then((data) => {
+    if (data.ticketStorage && data.ticketStorage.images.length > 0) {
+      const markdownImages = data.ticketStorage.images
+        .map(
+          (image) => `_${image.fileName}_\n![${image.fileName}](${image.url})`
+        )
+        .join("\n\n");
+      navigator.clipboard.writeText(markdownImages).then(() => {
+        document.getElementById("images-copy").classList.add("hidden");
+        document.getElementById("images-check").classList.remove("hidden");
+        document.getElementById("images-text").textContent = "Copied!";
+        // Hide the checkmark after 2 seconds.
+        setTimeout(() => {
+          document.getElementById("images-check").classList.add("hidden");
+          document.getElementById("images-copy").classList.remove("hidden");
+          document.getElementById("images-text").textContent = "Images";
+        }, 2000);
+        console.log("Images copied to clipboard in markdown format.");
+      });
+    }
+  });
+}
+
 // Global options.
 const optionsGlobal = {};
 browser.storage.sync.get("optionsGlobal").then((data) => {
@@ -598,6 +656,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".row-links").forEach((row) => {
       row.classList.add("selected");
     });
+    document.querySelectorAll(".row-attachments").forEach((row) => {
+      row.classList.remove("selected");
+    });
+    document.querySelectorAll(".row-images").forEach((row) => {
+      row.classList.remove("selected");
+    });
 
     document.getElementById("button-attachments").classList.remove("checked");
     document.getElementById("button-images").classList.remove("checked");
@@ -621,7 +685,14 @@ document.addEventListener("DOMContentLoaded", () => {
       document
         .getElementById("list-container-images")
         .classList.remove("selected");
+
       document.querySelectorAll(".row-links").forEach((row) => {
+        row.classList.remove("selected");
+      });
+      document.querySelectorAll(".row-attachments").forEach((row) => {
+        row.classList.add("selected");
+      });
+      document.querySelectorAll(".row-images").forEach((row) => {
         row.classList.remove("selected");
       });
 
@@ -650,6 +721,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".row-links").forEach((row) => {
       row.classList.remove("selected");
     });
+    document.querySelectorAll(".row-attachments").forEach((row) => {
+      row.classList.remove("selected");
+    });
+    document.querySelectorAll(".row-images").forEach((row) => {
+      row.classList.add("selected");
+    });
   });
 
   // Dynamically retrieve the version number from manifest.json and insert it into the "What's new?" button text.
@@ -661,4 +738,12 @@ document.addEventListener("DOMContentLoaded", () => {
     "href",
     `https://github.com/bagtoad/zendesk-link-collector/releases/tag/v${version}`
   );
+
+  // Add event listeners for the new buttons to copy attachments and images in markdown format
+  document
+    .getElementById("button-copy-attachments-md")
+    .addEventListener("click", copyAttachmentsMarkdown);
+  document
+    .getElementById("button-copy-images-md")
+    .addEventListener("click", copyImagesMarkdown);
 });
