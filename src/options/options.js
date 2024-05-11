@@ -120,7 +120,6 @@ function setLinkPatternError(err) {
   document.getElementById("link-patterns-error").textContent = err;
   if (err != "" && err != undefined) {
     document.getElementById("link-patterns-error").classList.remove("hidden");
-    console.log("here");
     return;
   }
   document.getElementById("link-patterns-error").classList.add("hidden");
