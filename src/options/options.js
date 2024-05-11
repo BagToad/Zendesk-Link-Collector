@@ -65,9 +65,18 @@ function loadLinkPatterns() {
       tdDate.appendChild(checkboxDate);
       nodes.push(tdDate);
 
+      // Create edit cell.
+      const tdEdit = document.createElement("td");
+      const buttonEdit = document.createElement("button");
+      buttonEdit.textContent = "Edit";
+      buttonEdit.addEventListener("click", () => editLinkPattern(option.id));
+      tdEdit.appendChild(buttonEdit);
+      nodes.push(tdEdit);
+
       // Create delete cell.
       const tdDelete = document.createElement("td");
       const buttonDelete = document.createElement("button");
+      buttonDelete.setAttribute("class", "button-delete");
       buttonDelete.textContent = "Delete";
       tdDelete.appendChild(buttonDelete);
       nodes.push(tdDelete);
@@ -94,7 +103,7 @@ function loadLinkPatterns() {
 
       //Add event listeners to dynamic elements.
       document
-        .querySelector(`[id = '${option.id}'] td button`)
+        .querySelector(`[id = '${option.id}'] td button.button-delete`)
         .addEventListener("click", () => deleteLink(option.id));
       document
         .querySelector(`[id = '${option.id}'] td button.button-reorder-up`)
@@ -111,7 +120,6 @@ function setLinkPatternError(err) {
   document.getElementById("link-patterns-error").textContent = err;
   if (err != "" && err != undefined) {
     document.getElementById("link-patterns-error").classList.remove("hidden");
-    console.log("here");
     return;
   }
   document.getElementById("link-patterns-error").classList.add("hidden");
@@ -221,6 +229,109 @@ function deleteLink(id) {
     browser.storage.sync.set({ options: data.options }).then(() => {
       loadLinkPatterns();
     });
+  });
+}
+
+// Edit a link pattern from the link patterns table.
+function editLinkPattern(id) {
+  // Disable all buttons except the one being edited.
+  document
+    .querySelectorAll("#table-link-patterns td button")
+    .forEach((button) => {
+      button.disabled = true;
+    });
+
+  // Fill the input fields with the selected link pattern's current values.
+  browser.storage.sync.get("options").then((data) => {
+    const option = data.options.find((option) => option.id === id);
+    if (option) {
+      document.getElementById("title").value = option.title;
+      document.getElementById("pattern").value = option.pattern;
+      document.getElementById("show-parent").checked = option.showParent;
+      document.getElementById("summary-type").value =
+        option.summaryType || "none";
+      document.getElementById("show-date").checked = option.showDate || false;
+
+      // Post a message that we are editing.
+      setLinkPatternError(
+        `You are editing the "${option.title}" link pattern!`
+      );
+
+      document.getElementById(id).classList.add("editing");
+
+      // Change the Save button to an Update button.
+      const saveButton = document.getElementById("button-save-link-patterns");
+      saveButton.textContent = "Update Link Pattern";
+      saveButton.removeEventListener("click", saveLinkPatterns);
+      saveButton.setAttribute("editing", id);
+      saveButton.onclick = updateLinkPattern;
+    }
+  });
+}
+
+// Update an existing link pattern with the values from the input fields.
+function updateLinkPattern() {
+  const id = document
+    .getElementById("button-save-link-patterns")
+    .getAttribute("editing");
+  browser.storage.sync.get("options").then((data) => {
+    const optionIndex = data.options.findIndex((option) => option.id === id);
+    if (optionIndex !== -1) {
+      // Validate RegEx.
+      try {
+        new RegExp(document.getElementById("pattern").value);
+      } catch (SyntaxError) {
+        setLinkPatternError(
+          "Invalid RegEx pattern! - Great work! That's difficult to do! :D"
+        );
+        console.error("Invalid RegEx");
+        return;
+      }
+
+      // Update the link pattern with the new values.
+      data.options[optionIndex].title = document.getElementById("title").value;
+      data.options[optionIndex].pattern =
+        document.getElementById("pattern").value;
+      data.options[optionIndex].showParent =
+        document.getElementById("show-parent").checked;
+      data.options[optionIndex].summaryType =
+        document.getElementById("summary-type").value;
+      data.options[optionIndex].showDate =
+        document.getElementById("show-date").checked;
+
+      // Save the updated link patterns to storage.
+      browser.storage.sync.set({ options: data.options }).then(() => {
+        // Load the updated patterns table.
+        loadLinkPatterns();
+
+        // Reset input fields.
+        document.getElementById("title").value = "";
+        document.getElementById("pattern").value = "";
+        document.getElementById("show-parent").checked = false;
+        document.getElementById("summary-type").value = "none";
+        document.getElementById("show-date").checked = false;
+
+        // Change the Update button back to a Save button.
+        const saveButton = document.getElementById("button-save-link-patterns");
+        saveButton.textContent = "Save Link Pattern";
+        saveButton.removeEventListener("click", updateLinkPattern);
+        saveButton.addEventListener("click", saveLinkPatterns);
+
+        //Clear the message that we are editing.
+        setLinkPatternError("");
+
+        //saveButton.onclick = saveLinkPatterns;
+
+        // Re-enable all edit buttons.
+        /* document
+          .querySelectorAll("#table-link-patterns td button")
+          .forEach((button) => {
+            if (button.textContent === "Edit") {
+              button.disabled = false;
+            }
+          }); */
+      });
+    }
   });
 }
 
@@ -342,70 +453,23 @@ function loadGlobalOptions() {
   });
 }
 
-/// Might use this eventually somewhere to update the schema in a more robust way.
-
-// async function updateSchema() {
-//     browser.storage.sync.get('schema').then(async data => {
-//         // Schema version is out of date.
-//         if (data.schemaVersion == undefined || data.schemaVersion < browser.runtime.getManifest().version) {
-//             // Update schema version.
-//             data.schemaVersion = browser.runtime.getManifest().version;
-//             browser.storage.sync.set({schemaVersion: data.schemaVersion});
-
-//             // Migrate naming (options -> optionsLinks)
-//             if (data.schemaVersion < "1.0.2") {
-//                 const optionsLinks = await browser.sync.get('optionsLinks');
-//                 //Check if migration somehow already occurred. Don't want to overwrite data.
-//                 if (optionsLinks.optionsLinks == undefined) {
-//                     // Migrate data.
-//                     browser.storage.sync.get('options').then(data => {
-//                         // This means the user is upgrading, but they don't have any data? :thinking:
-//                         if (data.options == undefined) {
-//                             data.options = [];
-//                         }
-//                         browser.storage.sync.set({optionsLinks: data.options});
-//                     });
-//                 }
-//             }
-
-//             // Update/validate stored options data.
-//             browser.storage.sync.get('optionsLinks').then(data => {
-//                 if (data.optionsLinks == undefined) {
-//                     data.optionsLinks = [];
-//                 }
-//                 data.optionsLinks.forEach(link => {
-//                     // Check for missing fields.
-//                     if (link.id == undefined || link.title == undefined) {
-//                         console.error(`Invalid JSON data (missing fields: ${link.id}, ${link.title})`);
-//                         // return;
-//                     }
-//                     // Always set new ID to avoid duplicates.
-//                     link.id = crypto.randomUUID();
-//                 });
-//                 browser.storage.sync.set({optionsLinks: data.optionsLinks});
-//             });
-//         }
-//     });
-//     return;
-// }
-
 document.addEventListener("DOMContentLoaded", () => {
   // Add event listeners to static elements.
   // Global options event listeners.
   document
     .getElementById("button-save-global-options")
-    .addEventListener("click", () => saveGlobalOptions());
+    .addEventListener("click", saveGlobalOptions);
   loadGlobalOptions();
 
   // Link patterns event listeners.
   document
     .getElementById("button-save-link-patterns")
-    .addEventListener("click", () => saveLinkPatterns());
+    .addEventListener("click", saveLinkPatterns);
   document
     .getElementById("link-patterns-import")
-    .addEventListener("click", () => importLinkPatternsJSON());
+    .addEventListener("click", importLinkPatternsJSON);
   document
     .getElementById("link-patterns-export")
-    .addEventListener("click", () => downloadLinkPatternsJSON());
+    .addEventListener("click", downloadLinkPatternsJSON);
   loadLinkPatterns();
 });

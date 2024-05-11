@@ -25,6 +25,15 @@ button {
     color: rgb(201, 209, 217);
 }
 
+button:disabled {
+    background-color: rgb(39, 44, 51);
+    color: rgb(148 147 147);
+}
+
+button:disabled:hover {
+    cursor: not-allowed;
+}
+
 .input-label {
     position: relative;
   }
@@ -105,4 +114,8 @@ table#table-link-patterns th {
     font-size: 15px;
     background-color: rgb(32, 37, 45);
     padding: 10px;
+}
+
+table tr.editing {
+    background-color: rgb(179 0 0 / 18%);
 }
