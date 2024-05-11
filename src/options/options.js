@@ -65,6 +65,14 @@ function loadLinkPatterns() {
       tdDate.appendChild(checkboxDate);
       nodes.push(tdDate);
 
+      // Create edit cell.
+      const tdEdit = document.createElement("td");
+      const buttonEdit = document.createElement("button");
+      buttonEdit.textContent = "Edit";
+      buttonEdit.addEventListener("click", () => editLinkPattern(option.id));
+      tdEdit.appendChild(buttonEdit);
+      nodes.push(tdEdit);
+
       // Create delete cell.
       const tdDelete = document.createElement("td");
       const buttonDelete = document.createElement("button");
@@ -169,45 +177,8 @@ function saveLinkPatterns() {
   });
 }
 
-// Reorder link patterns in the link patterns table.
-// id = ID of the link pattern to move.
-// move = Number of positions to move the link pattern. Negative numbers move up, positive numbers move down.
-function reorderLinkPattern(id, move) {
-  browser.storage.sync.get("options").then((data) => {
-    if (data.options.length <= 0) {
-      //Shouldn't happen?
-      return;
-    }
-    if (move == 0 || move == undefined) {
-      //No move.
-      return;
-    }
-    let found = false;
-    data.options.forEach((option) => {
-      if (option.id == id && !found) {
-        found = true;
-        let pOptionIndex = data.options.indexOf(option) + move;
-        if (pOptionIndex < 0 || pOptionIndex >= data.options.length) {
-          //OOB array.
-          console.error("OOB array");
-          return;
-        }
-        let option2Move = data.options.splice(
-          data.options.indexOf(option),
-          1
-        )[0];
-        data.options.splice(pOptionIndex, 0, option2Move);
-      }
-    });
-
-    browser.storage.sync.set({ options: data.options }).then(() => {
-      loadLinkPatterns();
-    });
-  });
-}
-
-// Delete a link pattern from the link patterns table.
-function deleteLink(id) {
+// Edit a link pattern from the link patterns table.
+function editLinkPattern(id) {
   browser.storage.sync.get("options").then((data) => {
     if (data.options.length <= 0) {
       //Shouldn't happen?
@@ -215,11 +186,69 @@ function deleteLink(id) {
     }
     data.options.forEach((option) => {
       if (option.id == id) {
-        data.options.splice(data.options.indexOf(option), 1);
+        // Fill the input fields with the selected link pattern's current values.
+        document.getElementById("title").value = option.title;
+        document.getElementById("pattern").value = option.pattern;
+        document.getElementById("show-parent").checked = option.showParent;
+        document.getElementById("summary-type").value = option.summaryType;
+        document.getElementById("show-date").checked = option.showDate;
+
+        // Disable all edit buttons except for the current editing one.
+        document.querySelectorAll("button").forEach((button) => {
+          if (button.textContent == "Edit" && button.parentElement.parentElement.id != id) {
+            button.disabled = true;
+          }
+        });
+
+        // Change the save button text to indicate editing is occurring.
+        document.getElementById("button-save-link-patterns").textContent = "Save Edit";
+
+        // Add an event listener to the save button to handle saving the edit.
+        document.getElementById("button-save-link-patterns").addEventListener("click", () => saveEdit(id));
       }
     });
-    browser.storage.sync.set({ options: data.options }).then(() => {
-      loadLinkPatterns();
+  });
+}
+
+// Save the edited link pattern.
+function saveEdit(id) {
+  browser.storage.sync.get("options").then((data) => {
+    if (data.options.length <= 0) {
+      //Shouldn't happen?
+      return;
+    }
+    data.options.forEach((option, index) => {
+      if (option.id == id) {
+        // Update the link pattern with the new values from the input fields.
+        data.options[index].title = document.getElementById("title").value;
+        data.options[index].pattern = document.getElementById("pattern").value;
+        data.options[index].showParent = document.getElementById("show-parent").checked;
+        data.options[index].summaryType = document.getElementById("summary-type").value;
+        data.options[index].showDate = document.getElementById("show-date").checked;
+
+        // Save the updated link pattern to disk.
+        browser.storage.sync.set({ options: data.options }).then(() => {
+          // Load the updated patterns table.
+          loadLinkPatterns();
+
+          // Reset input fields.
+          document.getElementById("title").value = "";
+          document.getElementById("pattern").value = "";
+          document.getElementById("show-parent").checked = false;
+          document.getElementById("summary-type").value = "none";
+          document.getElementById("show-date").checked = false;
+
+          // Re-enable all edit buttons.
+          document.querySelectorAll("button").forEach((button) => {
+            if (button.textContent == "Edit") {
+              button.disabled = false;
+            }
+          });
+
+          // Change the save button text back to its original state.
+          document.getElementById("button-save-link-patterns").textContent = "Save Link Pattern";
+        });
+      }
     });
   });
 }
@@ -341,53 +370,6 @@ function loadGlobalOptions() {
       data.optionsGlobal.wrapLists;
   });
 }
-
-/// Might use this eventually somewhere to update the schema in a more robust way.
-
-// async function updateSchema() {
-//     browser.storage.sync.get('schema').then(async data => {
-//         // Schema version is out of date.
-//         if (data.schemaVersion == undefined || data.schemaVersion < browser.runtime.getManifest().version) {
-//             // Update schema version.
-//             data.schemaVersion = browser.runtime.getManifest().version;
-//             browser.storage.sync.set({schemaVersion: data.schemaVersion});
-
-//             // Migrate naming (options -> optionsLinks)
-//             if (data.schemaVersion < "1.0.2") {
-//                 const optionsLinks = await browser.sync.get('optionsLinks');
-//                 //Check if migration somehow already occurred. Don't want to overwrite data.
-//                 if (optionsLinks.optionsLinks == undefined) {
-//                     // Migrate data.
-//                     browser.storage.sync.get('options').then(data => {
-//                         // This means the user is upgrading, but they don't have any data? :thinking:
-//                         if (data.options == undefined) {
-//                             data.options = [];
-//                         }
-//                         browser.storage.sync.set({optionsLinks: data.options});
-//                     });
-//                 }
-//             }
-
-//             // Update/validate stored options data.
-//             browser.storage.sync.get('optionsLinks').then(data => {
-//                 if (data.optionsLinks == undefined) {
-//                     data.optionsLinks = [];
-//                 }
-//                 data.optionsLinks.forEach(link => {
-//                     // Check for missing fields.
-//                     if (link.id == undefined || link.title == undefined) {
-//                         console.error(`Invalid JSON data (missing fields: ${link.id}, ${link.title})`);
-//                         // return;
-//                     }
-//                     // Always set new ID to avoid duplicates.
-//                     link.id = crypto.randomUUID();
-//                 });
-//                 browser.storage.sync.set({optionsLinks: data.optionsLinks});
-//             });
-//         }
-//     });
-//     return;
-// }
 
 document.addEventListener("DOMContentLoaded", () => {
   // Add event listeners to static elements.
