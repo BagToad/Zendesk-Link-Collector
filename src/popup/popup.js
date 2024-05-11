@@ -447,6 +447,18 @@ function copyAttachmentsMarkdown() {
         )
         .join("\n\n");
       navigator.clipboard.writeText(markdownLinks).then(() => {
+        document.getElementById("attachments-copy").classList.add("hidden");
+        document.getElementById("attachments-check").classList.remove("hidden");
+        document.getElementById("attachments-text").textContent = "Copied!";
+        // Hide the checkmark after 2 seconds.
+        setTimeout(() => {
+          document.getElementById("attachments-check").classList.add("hidden");
+          document
+            .getElementById("attachments-copy")
+            .classList.remove("hidden");
+          document.getElementById("attachments-text").textContent =
+            "Attachments";
+        }, 2000);
         console.log("Attachments copied to clipboard in markdown format.");
       });
     }
@@ -459,11 +471,19 @@ function copyImagesMarkdown() {
     if (data.ticketStorage && data.ticketStorage.images.length > 0) {
       const markdownImages = data.ticketStorage.images
         .map(
-          (image) =>
-            `![${image.fileName}](${image.url}) - Comment on: ${image.createdAt}`
+          (image) => `_${image.fileName}_\n![${image.fileName}](${image.url})`
         )
         .join("\n\n");
       navigator.clipboard.writeText(markdownImages).then(() => {
+        document.getElementById("images-copy").classList.add("hidden");
+        document.getElementById("images-check").classList.remove("hidden");
+        document.getElementById("images-text").textContent = "Copied!";
+        // Hide the checkmark after 2 seconds.
+        setTimeout(() => {
+          document.getElementById("images-check").classList.add("hidden");
+          document.getElementById("images-copy").classList.remove("hidden");
+          document.getElementById("images-text").textContent = "Images";
+        }, 2000);
         console.log("Images copied to clipboard in markdown format.");
       });
     }
@@ -636,6 +656,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".row-links").forEach((row) => {
       row.classList.add("selected");
     });
+    document.querySelectorAll(".row-attachments").forEach((row) => {
+      row.classList.remove("selected");
+    });
+    document.querySelectorAll(".row-images").forEach((row) => {
+      row.classList.remove("selected");
+    });
 
     document.getElementById("button-attachments").classList.remove("checked");
     document.getElementById("button-images").classList.remove("checked");
@@ -659,7 +685,14 @@ document.addEventListener("DOMContentLoaded", () => {
       document
         .getElementById("list-container-images")
         .classList.remove("selected");
+
       document.querySelectorAll(".row-links").forEach((row) => {
+        row.classList.remove("selected");
+      });
+      document.querySelectorAll(".row-attachments").forEach((row) => {
+        row.classList.add("selected");
+      });
+      document.querySelectorAll(".row-images").forEach((row) => {
         row.classList.remove("selected");
       });
 
@@ -687,6 +720,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Hide summary and background processing options for images tab
     document.querySelectorAll(".row-links").forEach((row) => {
       row.classList.remove("selected");
+    });
+    document.querySelectorAll(".row-attachments").forEach((row) => {
+      row.classList.remove("selected");
+    });
+    document.querySelectorAll(".row-images").forEach((row) => {
+      row.classList.add("selected");
     });
   });
 
