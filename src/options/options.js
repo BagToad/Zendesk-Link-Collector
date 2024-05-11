@@ -428,14 +428,20 @@ function saveGlobalOptions() {
     if (data.optionsGlobal == undefined) {
       data.optionsGlobal = {
         wrapLists: false,
+        includeAttachments: false, // New option for including attachments in markdown summary
+        includeImages: false // New option for including images in markdown summary
       };
     }
 
     data.optionsGlobal.wrapLists =
       document.getElementById("wrap-lists").checked;
+    data.optionsGlobal.includeAttachments =
+      document.getElementById("include-attachments").checked;
+    data.optionsGlobal.includeImages =
+      document.getElementById("include-images").checked;
 
     browser.storage.sync.set({
-      optionsGlobal: optionsGlobal,
+      optionsGlobal: data.optionsGlobal,
     });
   });
 }
@@ -446,10 +452,16 @@ function loadGlobalOptions() {
     if (data.optionsGlobal == undefined) {
       data.optionsGlobal = {
         wrapLists: false,
+        includeAttachments: false,
+        includeImages: false
       };
     }
     document.getElementById("wrap-lists").checked =
       data.optionsGlobal.wrapLists;
+    document.getElementById("include-attachments").checked =
+      data.optionsGlobal.includeAttachments;
+    document.getElementById("include-images").checked =
+      data.optionsGlobal.includeImages;
   });
 }
 

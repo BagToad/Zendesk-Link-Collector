@@ -33,6 +33,30 @@ function writeSummaryClipboard() {
       summary += "\n";
     }
   });
+
+  // Include attachments and images in the markdown summary if the respective global options are enabled.
+  // Fallback to enabled if the options are not set or null.
+  browser.storage.sync.get("optionsGlobal").then((data) => {
+    const includeAttachments = data.optionsGlobal?.includeAttachments ?? true;
+    const includeImages = data.optionsGlobal?.includeImages ?? true;
+
+    if (includeAttachments) {
+      summary += "### Attachments\n\n";
+      document.querySelectorAll(".list-item-attachments a").forEach((a) => {
+        summary += `- [${a.textContent}](${a.href})\n`;
+      });
+      summary += "\n";
+    }
+
+    if (includeImages) {
+      summary += "### Images\n\n";
+      document.querySelectorAll(".list-item-images img").forEach((img) => {
+        summary += `![${img.alt}](${img.src})\n`;
+      });
+      summary += "\n";
+    }
+  });
+
   if (summary != "") {
     navigator.clipboard.writeText(summary);
     document.getElementById("summary-copy").classList.add("hidden");
