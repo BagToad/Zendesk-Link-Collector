@@ -432,6 +432,44 @@ async function displayImages(imagesArr) {
     });
 }
 
+// Function to copy all attachments in markdown format to clipboard
+function copyAttachmentsMarkdown() {
+  browser.storage.local.get("ticketStorage").then((data) => {
+    if (data.ticketStorage && data.ticketStorage.attachments.length > 0) {
+      const markdownLinks = data.ticketStorage.attachments
+        .map((attachment) =>
+          attachment.attachments
+            .map(
+              (file) =>
+                `[${file.file_name}](${file.content_url}) - Comment on: ${attachment.created_at}`
+            )
+            .join("\n")
+        )
+        .join("\n\n");
+      navigator.clipboard.writeText(markdownLinks).then(() => {
+        console.log("Attachments copied to clipboard in markdown format.");
+      });
+    }
+  });
+}
+
+// Function to copy all images in markdown format to clipboard
+function copyImagesMarkdown() {
+  browser.storage.local.get("ticketStorage").then((data) => {
+    if (data.ticketStorage && data.ticketStorage.images.length > 0) {
+      const markdownImages = data.ticketStorage.images
+        .map(
+          (image) =>
+            `![${image.fileName}](${image.url}) - Comment on: ${image.createdAt}`
+        )
+        .join("\n\n");
+      navigator.clipboard.writeText(markdownImages).then(() => {
+        console.log("Images copied to clipboard in markdown format.");
+      });
+    }
+  });
+}
+
 // Global options.
 const optionsGlobal = {};
 browser.storage.sync.get("optionsGlobal").then((data) => {
@@ -661,4 +699,12 @@ document.addEventListener("DOMContentLoaded", () => {
     "href",
     `https://github.com/bagtoad/zendesk-link-collector/releases/tag/v${version}`
   );
+
+  // Add event listeners for the new buttons to copy attachments and images in markdown format
+  document
+    .getElementById("button-copy-attachments-md")
+    .addEventListener("click", copyAttachmentsMarkdown);
+  document
+    .getElementById("button-copy-images-md")
+    .addEventListener("click", copyImagesMarkdown);
 });
