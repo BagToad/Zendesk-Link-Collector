@@ -162,6 +162,7 @@ function saveLinkPatterns() {
       showParent: document.getElementById("show-parent").checked,
       summaryType: document.getElementById("summary-type").value,
       showDate: document.getElementById("show-date").checked,
+      userScript: document.getElementById("user-script").value // Save user-defined JavaScript code
     });
     // Save new link pattern to disk.
     browser.storage.sync.set({ options: data.options }).then(() => {
@@ -173,6 +174,7 @@ function saveLinkPatterns() {
       document.getElementById("show-parent").checked = false;
       document.getElementById("summary-type").value = "none";
       document.getElementById("show-date").checked = false;
+      document.getElementById("user-script").value = ""; // Reset user script input field
     });
   });
 }
@@ -251,6 +253,7 @@ function editLinkPattern(id) {
       document.getElementById("summary-type").value =
         option.summaryType || "none";
       document.getElementById("show-date").checked = option.showDate || false;
+      document.getElementById("user-script").value = option.userScript || ""; // Load user-defined JavaScript code
 
       // Post a message that we are editing.
       setLinkPatternError(
@@ -298,6 +301,8 @@ function updateLinkPattern() {
         document.getElementById("summary-type").value;
       data.options[optionIndex].showDate =
         document.getElementById("show-date").checked;
+      data.options[optionIndex].userScript =
+        document.getElementById("user-script").value; // Update user-defined JavaScript code
 
       // Save the updated link patterns to storage.
       browser.storage.sync.set({ options: data.options }).then(() => {
@@ -310,6 +315,7 @@ function updateLinkPattern() {
         document.getElementById("show-parent").checked = false;
         document.getElementById("summary-type").value = "none";
         document.getElementById("show-date").checked = false;
+        document.getElementById("user-script").value = ""; // Reset user script input field
 
         // Change the Update button back to a Save button.
         const saveButton = document.getElementById("button-save-link-patterns");

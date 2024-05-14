@@ -253,42 +253,24 @@ async function filterTicket() {
     }
   });
 
-  // Alternative implementation of the previous algorithm for future thought:
-  /*
-const filteredLinks = filters.flatMap((filter) => {
-  const re = new RegExp(filter.pattern);
-  const filteredLinksArr = linksArr
-    .filter((link) => re.test(link.href))
-    .map((link) => {
-      return {
-        ...link,
-        summaryType: filter.summaryType === undefined ? "all" : filter.summaryType,
-        showDate: filter.showDate === undefined ? false : filter.showDate,
-      };
+  // Execute user-defined JavaScript code for each link that matches a pattern
+  filteredLinks.forEach((bundle) => {
+    bundle.links.forEach((link) => {
+      try {
+        // Retrieve user-defined script for the current link pattern
+        const userScript = filters.find(f => f.title === bundle.title)?.userScript;
+        if (userScript) {
+          // Create a new function from the user-defined script
+          const userFunc = new Function('link', userScript);
+          // Execute the user-defined script, passing the current link as an argument
+          userFunc(link);
+        }
+      } catch (e) {
+        console.error(`Error executing user script for link pattern "${bundle.title}": ${e}`);
+        // Log the error and continue with the next link
+      }
     });
-
-  const filteredLinksArrUnique = filteredLinksArr.reduce((unique, link) => {
-    const found = unique.find((l) => l.href == link.href);
-    if (!found) {
-      return [...unique, link];
-    } else if (link.createdAt > found.createdAt && found.createdAt != null) {
-      return [...unique.filter((l) => l.href !== link.href), link];
-    } else {
-      return unique;
-    }
-  }, []);
-
-  if (filteredLinksArrUnique.length > 0) {
-    return {
-      title: filter.title,
-      showParent: filter.showParent,
-      links: filteredLinksArrUnique,
-    };
-  } else {
-    return [];
-  }
-});
-*/
+  });
 
   console.log("filtered links: ", filteredLinks);
   console.log("attachments: ", attachmentsArr);

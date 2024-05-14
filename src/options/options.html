@@ -38,6 +38,9 @@
             </select>
             <label class="input-label" title="Show the comment date where the link was found." for="show-date">Show Date:</label>
             <input type="checkbox" id="show-date">
+            <!-- New textarea input for user-defined JavaScript code -->
+            <label class="input-label" title="User-defined JavaScript code to transform the link. This code will be executed for each link that matches the pattern." for="user-script">User Script:</label>
+            <textarea id="user-script" placeholder="JavaScript code"></textarea>
             <button id="button-save-link-patterns">Save Link Pattern</button>
         </div>
         <div id="container-link-patterns-error" class="input-container-row">
