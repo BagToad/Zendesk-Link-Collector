@@ -426,20 +426,18 @@ function importLinkPatternsJSON() {
 function saveGlobalOptions() {
   browser.storage.sync.get("optionsGlobal").then((data) => {
     if (data.optionsGlobal == undefined) {
-      data.optionsGlobal = {
-        wrapLists: false,
-        includeAttachments: false,
-        includeImages: false,
-      };
+      data.optionsGlobal = {};
     }
 
-    data.optionsGlobal.wrapLists =
-      document.getElementById("wrap-lists").checked;
-    data.optionsGlobal.includeAttachments = document.getElementById(
-      "include-attachments"
-    ).checked;
-    data.optionsGlobal.includeImages =
-      document.getElementById("include-images").checked;
+    // Retrieve the selected summary option
+    const summaryOption = document.querySelector('input[name="summary-options"]:checked').value;
+    data.optionsGlobal.summaryOption = summaryOption;
+
+    // Retrieve the custom summary template if provided
+    if (summaryOption === "custom-template") {
+      const customTemplate = document.getElementById("custom-template-text").value;
+      data.optionsGlobal.customTemplate = customTemplate;
+    }
 
     browser.storage.sync.set({
       optionsGlobal: data.optionsGlobal,
@@ -451,20 +449,40 @@ function saveGlobalOptions() {
 function loadGlobalOptions() {
   browser.storage.sync.get("optionsGlobal").then((data) => {
     if (data.optionsGlobal == undefined) {
-      data.optionsGlobal = {
-        wrapLists: false,
-        includeAttachments: false,
-        includeImages: false,
-      };
+      data.optionsGlobal = {};
     }
-    document.getElementById("wrap-lists").checked =
-      data.optionsGlobal.wrapLists;
-    document.getElementById("include-attachments").checked =
-      data.optionsGlobal.includeAttachments;
-    document.getElementById("include-images").checked =
-      data.optionsGlobal.includeImages;
+
+    // Set the summary option radio button
+    if (data.optionsGlobal.summaryOption) {
+      document.querySelector(`input[value="${data.optionsGlobal.summaryOption}"]`).checked = true;
+    }
+
+    // Set the custom summary template text
+    if (data.optionsGlobal.customTemplate) {
+      document.getElementById("custom-template-text").value = data.optionsGlobal.customTemplate;
+    }
+
+    // Enable or disable the custom summary template text box based on the selected summary option
+    toggleCustomTemplateTextbox(data.optionsGlobal.summaryOption === "custom-template");
   });
 }
+
+// Toggle the custom summary template text box enabled state
+function toggleCustomTemplateTextbox(enable) {
+  const customTemplateTextbox = document.getElementById("custom-template-text");
+  if (enable) {
+    customTemplateTextbox.removeAttribute("disabled");
+  } else {
+    customTemplateTextbox.setAttribute("disabled", "true");
+  }
+}
+
+// Event listener for the summary options radio buttons to enable/disable the custom summary template text box
+document.querySelectorAll('input[name="summary-options"]').forEach((radio) => {
+  radio.addEventListener("change", (event) => {
+    toggleCustomTemplateTextbox(event.target.value === "custom-template");
+  });
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   // Add event listeners to static elements.
