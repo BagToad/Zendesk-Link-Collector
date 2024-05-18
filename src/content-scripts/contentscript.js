@@ -13,6 +13,7 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         document.querySelector(`[id="comment-${request.auditID}"]`);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "center" });
+      highlightComment(element); // Call the new highlight function after scrolling
       return;
     }
 
@@ -31,6 +32,7 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
           if (event.type == "Comment") {
             if (comment.outerHTML == event.html_body) {
               comment.scrollIntoView({ behavior: "smooth", block: "center" });
+              highlightComment(comment); // Call the new highlight function after scrolling
               return;
             }
           }
@@ -130,3 +132,12 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
   return true;
 });
+
+// Function to visually highlight the scrolled-to comment
+function highlightComment(element) {
+  element.style.transition = "background-color 0.5s ease";
+  element.style.backgroundColor = "#ffff99"; // Temporary highlight color
+  setTimeout(() => {
+    element.style.backgroundColor = ""; // Remove highlight after a few seconds
+  }, 2000); // Ensure the highlight fades away after a few seconds
+}
