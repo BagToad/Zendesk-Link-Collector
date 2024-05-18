@@ -135,18 +135,21 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 
 function highlightComment(element) {
-  let highlightElement = element.parentElement;
-  // Traverse up the DOM tree until an 'article' element is found
+  let highlightElement = element;
+  let counter = 0;
+  const maxCounter = 20;
+  // Traverse up the DOM tree until an 'article' element is found or counter reaches 10
   while (
     highlightElement &&
-    highlightElement.nodeName.toLowerCase() !== "article"
+    highlightElement.nodeName.toLowerCase() !== "article" &&
+    counter < maxCounter
   ) {
     highlightElement = highlightElement.parentElement;
+    counter++;
   }
 
-  // If an 'article' element is found
+  // If an 'article' element is found or the nth parent is reached, highlight whatever the element is.
   if (highlightElement) {
-    // Save the original background color
     const originalColor = highlightElement.style.backgroundColor;
 
     highlightElement.style.transition = "background-color 0.5s ease";
@@ -159,6 +162,7 @@ function highlightComment(element) {
     // After the transition is complete, remove the style attribute
     setTimeout(() => {
       highlightElement.removeAttribute("style");
-    }, 2500); // Ensure the style attribute is removed after the transition is complete
+    }, 2500); // Ensure the style attribute is removed after the transition is complete.
+    // This is very important to ensure the HTML of this element stays the same as what is returned by the audits endpoint.
   }
 }
