@@ -172,7 +172,7 @@ async function filterTicket() {
   });
   const ticketData = await response.json();
   const customFields = ticketData.ticket.custom_fields;
-  const ticketSubject = ticketData.ticket.subject;
+  const ticketSubject = ticketData.ticket.subject; // Get the ticket subject for the custom summary template.
 
   // For each custom field, check if it is a string and if it contains a link.
   customFields.forEach((field) => {
