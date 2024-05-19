@@ -380,6 +380,10 @@ browser.runtime.onInstalled.addListener((data) => {
             data.optionsGlobal.summaryOption === undefined
               ? "all"
               : data.optionsGlobal.summaryOption,
+          customTemplate:
+            data.optionsGlobal.customTemplate === undefined
+              ? ""
+              : data.optionsGlobal.customTemplate,
         },
       });
     });

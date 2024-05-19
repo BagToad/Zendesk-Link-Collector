@@ -429,13 +429,21 @@ function saveGlobalOptions() {
       data.optionsGlobal = {};
     }
 
+    // Retrieve the wrap lists option
+    data.optionsGlobal.wrapLists =
+      document.getElementById("wrap-lists").checked;
+
     // Retrieve the selected summary option
-    const summaryOption = document.querySelector('input[name="summary-options"]:checked').value;
+    const summaryOption = document.querySelector(
+      'input[name="summary-options"]:checked'
+    ).value;
     data.optionsGlobal.summaryOption = summaryOption;
 
     // Retrieve the custom summary template if provided
     if (summaryOption === "custom-template") {
-      const customTemplate = document.getElementById("custom-template-text").value;
+      const customTemplate = document.getElementById(
+        "custom-template-text"
+      ).value;
       data.optionsGlobal.customTemplate = customTemplate;
     }
 
@@ -452,18 +460,27 @@ function loadGlobalOptions() {
       data.optionsGlobal = {};
     }
 
+    // Set the wrap lists option checkbox
+    document.getElementById("wrap-lists").checked =
+      data.optionsGlobal.wrapLists;
+
     // Set the summary option radio button
     if (data.optionsGlobal.summaryOption) {
-      document.querySelector(`input[value="${data.optionsGlobal.summaryOption}"]`).checked = true;
+      document.querySelector(
+        `input[value="${data.optionsGlobal.summaryOption}"]`
+      ).checked = true;
     }
 
     // Set the custom summary template text
     if (data.optionsGlobal.customTemplate) {
-      document.getElementById("custom-template-text").value = data.optionsGlobal.customTemplate;
+      document.getElementById("custom-template-text").value =
+        data.optionsGlobal.customTemplate;
     }
 
     // Enable or disable the custom summary template text box based on the selected summary option
-    toggleCustomTemplateTextbox(data.optionsGlobal.summaryOption === "custom-template");
+    toggleCustomTemplateTextbox(
+      data.optionsGlobal.summaryOption === "custom-template"
+    );
   });
 }
 
