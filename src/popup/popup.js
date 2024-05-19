@@ -15,32 +15,53 @@ async function writeSummaryClipboard() {
   let summary = "";
   // Retrieve global options for summary customization
   const options = await browser.storage.sync.get("optionsGlobal");
+  const summaryOption = options.optionsGlobal.summaryOption;
   const customTemplate = options.optionsGlobal?.customTemplate;
-
+  const ticketStorage = await browser.storage.local.get("ticketStorage");
   // If a custom template is selected, use it to generate the summary
-  if (customTemplate) {
+  if (summaryOption === "custom-template") {
     summary = customTemplate
-      .replace("{{% links %}}", generateLinksMarkdown())
+      .replace("{{% links %}}", generateLinksMarkdown("###"))
+      .replace("{{% links_h1 %}}", generateLinksMarkdown("#"))
+      .replace("{{% links_h2 %}}", generateLinksMarkdown("##"))
+      .replace("{{% links_h3 %}}", generateLinksMarkdown("###"))
+      .replace("{{% links_h0 %}}", generateLinksMarkdown("none"))
       .replace("{{% attachments %}}", await generateAttachmentsMarkdown())
       .replace("{{% images %}}", await generateImagesMarkdown())
-      .replace("{{% ticket_id %}}", options.optionsGlobal.ticketID)
-      .replace("{{% ticket_url %}}", options.optionsGlobal.ticketURL);
+      .replace("{{% ticket_id %}}", ticketStorage.ticketStorage.ticketID)
+      .replace("{{% ticket_url %}}", ticketStorage.ticketStorage.ticketURL);
   } else {
     // Default summary generation logic
     document.querySelectorAll(".list-links").forEach((list) => {
       if (list.getAttribute("data-summary-type") == "all") {
         summary += `### ${list.getAttribute("data-title")}\n\n`;
         list.childNodes.forEach((li) => {
-          summary += `- [${li.textContent}](${li.querySelector("a").href}) - ${li.getAttribute("data-created-at")}\n`;
+          summary += `- [${li.textContent}](${
+            li.querySelector("a").href
+          }) - ${li.getAttribute("data-created-at")}\n`;
         });
         summary += "\n";
       } else if (list.getAttribute("data-summary-type") == "latest") {
         summary += `### ${list.getAttribute("data-title")} (Latest)\n\n`;
         const latest = list.childNodes[list.childNodes.length - 1];
-        summary += `- [${latest.textContent}](${latest.querySelector("a").href}) - ${latest.getAttribute("data-created-at")}\n`;
+        summary += `- [${latest.textContent}](${
+          latest.querySelector("a").href
+        }) - ${latest.getAttribute("data-created-at")}\n`;
         summary += "\n";
       }
     });
+    if (summaryOption == "all") {
+      summary += "### Attachments\n\n";
+      summary += await generateAttachmentsMarkdown();
+      summary += "### Images\n\n";
+      summary += await generateImagesMarkdown();
+    } else if (summaryOption == "attachments-only") {
+      summary += "### Attachments\n\n";
+      summary += await generateAttachmentsMarkdown();
+    } else if (summaryOption == "images-only") {
+      summary += "### Images\n\n";
+      summary += await generateImagesMarkdown();
+    }
   }
 
   if (summary != "") {
@@ -57,13 +78,18 @@ async function writeSummaryClipboard() {
 }
 
 // Helper function to generate markdown for links
-function generateLinksMarkdown() {
+function generateLinksMarkdown(h = "###") {
   let markdown = "";
   document.querySelectorAll(".list-links").forEach((list) => {
-    markdown += `### ${list.getAttribute("data-title")}\n\n`;
+    if (h !== "none") {
+      markdown += `${h} ${list.getAttribute("data-title")}\n\n`;
+    }
     list.childNodes.forEach((li) => {
-      markdown += `- [${li.textContent}](${li.querySelector("a").href}) - ${li.getAttribute("data-created-at")}\n`;
+      markdown += `- [${li.textContent}](${
+        li.querySelector("a").href
+      }) - ${li.getAttribute("data-created-at")}\n`;
     });
+
     markdown += "\n";
   });
   return markdown;
@@ -71,7 +97,7 @@ function generateLinksMarkdown() {
 
 // Helper function to generate markdown for attachments
 async function generateAttachmentsMarkdown() {
-  let markdown = "### Attachments\n\n";
+  let markdown = "";
   await browser.storage.local.get("ticketStorage").then((data) => {
     if (data.ticketStorage && data.ticketStorage.attachments.length > 0) {
       const markdownLinks = data.ticketStorage.attachments
@@ -92,7 +118,7 @@ async function generateAttachmentsMarkdown() {
 
 // Helper function to generate markdown for images
 async function generateImagesMarkdown() {
-  let markdown = "### Images\n\n";
+  let markdown = "";
   await browser.storage.local.get("ticketStorage").then((data) => {
     if (data.ticketStorage && data.ticketStorage.images.length > 0) {
       const markdownImages = data.ticketStorage.images

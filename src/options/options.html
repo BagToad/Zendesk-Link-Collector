@@ -13,17 +13,19 @@
         </div>
         <div id="input-container-summary-options" class="input-container-row">
             <label class="input-label" title="Select the summary options for the markdown summary." for="summary-options">Summary Options:</label>
+            <label for="links-only">Links Only</label>
+            <input type="radio" id="links-only" name="summary-options" value="links-only">
+            <label for="attachments-only">Attachments + Links</label>
             <input type="radio" id="attachments-only" name="summary-options" value="attachments-only">
-            <label for="attachments-only">Attachments Only</label>
+            <label for="images-only">Images + Links</label>
             <input type="radio" id="images-only" name="summary-options" value="images-only">
-            <label for="images-only">Images Only</label>
-            <input type="radio" id="attachments-and-images" name="summary-options" value="attachments-and-images">
-            <label for="attachments-and-images">Attachments and Images</label>
-            <input type="radio" id="custom-template" name="summary-options" value="custom-template">
+            <label for="all">All</label>
+            <input type="radio" id="all" name="summary-options" value="all">
             <label for="custom-template">Custom Template</label>
+            <input type="radio" id="custom-template" name="summary-options" value="custom-template">
         </div>
         <div id="input-container-custom-template" class="input-container-row">
-            <label class="input-label" title="Enter a custom template for the markdown summary. Use placeholders for dynamic content." for="custom-template-text">Custom Template:</label>
+            <label class="input-label" title="Enter a custom template for the markdown summary. Use placeholders for dynamic content. Available placeholders are:&#13&#13{{% links %}}&#13{{% links_h1 %}}&#13{{% links_h2 %}}&#13{{% links_h3 %}}&#13{{% links_h0 %}}&#13{{% attachments %}}&#13{{% images %}}&#13{{% ticket_id %}}&#13{{% ticket_url %}}" for="custom-template-text">Custom Template:</label>
             <textarea id="custom-template-text" placeholder="{{% links %}}\n{{% attachments %}}\n{{% images %}}\n{{% ticket_id %}}\n{{% ticket_url %}}" disabled></textarea>
         </div>
     </div>
