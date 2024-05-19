@@ -301,7 +301,7 @@ const filteredLinks = filters.flatMap((filter) => {
     ticketStorage: {
       links: filteredLinks,
       attachments: attachmentsArr,
-      images: imagesArr, // Store the images array
+      images: imagesArr,
       state: "complete",
       count: numComments,
       ticketID: ticketID,
