@@ -294,7 +294,7 @@ const filteredLinks = filters.flatMap((filter) => {
 
   console.log("filtered links: ", filteredLinks);
   console.log("attachments: ", attachmentsArr);
-  console.log("images: ", imagesArr); // Log the images array
+  console.log("images: ", imagesArr);
 
   // Store the filtered links, attachments, and images for the current ticket in the browser storage.
   browser.storage.local.set({
