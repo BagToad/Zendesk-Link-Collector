@@ -71,6 +71,7 @@ async function filterTicket() {
   // Get the ticket ID from the URL.
   const stringArr = url.href.split("/");
   const ticketID = stringArr[stringArr.length - 1];
+  const ticketURL = `https://${url.hostname}/agent/tickets/${ticketID}`;
 
   // Comment collecting loop section
   // *******************************
@@ -303,6 +304,7 @@ const filteredLinks = filters.flatMap((filter) => {
       state: "complete",
       count: numComments,
       ticketID: ticketID,
+      ticketURL: ticketURL,
       updatedAt: Date.now(),
     },
   });
