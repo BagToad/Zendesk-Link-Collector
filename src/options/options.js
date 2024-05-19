@@ -1,6 +1,3 @@
-// LATER:
-// - Edit?
-
 // Load link patterns into the link patterns table.
 function loadLinkPatterns() {
   const linkTable = document.getElementById("table-link-patterns").tBodies[0];
