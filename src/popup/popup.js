@@ -54,17 +54,27 @@ async function writeSummaryClipboard() {
         summary += "\n";
       }
     });
+    const attachmentsMD = await generateAttachmentsMarkdown();
+    const imagesMD = await generateImagesMarkdown();
     if (summaryOption == "all") {
-      summary += "### Attachments\n\n";
-      summary += await generateAttachmentsMarkdown();
-      summary += "### Images\n\n";
-      summary += await generateImagesMarkdown();
+      if (attachmentsMD) {
+        summary += "### Attachments\n\n";
+        summary += attachmentsMD;
+      }
+      if (imagesMD) {
+        summary += "\n\n### Images\n\n";
+        summary += imagesMD;
+      }
     } else if (summaryOption == "attachments-only") {
-      summary += "### Attachments\n\n";
-      summary += await generateAttachmentsMarkdown();
+      if (attachmentsMD) {
+        summary += "### Attachments\n\n";
+        summary += attachmentsMD;
+      }
     } else if (summaryOption == "images-only") {
-      summary += "### Images\n\n";
-      summary += await generateImagesMarkdown();
+      if (imagesMD) {
+        summary += "### Images\n\n";
+        summary += imagesMD;
+      }
     }
   }
 
