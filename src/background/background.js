@@ -353,7 +353,7 @@ browser.runtime.onInstalled.addListener((data) => {
       optionsGlobal: {
         wrapLists: false,
         backgroundProcessing: false,
-        summmaryOption: "all",
+        summaryOption: "all",
       },
     });
   } else if (reason === "update") {
@@ -376,10 +376,10 @@ browser.runtime.onInstalled.addListener((data) => {
             data.optionsGlobal.backgroundProcessing === undefined
               ? false
               : data.optionsGlobal.backgroundProcessing,
-          summmaryOption:
-            data.optionsGlobal.summmaryOption === undefined
+          summaryOption:
+            data.optionsGlobal.summaryOption === undefined
               ? "all"
-              : data.optionsGlobal.summmaryOption,
+              : data.optionsGlobal.summaryOption,
         },
       });
     });
