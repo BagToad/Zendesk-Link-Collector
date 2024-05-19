@@ -172,6 +172,7 @@ async function filterTicket() {
   });
   const ticketData = await response.json();
   const customFields = ticketData.ticket.custom_fields;
+  const ticketSubject = ticketData.ticket.subject;
 
   // For each custom field, check if it is a string and if it contains a link.
   customFields.forEach((field) => {
@@ -305,6 +306,7 @@ const filteredLinks = filters.flatMap((filter) => {
       count: numComments,
       ticketID: ticketID,
       ticketURL: ticketURL,
+      ticketSubject: ticketSubject,
       updatedAt: Date.now(),
     },
   });

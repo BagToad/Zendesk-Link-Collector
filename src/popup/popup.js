@@ -29,7 +29,11 @@ async function writeSummaryClipboard() {
       .replace("{{% attachments %}}", await generateAttachmentsMarkdown())
       .replace("{{% images %}}", await generateImagesMarkdown())
       .replace("{{% ticket_id %}}", ticketStorage.ticketStorage.ticketID)
-      .replace("{{% ticket_url %}}", ticketStorage.ticketStorage.ticketURL);
+      .replace("{{% ticket_url %}}", ticketStorage.ticketStorage.ticketURL)
+      .replace(
+        "{{% ticket_subject %}}",
+        ticketStorage.ticketStorage.ticketSubject
+      );
   } else {
     // Default summary generation logic
     document.querySelectorAll(".list-links").forEach((list) => {
