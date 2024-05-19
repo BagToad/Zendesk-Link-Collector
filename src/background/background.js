@@ -351,8 +351,7 @@ browser.runtime.onInstalled.addListener((data) => {
       optionsGlobal: {
         wrapLists: false,
         backgroundProcessing: false,
-        includeAttachments: true,
-        includeImages: true,
+        summmaryOption: "all",
       },
     });
   } else if (reason === "update") {
@@ -375,14 +374,10 @@ browser.runtime.onInstalled.addListener((data) => {
             data.optionsGlobal.backgroundProcessing === undefined
               ? false
               : data.optionsGlobal.backgroundProcessing,
-          includeAttachments:
-            data.optionsGlobal.includeAttachments === undefined
-              ? true
-              : data.optionsGlobal.includeAttachments,
-          includeImages:
-            data.optionsGlobal.includeImages === undefined
-              ? true
-              : data.optionsGlobal.includeImages,
+          summmaryOption:
+            data.optionsGlobal.summmaryOption === undefined
+              ? "all"
+              : data.optionsGlobal.summmaryOption,
         },
       });
     });
