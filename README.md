@@ -43,4 +43,6 @@ Click the ⚙️ icon in the top-right corner of the extension popup to open the
 3.  Turn on `Developer mode` by clicking the toggle in the top-right corner.
 4.  Click on the `Load unpacked` button and select the `src` folder in the directory containing the extracted ZIP file.
 
+## Project Strucutre
 
+![Visualization of the codebase](./diagram.svg)
