@@ -45,4 +45,8 @@ Click the ⚙️ icon in the top-right corner of the extension popup to open the
 
 ## Project Strucutre
 
+The project is structured like a typical manifest v3 browser extension, with some slight differences. For example, we have separate browser-specific manifest files and a `makefile` to build for each target browser.
+
+Below is a diagram of the project using [`githubocto/repo-visualizer`](https://github.com/githubocto/repo-visualizer/).
+
 ![Visualization of the codebase](./diagram.svg)
