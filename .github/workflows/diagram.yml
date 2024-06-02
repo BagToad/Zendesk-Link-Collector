@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - dev**
+      - main
 jobs:
   get_data:
     runs-on: ubuntu-latest
