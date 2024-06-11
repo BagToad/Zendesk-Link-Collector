@@ -13,84 +13,138 @@ function scrollToComment(data) {
 // Write the configurable summary to the clipboard.
 async function writeSummaryClipboard() {
   let summary = "";
-  document.querySelectorAll(".list-links").forEach((list) => {
-    // If "all" summary type, add all to summary.
-    if (list.getAttribute("data-summary-type") == "all") {
-      summary += `### ${list.getAttribute("data-title")}\n\n`;
-      list.childNodes.forEach((li) => {
-        summary += `- [${li.textContent}](${
-          li.querySelector("a").href
-        }) - ${li.getAttribute("data-created-at")}\n`;
-      });
-      summary += "\n";
-      // If "latest" summary type, add only the latest to summary.
-    } else if (list.getAttribute("data-summary-type") == "latest") {
-      summary += `### ${list.getAttribute("data-title")} (Latest)\n\n`;
-      const latest = list.childNodes[list.childNodes.length - 1];
-      summary += `- [${latest.textContent}](${
-        latest.querySelector("a").href
-      }) - ${latest.getAttribute("data-created-at")}\n`;
-      summary += "\n";
+  // Retrieve global options for summary customization
+  const options = await browser.storage.sync.get("optionsGlobal");
+  const summaryOption = options.optionsGlobal.summaryOption;
+  const customTemplate = options.optionsGlobal?.customTemplate;
+  const ticketStorage = await browser.storage.local.get("ticketStorage");
+  // If a custom template is selected, use it to generate the summary
+  if (summaryOption === "custom-template") {
+    summary = customTemplate
+      .replace("{{% links %}}", generateLinksMarkdown("###"))
+      .replace("{{% links_h1 %}}", generateLinksMarkdown("#"))
+      .replace("{{% links_h2 %}}", generateLinksMarkdown("##"))
+      .replace("{{% links_h3 %}}", generateLinksMarkdown("###"))
+      .replace("{{% links_h0 %}}", generateLinksMarkdown("none"))
+      .replace("{{% attachments %}}", await generateAttachmentsMarkdown())
+      .replace("{{% images %}}", await generateImagesMarkdown())
+      .replace("{{% ticket_id %}}", ticketStorage.ticketStorage.ticketID)
+      .replace("{{% ticket_url %}}", ticketStorage.ticketStorage.ticketURL)
+      .replace(
+        "{{% ticket_subject %}}",
+        ticketStorage.ticketStorage.ticketSubject
+      );
+  } else {
+    // Default summary generation logic
+    document.querySelectorAll(".list-links").forEach((list) => {
+      if (list.getAttribute("data-summary-type") == "all") {
+        summary += `### ${list.getAttribute("data-title")}\n\n`;
+        list.childNodes.forEach((li) => {
+          summary += `- [${li.textContent}](${
+            li.querySelector("a").href
+          }) - ${li.getAttribute("data-created-at")}\n`;
+        });
+        summary += "\n";
+      } else if (list.getAttribute("data-summary-type") == "latest") {
+        summary += `### ${list.getAttribute("data-title")} (Latest)\n\n`;
+        const latest = list.childNodes[list.childNodes.length - 1];
+        summary += `- [${latest.textContent}](${
+          latest.querySelector("a").href
+        }) - ${latest.getAttribute("data-created-at")}\n`;
+        summary += "\n";
+      }
+    });
+    const attachmentsMD = await generateAttachmentsMarkdown();
+    const imagesMD = await generateImagesMarkdown();
+    if (summaryOption == "all") {
+      if (attachmentsMD) {
+        summary += "### Attachments\n\n";
+        summary += attachmentsMD;
+      }
+      if (imagesMD) {
+        summary += "\n\n### Images\n\n";
+        summary += imagesMD;
+      }
+    } else if (summaryOption == "attachments-only") {
+      if (attachmentsMD) {
+        summary += "### Attachments\n\n";
+        summary += attachmentsMD;
+      }
+    } else if (summaryOption == "images-only") {
+      if (imagesMD) {
+        summary += "### Images\n\n";
+        summary += imagesMD;
+      }
     }
-  });
-
-  // Include attachments and images in the markdown summary if the respective global options are enabled.
-  // Fallback to enabled if the options are not set or null.
-  await browser.storage.sync.get("optionsGlobal").then(async (data) => {
-    const includeAttachments = data.optionsGlobal?.includeAttachments ?? true;
-    const includeImages = data.optionsGlobal?.includeImages ?? true;
-
-    console.log(includeAttachments, includeImages);
-
-    if (includeAttachments) {
-      summary += "### Attachments\n\n";
-      await browser.storage.local.get("ticketStorage").then(async (data) => {
-        if (data.ticketStorage && data.ticketStorage.attachments.length > 0) {
-          const markdownLinks = data.ticketStorage.attachments
-            .map((attachment) =>
-              attachment.attachments
-                .map(
-                  (file) =>
-                    `[${file.file_name}](${file.content_url}) - ${attachment.created_at}`
-                )
-                .join("\n")
-            )
-            .join("\n\n");
-          summary += markdownLinks;
-        }
-      });
-      summary += "\n";
-    }
-
-    if (includeImages) {
-      summary += "### Images\n\n";
-      await browser.storage.local.get("ticketStorage").then((data) => {
-        if (data.ticketStorage && data.ticketStorage.images.length > 0) {
-          const markdownImages = data.ticketStorage.images
-            .map(
-              (image) =>
-                `_${image.fileName}_ - ${image.createdAt}\n\n![${image.fileName}](${image.url})`
-            )
-            .join("\n\n");
-          summary += markdownImages;
-        }
-      });
-      summary += "\n";
-    }
-  });
+  }
 
   if (summary != "") {
     navigator.clipboard.writeText(summary);
     document.getElementById("summary-copy").classList.add("hidden");
     document.getElementById("summary-check").classList.remove("hidden");
     document.getElementById("summary-text").textContent = "Copied!";
-    // Hide the checkmark after 2 seconds.
     setTimeout(() => {
       document.getElementById("summary-check").classList.add("hidden");
       document.getElementById("summary-copy").classList.remove("hidden");
       document.getElementById("summary-text").textContent = "Summary";
     }, 2000);
   }
+}
+
+// Helper function to generate markdown for links
+function generateLinksMarkdown(h = "###") {
+  let markdown = "";
+  document.querySelectorAll(".list-links").forEach((list) => {
+    if (h !== "none") {
+      markdown += `${h} ${list.getAttribute("data-title")}\n\n`;
+    }
+    list.childNodes.forEach((li) => {
+      markdown += `- [${li.textContent}](${
+        li.querySelector("a").href
+      }) - ${li.getAttribute("data-created-at")}\n`;
+    });
+
+    markdown += "\n";
+  });
+  return markdown;
+}
+
+// Helper function to generate markdown for attachments
+async function generateAttachmentsMarkdown() {
+  let markdown = "";
+  await browser.storage.local.get("ticketStorage").then((data) => {
+    if (data.ticketStorage && data.ticketStorage.attachments.length > 0) {
+      const markdownLinks = data.ticketStorage.attachments
+        .map((attachment) =>
+          attachment.attachments
+            .map(
+              (file) =>
+                `[${file.file_name}](${file.content_url}) - ${attachment.created_at}`
+            )
+            .join("\n")
+        )
+        .join("\n\n");
+      markdown += markdownLinks;
+    }
+  });
+  return markdown;
+}
+
+// Helper function to generate markdown for images
+async function generateImagesMarkdown() {
+  let markdown = "";
+  await browser.storage.local.get("ticketStorage").then((data) => {
+    if (data.ticketStorage && data.ticketStorage.images.length > 0) {
+      const markdownImages = data.ticketStorage.images
+        .map(
+          (image) =>
+            `_${image.fileName}_ - ${image.createdAt}\n\n![${image.fileName}](${image.url})`
+        )
+        .join("\n\n");
+      markdown += markdownImages;
+    }
+  });
+  return markdown;
 }
 
 //Write a link to the clipboard in markdown format.
