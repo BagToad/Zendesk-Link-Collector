@@ -17,7 +17,7 @@
   },
   {
     "id": "9f6bc302-e46a-4621-a55d-fc4af232984d",
-    "pattern": "https:\\/\\/.*\\.zendesk\\.com\\/agent\\/tickets\\/[0-9]+",
+    "pattern": "https://[A-Za-z0-9]+\\.zendesk\\.com/agent/tickets/[0-9]+",
     "showDate": false,
     "showParent": false,
     "summaryType": "all",
