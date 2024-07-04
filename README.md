@@ -14,6 +14,8 @@ You can also manually [install it from the source code](#chrome-manual-installat
 ## Configuration
 Access the configuration page to set link regex patterns you would like to aggregate from tickets.
 
+You can download [a sample JSON file](./samples/link-patterns.json) as a starter. You can import it from the configuration page.
+
 ### Google Chrome and Firefox
 
 Click the ⚙️ icon in the top-right corner of the extension popup to open the configuration page.
