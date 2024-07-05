@@ -344,7 +344,7 @@ browser.runtime.onInstalled.addListener((data) => {
   const previousVersion = data.previousVersion;
   if (reason === "install") {
     console.log("Zendesk Link Collector - installed");
-    // Set the default options.
+    // Set the default options on install.
     browser.storage.sync.set({
       optionsGlobal: {
         wrapLists: false,
@@ -352,6 +352,42 @@ browser.runtime.onInstalled.addListener((data) => {
         includeAttachments: true,
         includeImages: true,
       },
+    });
+
+    // Set the default patterns on install.
+    // Check if patterns from a previous installation exist before overwriting them.
+    browser.storage.sync.get("options").then((data) => {
+      if (data.options == undefined || data.options.length <= 0) {
+        browser.storage.sync.set({
+          options: [
+            {
+              id: "b19a712c-dd34-491f-a43a-c0483f44f045",
+              title: "GitHub Docs",
+              pattern: "https:\\/\\/docs\\.github\\.com\\/",
+              showParent: false,
+              summaryType: "none",
+              showDate: false,
+            },
+            {
+              id: "4adcb721-769c-48cd-b1b4-21bc76addad4",
+              title: "GitHub Discussions",
+              pattern:
+                "https:\\/\\/github\\.com\\/orgs\\/community\\/discussions",
+              showParent: false,
+              summaryType: "all",
+              showDate: true,
+            },
+            {
+              id: "9f6bc302-e46a-4621-a55d-fc4af232984d",
+              title: "Zendesk Tickets",
+              pattern: "https://[A-Za-z0-9]+.zendesk.com/agent/tickets/[0-9]+",
+              showParent: false,
+              summaryType: "all",
+              showDate: false,
+            },
+          ],
+        });
+      }
     });
   } else if (reason === "update") {
     console.log(
