@@ -72,18 +72,28 @@ button:disabled:hover {
     margin-left: 0;
 }
 
-.input-container-row {
-    margin-bottom: 15px;
+.input-container-row input[type="radio"] {
+    cursor: pointer;
 }
 
 .input-container-row {
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin-bottom: 15px;
 }
 
 .input-container-row * {
     margin: 0 5px;
+}
+
+#custom-template-text {
+    width: 576px;
+    height: 249px;
+}
+
+#custom-template-text:disabled {
+    cursor: not-allowed;
 }
 
 #link-patterns-error {

@@ -71,6 +71,7 @@ async function filterTicket() {
   // Get the ticket ID from the URL.
   const stringArr = url.href.split("/");
   const ticketID = stringArr[stringArr.length - 1];
+  const ticketURL = `https://${url.hostname}/agent/tickets/${ticketID}`;
 
   // Comment collecting loop section
   // *******************************
@@ -171,6 +172,7 @@ async function filterTicket() {
   });
   const ticketData = await response.json();
   const customFields = ticketData.ticket.custom_fields;
+  const ticketSubject = ticketData.ticket.subject; // Get the ticket subject for the custom summary template.
 
   // For each custom field, check if it is a string and if it contains a link.
   customFields.forEach((field) => {
@@ -292,17 +294,19 @@ const filteredLinks = filters.flatMap((filter) => {
 
   console.log("filtered links: ", filteredLinks);
   console.log("attachments: ", attachmentsArr);
-  console.log("images: ", imagesArr); // Log the images array
+  console.log("images: ", imagesArr);
 
   // Store the filtered links, attachments, and images for the current ticket in the browser storage.
   browser.storage.local.set({
     ticketStorage: {
       links: filteredLinks,
       attachments: attachmentsArr,
-      images: imagesArr, // Store the images array
+      images: imagesArr,
       state: "complete",
       count: numComments,
       ticketID: ticketID,
+      ticketURL: ticketURL,
+      ticketSubject: ticketSubject,
       updatedAt: Date.now(),
     },
   });
@@ -349,8 +353,7 @@ browser.runtime.onInstalled.addListener((data) => {
       optionsGlobal: {
         wrapLists: false,
         backgroundProcessing: false,
-        includeAttachments: true,
-        includeImages: true,
+        summaryOption: "all",
       },
     });
 
@@ -409,14 +412,14 @@ browser.runtime.onInstalled.addListener((data) => {
             data.optionsGlobal.backgroundProcessing === undefined
               ? false
               : data.optionsGlobal.backgroundProcessing,
-          includeAttachments:
-            data.optionsGlobal.includeAttachments === undefined
-              ? true
-              : data.optionsGlobal.includeAttachments,
-          includeImages:
-            data.optionsGlobal.includeImages === undefined
-              ? true
-              : data.optionsGlobal.includeImages,
+          summaryOption:
+            data.optionsGlobal.summaryOption === undefined
+              ? "all"
+              : data.optionsGlobal.summaryOption,
+          customTemplate:
+            data.optionsGlobal.customTemplate === undefined
+              ? ""
+              : data.optionsGlobal.customTemplate,
         },
       });
     });
