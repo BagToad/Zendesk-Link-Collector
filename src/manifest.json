@@ -10,7 +10,7 @@
     {
       "matches": ["https://*.zendesk.com/*"],
       "run_at": "document_start",
-      "js": ["lib/browser-polyfill.min.js", "content-scripts/contentscript.js"]
+      "js": ["lib/browser-shim.js", "content-scripts/contentscript.js"]
     }
   ],
   "icons": {

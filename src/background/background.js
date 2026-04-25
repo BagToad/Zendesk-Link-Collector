@@ -1,6 +1,6 @@
-// "importScripts" is only supported in chrome. Firefox loads the polyfill from the manifest.json file.
+// "importScripts" is only supported in chrome. Firefox loads the shim from the manifest.json file.
 if (typeof importScripts === "function") {
-  importScripts("../lib/browser-polyfill.min.js");
+  importScripts("../lib/browser-shim.js");
 }
 
 // Sends a message to the content script to execute a fetch.
