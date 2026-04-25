@@ -86,12 +86,16 @@ function loadLinkPatterns() {
       const tdReorder = document.createElement("td");
       const buttonReorderUp = document.createElement("button");
       buttonReorderUp.setAttribute("class", "button-reorder-up");
-      buttonReorderUp.textContent = "Up";
+      buttonReorderUp.textContent = "▲";
+      buttonReorderUp.setAttribute("title", "Move up");
+      buttonReorderUp.setAttribute("aria-label", "Move up");
       tdReorder.appendChild(buttonReorderUp);
       // Create down button.
       const buttonReorderDown = document.createElement("button");
       buttonReorderDown.setAttribute("class", "button-reorder-down");
-      buttonReorderDown.textContent = "Down";
+      buttonReorderDown.textContent = "▼";
+      buttonReorderDown.setAttribute("title", "Move down");
+      buttonReorderDown.setAttribute("aria-label", "Move down");
       tdReorder.appendChild(buttonReorderDown);
       nodes.push(tdReorder);
 

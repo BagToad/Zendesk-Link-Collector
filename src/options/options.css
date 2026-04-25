@@ -119,3 +119,11 @@ table#table-link-patterns th {
 table tr.editing {
     background-color: rgb(179 0 0 / 18%);
 }
+/* Focus-visible outlines for keyboard navigation. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid rgb(98, 163, 75);
+    outline-offset: 2px;
+}

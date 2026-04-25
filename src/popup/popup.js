@@ -194,6 +194,9 @@ async function displayLinks(linksBundle) {
         iScroll.setAttribute("commentID", link.commentID);
         iScroll.setAttribute("auditID", link.auditID);
         iScroll.setAttribute("title", "Scroll to link's source comment.");
+        iScroll.setAttribute("role", "button");
+        iScroll.setAttribute("tabindex", "0");
+        iScroll.setAttribute("aria-label", "Scroll to source comment");
         li.appendChild(iScroll);
       }
 
@@ -201,6 +204,9 @@ async function displayLinks(linksBundle) {
       const iCopy = document.createElement("i");
       iCopy.setAttribute("class", "icon-invert icon-li icon-copy");
       iCopy.setAttribute("title", "Copy link to markdown.");
+      iCopy.setAttribute("role", "button");
+      iCopy.setAttribute("tabindex", "0");
+      iCopy.setAttribute("aria-label", "Copy link as markdown");
       li.appendChild(iCopy);
 
       // Add link content or parent context to list item.
@@ -279,11 +285,21 @@ async function displayLinks(linksBundle) {
           "title",
           `Click to copy time in UTC\n\n${link.createdAt}`
         );
+        spanDate.setAttribute("role", "button");
+        spanDate.setAttribute("tabindex", "0");
+        spanDate.setAttribute("aria-label", `Copy date ${spanDate.textContent}`);
         li.appendChild(spaceNode);
         li.appendChild(separator);
         li.appendChild(spanDate);
         spanDate.addEventListener("click", () => {
           navigator.clipboard.writeText(link.createdAt);
+        });
+        // Keyboard activation: Enter or Space copies the timestamp.
+        spanDate.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            navigator.clipboard.writeText(link.createdAt);
+          }
         });
       }
 
@@ -301,11 +317,19 @@ async function displayLinks(linksBundle) {
     .getElementById("list-container-links")
     .querySelectorAll("i.icon-search")
     .forEach((i) => {
-      i.addEventListener("click", () => {
+      const handler = () => {
         scrollToComment({
           commentID: i.getAttribute("commentID"),
           auditID: i.getAttribute("auditID"),
         });
+      };
+      i.addEventListener("click", handler);
+      // Keyboard activation for the focusable icon button.
+      i.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handler();
+        }
       });
     });
 
@@ -314,10 +338,18 @@ async function displayLinks(linksBundle) {
     .getElementById("list-container-links")
     .querySelectorAll("i.icon-copy")
     .forEach((i) => {
-      i.addEventListener("click", () => {
+      const handler = () => {
         const href = i.parentElement.querySelector("a").href;
         const text = i.parentElement.textContent;
         writeLinkClipboard(text, href);
+      };
+      i.addEventListener("click", handler);
+      // Keyboard activation for the focusable icon button.
+      i.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handler();
+        }
       });
     });
 
