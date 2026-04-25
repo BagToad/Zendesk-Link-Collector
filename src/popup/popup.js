@@ -627,14 +627,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Otherwise, the background script will have the new ticket already and we can directly start.
   browser.storage.sync.get("optionsGlobal").then((data) => {
     if (data.optionsGlobal.backgroundProcessing) {
-      // Show that background processing is enabled.
-      // Directly load from ticket storage.
-      document.getElementById("background-processing").checked = true;
+      // Background processing is enabled — load directly from ticket storage.
       start();
     } else {
-      // Show that background processing is disabled.
-      // Send refresh request to background script.
-      document.getElementById("background-processing").checked = false;
+      // Background processing is disabled — request a refresh to fetch the current ticket.
       refresh();
     }
   });
@@ -657,38 +653,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("button-summary").addEventListener("click", () => {
     writeSummaryClipboard();
   });
-
-  // Event listener to toggle background processing.
-  document
-    .getElementById("button-background-processing")
-    .addEventListener("click", (event) => {
-      const checkbox = document.getElementById("background-processing");
-      browser.storage.sync.get("optionsGlobal").then((data) => {
-        // If run in background is disabled, then enable it.
-        if (!data.optionsGlobal.backgroundProcessing) {
-          console.log("Enable background processing.");
-          data.optionsGlobal.backgroundProcessing = true;
-          browser.storage.sync
-            .set({
-              optionsGlobal: data.optionsGlobal,
-            })
-            .then(() => {
-              checkbox.checked = true;
-            });
-          return;
-        }
-        // If run in background is enabled, then disable it.
-        console.log("Disable background processing.");
-        data.optionsGlobal.backgroundProcessing = false;
-        browser.storage.sync
-          .set({
-            optionsGlobal: data.optionsGlobal,
-          })
-          .then(() => {
-            checkbox.checked = false;
-          });
-      });
-    });
 
   // Add event listener to the refresh button.
   document.getElementById("button-refresh").addEventListener("click", () => {

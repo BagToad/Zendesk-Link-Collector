@@ -435,6 +435,9 @@ function saveGlobalOptions() {
 
     data.optionsGlobal.wrapLists =
       document.getElementById("wrap-lists").checked;
+    data.optionsGlobal.backgroundProcessing = document.getElementById(
+      "background-processing"
+    ).checked;
     data.optionsGlobal.includeAttachments = document.getElementById(
       "include-attachments"
     ).checked;
@@ -459,6 +462,8 @@ function loadGlobalOptions() {
     }
     document.getElementById("wrap-lists").checked =
       data.optionsGlobal.wrapLists;
+    document.getElementById("background-processing").checked =
+      data.optionsGlobal.backgroundProcessing || false;
     document.getElementById("include-attachments").checked =
       data.optionsGlobal.includeAttachments;
     document.getElementById("include-images").checked =
