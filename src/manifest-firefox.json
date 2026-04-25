@@ -4,13 +4,13 @@
   "version": "1.4.0",
   "description": "Summarize links and attachments",
   "background": {
-    "scripts": ["lib/browser-polyfill.min.js", "background/background.js"]
+    "scripts": ["lib/browser-shim.js", "background/background.js"]
   },
   "content_scripts": [
     {
       "matches": ["https://*.zendesk.com/*"],
       "run_at": "document_start",
-      "js": ["lib/browser-polyfill.min.js", "content-scripts/contentscript.js"]
+      "js": ["lib/browser-shim.js", "content-scripts/contentscript.js"]
     }
   ],
   "icons": {
