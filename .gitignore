@@ -1,7 +1,8 @@
 # ZLC Specific
 build
 
-# Dependencies
+# Dependencies (installed locally if running ESLint by hand;
+# CI installs inline so the repo never tracks them)
 node_modules
 
 # General

@@ -1,0 +1,26 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+
+      # Install lint dependencies inline rather than committing package.json.
+      # This keeps the repository free of npm artifacts while still allowing
+      # CI to enforce code quality. Versions match what eslint.config.mjs needs.
+      - name: Install ESLint
+        run: npm install --no-save --no-package-lock eslint@^10 @eslint/js@^10 globals@^17
+
+      - name: Run ESLint
+        run: npx eslint src/
