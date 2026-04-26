@@ -68,9 +68,12 @@ async function filterTicket() {
   // Get make a real URL from the text URL.
   const url = new URL(tab.url);
 
-  // Get the ticket ID from the URL.
-  const stringArr = url.href.split("/");
-  const ticketID = stringArr[stringArr.length - 1];
+  // Get the ticket ID from the URL. Use a regex on pathname so trailing
+  // slashes, query strings, and fragments don't poison the extracted ID
+  // (`split("/").pop()` on `…/tickets/123/` would yield `""`, which then
+  // makes the self-reference filter below match every ticket link).
+  const ticketIDMatch = url.pathname.match(/\/tickets\/(\d+)/);
+  const ticketID = ticketIDMatch ? ticketIDMatch[1] : "";
 
   // Comment collecting loop section
   // *******************************
@@ -218,6 +221,25 @@ async function filterTicket() {
     const filteredLinksArr = [];
     linksArr.forEach((link) => {
       const re = new RegExp(filter.pattern);
+      // Skip links that point back to the currently open ticket — these
+      // self-references add noise without value. Use exact path comparison
+      // (parsed URL) so a substring match on `/tickets/123` doesn't also
+      // hide unrelated tickets like `/tickets/1234`. If we couldn't extract
+      // a ticket ID, skip the filter to avoid masking every ticket link.
+      if (ticketID) {
+        try {
+          const linkUrl = new URL(link.href);
+          if (
+            linkUrl.hostname === url.hostname &&
+            linkUrl.pathname.replace(/\/$/, "") ===
+              `/agent/tickets/${ticketID}`
+          ) {
+            return;
+          }
+        } catch (_e) {
+          // Malformed link.href — fall through and let the regex decide.
+        }
+      }
       if (re.test(link.href)) {
         const link2Push = Object.assign({}, link);
         link2Push.summaryType =

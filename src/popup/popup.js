@@ -253,7 +253,10 @@ async function displayLinks(linksBundle) {
             "data-created-at"
           )}\nLink source: ${li.getAttribute("data-source")}`
         );
-        a.textContent = link.text;
+        // Fall back to the URL when anchor text is empty or whitespace-only
+        // so the entry stays visible. Zendesk ticket links commonly have no
+        // inner text; some anchors carry only whitespace from formatting.
+        a.textContent = link.text?.trim() || link.href;
         li.appendChild(a);
       }
 

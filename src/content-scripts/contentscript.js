@@ -69,11 +69,33 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     const doc = parser.parseFromString(request.htmlText, "text/html");
     const links = doc.querySelectorAll(`a`);
     const linksArr = [];
+    // Pattern that identifies a Zendesk agent ticket URL. Hash-stripping is
+    // safe for these (the fragment is unreliable across views) but would
+    // collapse meaningful anchors elsewhere (GitHub comments, doc sections,
+    // Jira/Slack permalinks), so we scope it explicitly.
+    const ZENDESK_TICKET_PATH = /^\/agent\/tickets\/\d+\/?$/;
     links.forEach((link) => {
+      // Anchors without href, or with malformed href, throw on `new URL(...)`.
+      // A single bad anchor would propagate out of forEach and abort the
+      // entire response — every subsequent link silently lost. Guard so the
+      // bad anchor is dropped and the rest of the parse continues.
+      let cleanHref;
+      try {
+        const url = new URL(link.href);
+        if (
+          url.hostname === location.hostname &&
+          ZENDESK_TICKET_PATH.test(url.pathname)
+        ) {
+          url.hash = "";
+        }
+        cleanHref = url.toString();
+      } catch (_e) {
+        return;
+      }
       linksArr.push({
         parent_text: link.parentElement.innerHTML,
         text: link.innerText,
-        href: link.href,
+        href: cleanHref,
       });
     });
     sendResponse(linksArr);
