@@ -418,8 +418,8 @@ async function displayImages(imagesArr) {
   // Get images container
   const imagesList = document.getElementById("list-container-images");
 
-  // Clear the images container of previous content
-  imagesList.innerHTML = "";
+  // Clear previous image lists without removing the status message divs.
+  imagesList.querySelectorAll("ul.list-images").forEach((el) => el.remove());
 
   const ul = document.createElement("ul");
   ul.setAttribute("class", "list-images");
@@ -547,6 +547,115 @@ browser.storage.sync.get("optionsGlobal").then((data) => {
   optionsGlobal.backgroundProcessing = data.optionsGlobal.backgroundProcessing;
 });
 
+// Filter list items by a search query using case-insensitive substring matching.
+// Shows/hides items based on whether their searchable text contains the query.
+// For the Links tab, also hides headers (h3) when all items in the following list are hidden.
+function filterLinks(query) {
+  const container = document.getElementById("list-container-links");
+  const lowerQuery = query.toLowerCase();
+  let anyVisible = false;
+
+  // Iterate each header + list pair.
+  container.querySelectorAll("ul.list-links").forEach((ul) => {
+    let groupVisible = false;
+    ul.querySelectorAll("li.list-item-links").forEach((li) => {
+      const matches = lowerQuery === "" || li.textContent.toLowerCase().includes(lowerQuery);
+      li.style.display = matches ? "" : "none";
+      if (matches) groupVisible = true;
+    });
+
+    // Hide the associated header if no items in this group matched.
+    const header = ul.previousElementSibling;
+    if (header && header.tagName === "H3") {
+      header.style.display = groupVisible ? "" : "none";
+    }
+    ul.style.display = groupVisible ? "" : "none";
+    if (groupVisible) anyVisible = true;
+  });
+
+  // Show "no matches" message if query is active but nothing matched.
+  // Don't show it if the dataset itself is empty (not-found-container is visible).
+  const noResults = document.getElementById("no-search-results-links");
+  const dataEmpty = !document.getElementById("not-found-container-links").classList.contains("hidden");
+  noResults.classList.toggle("hidden", dataEmpty || lowerQuery === "" || anyVisible);
+}
+
+function filterAttachments(query) {
+  const container = document.getElementById("list-container-attachments");
+  const lowerQuery = query.toLowerCase();
+  let anyVisible = false;
+
+  // Filter individual attachment items within each comment group.
+  // Hide the parent comment group if none of its child attachments match.
+  // Use `:scope >` to avoid matching nested items at the wrong level,
+  // since both levels share the same ul/li class names.
+  const topUl = container.querySelector(":scope > ul.list-attachments");
+  if (!topUl) return;
+  topUl.querySelectorAll(":scope > li.list-item-attachments").forEach((commentGroup) => {
+    let groupVisible = false;
+    // Check each nested attachment file item within this comment group.
+    const fileItems = commentGroup.querySelectorAll(":scope > ul.list-attachments > li.list-item-attachments");
+    fileItems.forEach((fileLi) => {
+      const matches = lowerQuery === "" || fileLi.textContent.toLowerCase().includes(lowerQuery);
+      fileLi.style.display = matches ? "" : "none";
+      if (matches) groupVisible = true;
+    });
+
+    // Also match on the comment date text in the parent group.
+    if (!groupVisible && lowerQuery !== "") {
+      // Check if the comment group's own direct text (date) matches.
+      const ownText = Array.from(commentGroup.childNodes)
+        .filter((n) => n.nodeType === Node.TEXT_NODE || n.tagName === "I")
+        .map((n) => n.textContent)
+        .join("")
+        .toLowerCase();
+      if (ownText.includes(lowerQuery)) {
+        // Date matched — show all file items in this group.
+        fileItems.forEach((fileLi) => {
+          fileLi.style.display = "";
+        });
+        groupVisible = true;
+      }
+    }
+
+    commentGroup.style.display = groupVisible ? "" : "none";
+    if (groupVisible) anyVisible = true;
+  });
+
+  const noResults = document.getElementById("no-search-results-attachments");
+  const dataEmpty = !document.getElementById("not-found-container-attachments").classList.contains("hidden");
+  noResults.classList.toggle("hidden", dataEmpty || lowerQuery === "" || anyVisible);
+}
+
+function filterImages(query) {
+  const container = document.getElementById("list-container-images");
+  const lowerQuery = query.toLowerCase();
+  let anyVisible = false;
+
+  // Filter images by their file name (stored in the img alt attribute).
+  container.querySelectorAll("li.list-item-images").forEach((li) => {
+    const img = li.querySelector("img");
+    const fileName = img ? img.alt.toLowerCase() : "";
+    const matches = lowerQuery === "" || fileName.includes(lowerQuery);
+    li.style.display = matches ? "" : "none";
+    if (matches) anyVisible = true;
+  });
+
+  const noResults = document.getElementById("no-search-results-images");
+  const dataEmpty = !document.getElementById("not-found-container-images").classList.contains("hidden");
+  noResults.classList.toggle("hidden", dataEmpty || lowerQuery === "" || anyVisible);
+}
+
+// Re-apply all active search filters. Called after content re-renders (e.g., refresh).
+function reapplySearchFilters() {
+  const linksInput = document.getElementById("search-links");
+  const attachmentsInput = document.getElementById("search-attachments");
+  const imagesInput = document.getElementById("search-images");
+  if (linksInput.value) filterLinks(linksInput.value);
+  if (attachmentsInput.value) filterAttachments(attachmentsInput.value);
+  if (imagesInput.value) filterImages(imagesInput.value);
+}
+
 // Start the popup.
 function start() {
   browser.storage.local.get("ticketStorage").then((data) => {
@@ -578,6 +687,9 @@ function start() {
 
     document.getElementById("loader").classList.remove("loading");
     document.getElementById("list-container-links").classList.remove("hidden");
+
+    // Re-apply any active search filters after content re-renders.
+    reapplySearchFilters();
   });
 }
 
@@ -648,10 +760,45 @@ document.addEventListener("DOMContentLoaded", () => {
       browser.runtime.openOptionsPage();
     });
 
-  // Event listener to open options when options button is clicked.
-  document.getElementById("button-options").addEventListener("click", () => {
-    browser.runtime.openOptionsPage();
+  // Event listener to toggle the gear dropdown when the gear icon is clicked.
+  const gearDropdown = document.getElementById("gear-dropdown");
+  document.getElementById("button-options").addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    gearDropdown.classList.toggle("open");
   });
+
+  // Close the gear dropdown when clicking outside of it.
+  document.addEventListener("click", (e) => {
+    if (!gearDropdown.contains(e.target)) {
+      gearDropdown.classList.remove("open");
+    }
+  });
+
+  // Close the gear dropdown on Escape key.
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      gearDropdown.classList.remove("open");
+    }
+  });
+
+  // Open the options page from within the gear dropdown.
+  document.getElementById("gear-options").addEventListener("click", (e) => {
+    e.preventDefault();
+    browser.runtime.openOptionsPage();
+    window.close();
+  });
+
+  // Dynamically retrieve the version number from manifest.json and link the
+  // gear-dropdown version item to the latest GitHub release.
+  const manifestData = browser.runtime.getManifest();
+  const version = manifestData.version;
+  const gearVersion = document.getElementById("gear-version");
+  gearVersion.textContent = `v${version}`;
+  gearVersion.setAttribute(
+    "href",
+    `https://github.com/bagtoad/zendesk-link-collector/releases/latest`
+  );
 
   // Event listener to copy summary to clipboard when summary button is clicked.
   document.getElementById("button-summary").addEventListener("click", () => {
@@ -776,16 +923,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Dynamically retrieve the version number from manifest.json and insert it into the "What's new?" button text.
-  const manifestData = browser.runtime.getManifest();
-  const version = manifestData.version;
-  const whatsNewButton = document.getElementById("button-whats-new");
-  whatsNewButton.textContent = `v${version}`;
-  whatsNewButton.setAttribute(
-    "href",
-    `https://github.com/bagtoad/zendesk-link-collector/releases/tag/v${version}`
-  );
-
   // Add event listeners for the new buttons to copy attachments and images in markdown format
   document
     .getElementById("button-copy-attachments-md")
@@ -793,4 +930,35 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .getElementById("button-copy-images-md")
     .addEventListener("click", copyImagesMarkdown);
+
+  // Live search: filter results as the user types.
+  document.getElementById("search-links").addEventListener("input", (e) => {
+    filterLinks(e.target.value);
+  });
+  document.getElementById("search-attachments").addEventListener("input", (e) => {
+    filterAttachments(e.target.value);
+  });
+  document.getElementById("search-images").addEventListener("input", (e) => {
+    filterImages(e.target.value);
+  });
+
+  // Clear search buttons: reset the input and show all items.
+  document.getElementById("clear-search-links").addEventListener("click", () => {
+    const input = document.getElementById("search-links");
+    input.value = "";
+    filterLinks("");
+    input.focus();
+  });
+  document.getElementById("clear-search-attachments").addEventListener("click", () => {
+    const input = document.getElementById("search-attachments");
+    input.value = "";
+    filterAttachments("");
+    input.focus();
+  });
+  document.getElementById("clear-search-images").addEventListener("click", () => {
+    const input = document.getElementById("search-images");
+    input.value = "";
+    filterImages("");
+    input.focus();
+  });
 });

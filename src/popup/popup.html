@@ -10,9 +10,15 @@
         <img class="icon icon-invert" src="../icons/home.svg" width="15px" height="15px" style="margin-right: 3px"><span>Links</span></a>
       <a href="#" class="button button-fill" id="button-attachments">Attachments</a>
       <a href="#" class="button button-fill" id="button-images">Images</a>
-      <a href="#" class="button button-fill" id="button-options">
-        <img class="icon icon-invert" src="../icons/gear.svg" width="15px" height="15px">
-      </a>
+      <div class="gear-container">
+        <a href="#" class="button button-fill" id="button-options">
+          <img class="icon icon-invert" src="../icons/gear.svg" alt="" width="15px" height="15px">
+        </a>
+        <div id="gear-dropdown" class="gear-dropdown">
+          <a href="#" class="gear-dropdown-item" id="gear-options">Options</a>
+          <a href="#" class="gear-dropdown-item gear-version" id="gear-version" target="_blank"></a>
+        </div>
+      </div>
     </div>
     <div class="row row-sub row-links selected">
       <a href="#" title="Copy a configurable summary to clipboard in markdown. See the options page for configuration options." class="button button-sub" id="button-summary">
@@ -28,7 +34,10 @@
         <img class="icon-button" id="refresh" src="../icons/loader.svg" width="15px" height="15px">
         <span for="refresh">Refresh</span>
       </a>
-      <a href="#" class="button button-sub" id="button-whats-new" target="_blank"></a>
+      <div class="search-group">
+        <input type="text" class="search-input" id="search-links" placeholder="Search by link text...">
+        <button class="search-clear-btn" id="clear-search-links" title="Clear search">⌫</button>
+      </div>
     </div>
     <div class="row row-sub row-attachments">
       <a href="#" class="button button-sub" id="button-copy-attachments-md">
@@ -36,6 +45,10 @@
         <img class="icon-button icon-invert" id="attachments-copy" src="../icons/copy.svg" width="15px" height="15px">
         <span id="attachments-text">All Attachments</span>
       </a>
+      <div class="search-group">
+        <input type="text" class="search-input" id="search-attachments" placeholder="Search by file name...">
+        <button class="search-clear-btn" id="clear-search-attachments" title="Clear search">⌫</button>
+      </div>
     </div>
     <div class="row row-sub row-images">
       <a href="#" class="button button-sub" id="button-copy-images-md">
@@ -43,6 +56,10 @@
         <img class="icon-button icon-invert" id="images-copy" src="../icons/copy.svg" width="15px" height="15px">
         <span id="images-text">All Images</span>
       </a>
+      <div class="search-group">
+        <input type="text" class="search-input" id="search-images" placeholder="Search by file name...">
+        <button class="search-clear-btn" id="clear-search-images" title="Clear search">⌫</button>
+      </div>
     </div>
     <div id="container" style="display: flex">
     <div id="loader" class="loading"></div>
@@ -52,18 +69,21 @@
         <div>There doesn't seem to be any comments matching link patterns!</div>
         <div>Try adding more link patterns in the <a href="#" id="not-found-link-patterns-options">options page.</a></div>
       </div>
+      <div class="no-search-results hidden" id="no-search-results-links">No matches found.</div>
     </div>
     <div id="list-container-attachments" class="list-container">
       <div class="not-found-container hidden" id="not-found-container-attachments">
         <img src="../icons/bufo-sad-but-ok.png" width="50px" height="50px">
         <div>There doesn't seem to be any comments with attachments!</div>
       </div>
+      <div class="no-search-results hidden" id="no-search-results-attachments">No matches found.</div>
     </div>
     <div id="list-container-images" class="list-container">
       <div class="not-found-container hidden" id="not-found-container-images">
         <img src="../icons/bufo-sad-but-ok.png" width="50px" height="50px">
         <div>There doesn't seem to be any comments with image attachments!</div>
       </div>
+      <div class="no-search-results hidden" id="no-search-results-images">No matches found.</div>
     </div>
     <script type="application/javascript" src="../lib/browser-polyfill.min.js"></script>
     <script type="application/javascript" src="popup.js"></script>

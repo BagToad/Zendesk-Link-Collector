@@ -10,6 +10,9 @@
     --primary-bg-light: rgb(33, 38, 45);
     --primary-bg-light-active: rgb(42, 47, 54);
     --secondary: rgb(73, 78, 85);
+
+    /* Shared width for the gear column and the search clear button column */
+    --gear-col-width: 39px;
 }
 
 * {
@@ -67,11 +70,16 @@
 }
   
 
+html {
+    font-size: 16px;
+}
+
 body {
     width: fit-content;
     height: fit-content;
     border-radius: 0.5em;
     font-family: sans-serif;
+    font-size: 1rem;
     color: rgb(201, 209, 217);
     background-color: var(--primary-bg);
     text-decoration: none;
@@ -138,11 +146,12 @@ a:hover {
 
 .button-sub {
     display: flex;
+    align-items: center;
     justify-content: flex-start;
     column-gap: 10px;
     padding: 0.5em;
     font-size: 1em;
-    border-width: 1px;
+    border-width: 2px;
 }
 
 .button-sub label:hover, .button-sub input:hover {
@@ -152,10 +161,6 @@ a:hover {
 .button:hover {
     background-color: var(--primary-bg-light-active);
     cursor: pointer;
-}
-
-#button-whats-new {
-    margin-left: auto;
 }
 
 .row {
@@ -174,14 +179,121 @@ a:hover {
 
 .row-sub.selected {
     display: flex;
+    align-items: stretch;
 }
 
 #button-options {
     flex-grow: 0;
+    width: var(--gear-col-width);
+    box-sizing: border-box;
 }
 
 #button-options img {
     vertical-align: middle;
+}
+
+/* Gear dropdown container and menu */
+.gear-container {
+    position: relative;
+    display: flex;
+}
+
+.gear-dropdown {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 10;
+    min-width: 120px;
+    background-color: var(--primary-bg-light);
+    border: 2px solid var(--secondary);
+    border-top: none;
+}
+
+.gear-dropdown.open {
+    display: flex;
+}
+
+.gear-dropdown-item {
+    padding: 8px 12px;
+    color: rgb(201, 209, 217);
+    text-decoration: none;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.gear-dropdown-item:hover {
+    background-color: var(--primary-bg-light-active);
+    text-decoration: none;
+}
+
+.gear-version {
+    font-size: 0.85em;
+    color: rgb(201, 209, 217);
+}
+
+/* Search group: input + clear button, pinned right in sub-rows */
+.search-group {
+    margin-left: auto;
+    display: flex;
+    align-items: stretch;
+}
+
+.search-input {
+    width: 250px;
+    padding: 0.5em;
+    font-family: inherit;
+    font-size: 1em;
+    line-height: inherit;
+    color: rgb(201, 209, 217);
+    background-color: var(--primary-bg);
+    border: 2px solid var(--secondary);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.search-input::placeholder {
+    color: var(--secondary);
+}
+
+.search-input:focus {
+    background-color: var(--primary-bg-light-active);
+}
+
+.search-clear-btn {
+    width: var(--gear-col-width);
+    min-width: var(--gear-col-width);
+    padding: 0;
+    font-family: inherit;
+    font-size: 1.2em;
+    font-weight: normal;
+    line-height: 1;
+    text-align: center;
+    color: rgb(201, 209, 217);
+    background-color: var(--primary-bg-light);
+    border: 2px solid var(--secondary);
+    cursor: pointer;
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.search-clear-btn:hover {
+    background-color: var(--primary-bg-light-active);
+}
+
+/* "No matches found" message shown when search filters everything */
+.no-search-results {
+    padding: 20px;
+    text-align: center;
+    color: var(--secondary);
+    font-size: 14px;
+}
+
+.no-search-results.hidden {
+    display: none;
 }
 
 /* Loader Styles */
