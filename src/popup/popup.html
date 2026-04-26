@@ -10,9 +10,15 @@
         <img class="icon icon-invert" src="../icons/home.svg" width="15px" height="15px" style="margin-right: 3px"><span>Links</span></a>
       <a href="#" class="button button-fill" id="button-attachments">Attachments</a>
       <a href="#" class="button button-fill" id="button-images">Images</a>
-      <a href="#" class="button button-fill" id="button-options">
-        <img class="icon icon-invert" src="../icons/gear.svg" width="15px" height="15px">
-      </a>
+      <div class="gear-container">
+        <a href="#" class="button button-fill" id="button-options">
+          <img class="icon icon-invert" src="../icons/gear.svg" alt="" width="15px" height="15px">
+        </a>
+        <div id="gear-dropdown" class="gear-dropdown">
+          <a href="#" class="gear-dropdown-item" id="gear-options">Options</a>
+          <a href="#" class="gear-dropdown-item gear-version" id="gear-version" target="_blank"></a>
+        </div>
+      </div>
     </div>
     <div class="row row-sub row-links selected">
       <a href="#" title="Copy a configurable summary to clipboard in markdown. See the options page for configuration options." class="button button-sub" id="button-summary">
@@ -28,7 +34,6 @@
         <img class="icon-button" id="refresh" src="../icons/loader.svg" width="15px" height="15px">
         <span for="refresh">Refresh</span>
       </a>
-      <a href="#" class="button button-sub" id="button-whats-new" target="_blank"></a>
     </div>
     <div class="row row-sub row-attachments">
       <a href="#" class="button button-sub" id="button-copy-attachments-md">

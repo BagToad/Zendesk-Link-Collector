@@ -648,9 +648,33 @@ document.addEventListener("DOMContentLoaded", () => {
       browser.runtime.openOptionsPage();
     });
 
-  // Event listener to open options when options button is clicked.
-  document.getElementById("button-options").addEventListener("click", () => {
+  // Event listener to toggle the gear dropdown when the gear icon is clicked.
+  const gearDropdown = document.getElementById("gear-dropdown");
+  document.getElementById("button-options").addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    gearDropdown.classList.toggle("open");
+  });
+
+  // Close the gear dropdown when clicking outside of it.
+  document.addEventListener("click", (e) => {
+    if (!gearDropdown.contains(e.target)) {
+      gearDropdown.classList.remove("open");
+    }
+  });
+
+  // Close the gear dropdown on Escape key.
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      gearDropdown.classList.remove("open");
+    }
+  });
+
+  // Open the options page from within the gear dropdown.
+  document.getElementById("gear-options").addEventListener("click", (e) => {
+    e.preventDefault();
     browser.runtime.openOptionsPage();
+    window.close();
   });
 
   // Event listener to copy summary to clipboard when summary button is clicked.
@@ -776,14 +800,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Dynamically retrieve the version number from manifest.json and insert it into the "What's new?" button text.
+  // Dynamically retrieve the version number from manifest.json and link the
+  // gear-dropdown version item to the latest GitHub release.
   const manifestData = browser.runtime.getManifest();
   const version = manifestData.version;
-  const whatsNewButton = document.getElementById("button-whats-new");
-  whatsNewButton.textContent = `v${version}`;
-  whatsNewButton.setAttribute(
+  const gearVersion = document.getElementById("gear-version");
+  gearVersion.textContent = `v${version}`;
+  gearVersion.setAttribute(
     "href",
-    `https://github.com/bagtoad/zendesk-link-collector/releases/tag/v${version}`
+    `https://github.com/bagtoad/zendesk-link-collector/releases/latest`
   );
 
   // Add event listeners for the new buttons to copy attachments and images in markdown format

@@ -10,6 +10,9 @@
     --primary-bg-light: rgb(33, 38, 45);
     --primary-bg-light-active: rgb(42, 47, 54);
     --secondary: rgb(73, 78, 85);
+
+    /* Width of the gear column in the top row. */
+    --gear-col-width: 39px;
 }
 
 * {
@@ -154,10 +157,6 @@ a:hover {
     cursor: pointer;
 }
 
-#button-whats-new {
-    margin-left: auto;
-}
-
 .row {
     display: flex;
     flex-direction: row;
@@ -178,10 +177,53 @@ a:hover {
 
 #button-options {
     flex-grow: 0;
+    width: var(--gear-col-width);
+    box-sizing: border-box;
 }
 
 #button-options img {
     vertical-align: middle;
+}
+
+/* Gear dropdown container and menu */
+.gear-container {
+    position: relative;
+    display: flex;
+}
+
+.gear-dropdown {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 10;
+    min-width: 120px;
+    background-color: var(--primary-bg-light);
+    border: 2px solid var(--secondary);
+    border-top: none;
+}
+
+.gear-dropdown.open {
+    display: flex;
+}
+
+.gear-dropdown-item {
+    padding: 8px 12px;
+    color: rgb(201, 209, 217);
+    text-decoration: none;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.gear-dropdown-item:hover {
+    background-color: var(--primary-bg-light-active);
+    text-decoration: none;
+}
+
+.gear-version {
+    font-size: 0.85em;
+    color: rgb(201, 209, 217);
 }
 
 /* Loader Styles */
