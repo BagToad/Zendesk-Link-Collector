@@ -460,7 +460,7 @@ browser.tabs.onActivated.addListener((activeTab) => {
     if (
       !tab.url ||
       tab.url.search(
-        /^https:\/\/[\-_A-Za-z0-9]+\.zendesk.com\/agent\/tickets\/[0-9]+/i
+        /^https:\/\/[-_A-Za-z0-9]+\.zendesk.com\/agent\/tickets\/[0-9]+/i
       ) == -1
     ) {
       browser.action.disable(tab.id);
@@ -492,7 +492,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (
     !tab.url ||
     tab.url.search(
-      /^https:\/\/[\-_A-Za-z0-9]+\.zendesk.com\/agent\/tickets\/[0-9]+/i
+      /^https:\/\/[-_A-Za-z0-9]+\.zendesk.com\/agent\/tickets\/[0-9]+/i
     ) == -1
   ) {
     browser.action.disable(tab.id);
