@@ -1,84 +1,297 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>Options Page</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Zendesk Link Collector — Options</title>
     <link rel="stylesheet" href="options.css">
 </head>
 <body>
-	<h1>Options Page</h1>
-    <div class="input-container-column">
-        <div class="input-container-row">
-            <label class="input-label" title="How to handle links that are too long to be displayed in the extension.&#13&#13Enabled = wrap long links.&#13Disabled = scroll long links." for="wrap-lists">Wrap long links?</label>
-            <input type="checkbox" id="wrap-lists">
+    <!--
+      Layout: a single 1024px column. Each top-level <section> is a card
+      (background + border + padding) with its heading + lede in the same panel.
+      The Patterns section nests three sub-cards (add form, examples, rules)
+      inside a .stack so they read as related grouped tools.
+    -->
+    <header class="page-header">
+        <div class="shell">
+            <p class="eyebrow">Browser extension options</p>
+            <h1>Zendesk Link Collector</h1>
+            <p class="lede">Configure how links are collected from Zendesk tickets and how they appear in the popup and markdown summary.</p>
         </div>
-        <div id="input-container-attachments" class="input-container-row">
-            <label class="input-label" title="Include attachments in the markdown summary." for="include-attachments">Include Attachments:</label>
-            <input type="checkbox" id="include-attachments">
-            <label class="input-label" title="Include images in the markdown summary." for="include-images">Include Images:</label>
-            <input type="checkbox" id="include-images">
-        </div>
-    </div>
-    <div id="input-container-save-options" class="input-container-row">
-        <button id="button-save-global-options">Save Options</button>
-    </div>
-    <div id="table-container-link-patterns">
-        <h1>Saved Link Patterns</h1>
-        <div id="input-container-link-patterns" class="input-container-row">
-            <label class="input-label" title="The heading to group links that match the pattern.&#13&#13This is a required field" for="title">Title:</label>
-            <input type="text" id="title" placeholder="Title">
-            <label class="input-label" title="The regex pattern to use for matching links in the ticket. Links matching this pattern will be collected and displayed in the extension.&#13&#13This is a required field." for="pattern">Pattern:</label>
-            <input type="text" id="pattern" placeholder="RegEx Pattern">
-            <label class="input-label" title="Show the context surrounding the link.&#13&#13Disabled = only the link is collected and displayed in the extension.&#13Enabled = the plain text surrounding the link will also be displayed in the extension." for="show-parent">Show Context:</label>
-            <input type="checkbox" id="show-parent">
-            <label class="input-label" title="How to summarize links found by this pattern when copying the markdown summary to clipboard.&#13&#13All = all links found will by copied.&#13Latest = only the most recent links will be copied&#13None = no links under this heading are copied (the heading will also be excluded)." for="summary-type">Summary Type:</label>
-            <select id="summary-type">
-                <option value="none" selected>None</option>
-                <option value="latest">Latest</option>
-                <option value="all">All</option>
-            </select>
-            <label class="input-label" title="Show the comment date where the link was found." for="show-date">Show Date:</label>
-            <input type="checkbox" id="show-date">
-            <button id="button-save-link-patterns">Save Link Pattern</button>
-        </div>
-        <h2>Example Patterns</h2>
-        <div>
-            <pre>https:\/\/docs\.github\.com</pre>
-            <pre>https:\/\/github\.com\/orgs\/community\/discussions</pre>
-            <pre>https:\/\/[A-Za-z0-9]+\.zendesk\.com\/agent\/tickets\/[0-9]+</pre>
-        </div>
-        <div id="container-link-patterns-error" class="input-container-row">
-            <div class="hidden" id="link-patterns-error">Error: this is an error</div>
-        </div>
-        <table id="table-link-patterns">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Pattern</th>
-                <th>Show Context</th>
-                <th>Summary Type</th>
-                <th>Show Date</th>
-                <th>Edit</th>
-                <th>Delete</th>
-                <th>Reorder</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-    <h2>Import/Export</h2>
-    <div class="input-container-row input-container-import-export" id="input-container-link-patterns-import-export">
-        <label for="link-patterns-import-file">Import File: </label>
-        <input type="file" id="link-patterns-import-file" name="link-patterns-import-file" accept=".json">
-        <label class="input-label" title="How to import link patterns and options.&#13&#13Append = keep all existing data add add patterns to the end.&#13Overwrite = delete all link patterns and load only the patterns in the import file." for="link-patterns-import-type">Import Type: </label>
-        <select id="link-patterns-import-type" name="link-patterns-import-type">
-            <option value="append" selected>Append</option>
-            <option value="overwrite">Overwrite</option>
-        </select>
-        <button type="button" id="link-patterns-import">Import</button>
-        <button type="button" id="link-patterns-export">Export</button>
-    </div>
-    <script type="application/javascript" src="../lib/browser-polyfill.min.js"></script>
-	<script type="application/javascript" src="options.js"></script>
+    </header>
+
+    <main class="shell">
+
+        <!-- Section 1: Global settings -->
+        <section class="section" id="section-globals" aria-labelledby="h-globals">
+            <div class="section__head">
+                <h2 id="h-globals">Global settings</h2>
+                <p>These apply to every Zendesk ticket.</p>
+            </div>
+            <!--
+              2-column grid of single-line toggle rows. Each row is a flex
+              container of [checkbox][label][?] — no nested grids, no
+              display:contents. Order in source = visual order top-to-bottom,
+              column-by-column.
+            -->
+            <div class="toggle-list toggle-list--grid">
+                <div class="toggle-row">
+                    <input type="checkbox" id="wrap-lists">
+                    <label for="wrap-lists" class="toggle-row__label">Wrap long URLs</label>
+                    <button type="button" class="help-tip"
+                            aria-label="Wrap long URLs: wrap long URLs in the popup instead of horizontal scrolling."
+                            title="Wrap long URLs in the popup instead of horizontal scrolling.">?</button>
+                </div>
+                <div class="toggle-row">
+                    <input type="checkbox" id="background-processing">
+                    <label for="background-processing" class="toggle-row__label">Run in background</label>
+                    <button type="button" class="help-tip"
+                            aria-label="Run in background: pre-collect links while a Zendesk tab loads. Faster popup, more API calls."
+                            title="Pre-collects links while a Zendesk tab loads. Faster popup, more API calls.">?</button>
+                </div>
+                <div class="toggle-row">
+                    <input type="checkbox" id="include-attachments">
+                    <label for="include-attachments" class="toggle-row__label">Include attachments</label>
+                    <button type="button" class="help-tip"
+                            aria-label="Include attachments: include attachment links in the markdown summary."
+                            title="Includes attachment links in the markdown summary.">?</button>
+                </div>
+                <div class="toggle-row">
+                    <input type="checkbox" id="include-images">
+                    <label for="include-images" class="toggle-row__label">Include images</label>
+                    <button type="button" class="help-tip"
+                            aria-label="Include images: include image links in the markdown summary."
+                            title="Includes image links in the markdown summary.">?</button>
+                </div>
+            </div>
+            <div class="form-actions form-actions--end" id="input-container-save-options">
+                <button id="button-save-global-options" class="btn btn--primary">Save Options</button>
+            </div>
+        </section>
+
+        <!-- Section 2: Link patterns. Nests three sub-cards: Add, Examples, Rules. -->
+        <section class="section" id="section-patterns" aria-labelledby="h-patterns">
+            <div class="section__head">
+                <h2 id="h-patterns">Link patterns</h2>
+                <p>Rules that match URLs in tickets and decide how they are grouped, summarized, and dated.</p>
+            </div>
+
+            <div class="stack">
+
+                <!-- Sub-card: Add a pattern -->
+                <div class="subcard">
+                    <h3 class="subcard__title">Add a pattern</h3>
+                    <!-- Real <form> so Enter in any field submits naturally
+                         and assistive tech announces this as a form. The
+                         submit handler delegates to saveLinkPatterns and
+                         calls preventDefault to keep us on the page. -->
+                    <form class="pattern-form" id="input-container-link-patterns">
+                        <div class="form-grid form-grid--title-pattern">
+                            <div class="form-row">
+                                <label for="title">Title</label>
+                                <input type="text" id="title" placeholder="e.g. GitHub Docs">
+                            </div>
+                            <div class="form-row">
+                                <label for="pattern">Pattern <span class="muted">(regex)</span></label>
+                                <input type="text" id="pattern" class="mono" placeholder="https:\/\/example\.com\/\S+" spellcheck="false">
+                            </div>
+                        </div>
+
+                        <div class="form-grid--inline">
+                            <div class="form-row form-row--compact">
+                                <div class="label-with-help">
+                                    <label for="summary-type">Summary type</label>
+                                    <button type="button" class="help-tip"
+                                            aria-label="Summary type: how to summarize multiple matches of this pattern in the popup."
+                                            title="How to summarize multiple matches of this pattern in the popup. None: list all matches plainly. Latest: show only the most recent. All: show every match grouped together.">?</button>
+                                </div>
+                                <select id="summary-type">
+                                    <option value="none" selected>None</option>
+                                    <option value="latest">Latest</option>
+                                    <option value="all">All</option>
+                                </select>
+                            </div>
+                            <div class="toggle-row">
+                                <input type="checkbox" id="show-parent">
+                                <label for="show-parent" class="toggle-row__label">Show context</label>
+                                <button type="button" class="help-tip"
+                                        aria-label="Show context: include the surrounding text from the comment where the link was found."
+                                        title="Includes the surrounding text from the comment where the link was found.">?</button>
+                            </div>
+                            <div class="toggle-row">
+                                <input type="checkbox" id="show-date">
+                                <label for="show-date" class="toggle-row__label">Show date</label>
+                                <button type="button" class="help-tip"
+                                        aria-label="Show date: include the timestamp of the comment that contained the link."
+                                        title="Includes the timestamp of the comment that contained the link.">?</button>
+                            </div>
+                            <!-- Save sits on the same inline row as the
+                                 Summary type / toggles, pushed to the
+                                 right via margin-left: auto. Keeps the
+                                 form compact instead of dropping the
+                                 button onto its own line below. -->
+                            <button type="submit" id="button-save-link-patterns" class="btn btn--primary form-inline-submit">Save Link Pattern</button>
+                        </div>
+
+                        <div id="container-link-patterns-error">
+                            <!-- role=status is non-interrupting; live regex
+                                 validation feedback shouldn't pre-empt the
+                                 screen reader on every keystroke. -->
+                            <div class="hidden alert" id="link-patterns-error" role="status" aria-live="polite"></div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Sub-card: Rules table. Rendered by options.js — preserves all required
+                     IDs and class hooks. -->
+                <div class="subcard subcard--flush">
+                    <h3 class="subcard__title subcard__title--padded">Rules</h3>
+                    <div id="table-container-link-patterns">
+                        <table id="table-link-patterns" class="data-table">
+                            <colgroup>
+                                <col class="col-title">
+                                <col class="col-pattern">
+                                <col class="col-bool">
+                                <col class="col-summary">
+                                <col class="col-bool">
+                                <col class="col-reorder">
+                                <col class="col-action">
+                                <col class="col-action">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Pattern</th>
+                                    <th scope="col">Context</th>
+                                    <th scope="col">Summary</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Reorder</th>
+                                    <th scope="col">Edit</th>
+                                    <th scope="col">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section 3: Import / Export -->
+        <section class="section" id="section-io" aria-labelledby="h-io">
+            <div class="section__head">
+                <h2 id="h-io">Import / Export</h2>
+                <p>Back up the configuration or load a teammate's.</p>
+            </div>
+            <div class="io-row" id="input-container-link-patterns-import-export">
+                <div class="form-row">
+                    <label for="link-patterns-import-file">Import file</label>
+                    <input type="file" id="link-patterns-import-file" name="link-patterns-import-file" accept=".json">
+                </div>
+                <fieldset class="radio-set">
+                    <legend>Import mode</legend>
+                    <label><input type="radio" name="link-patterns-import-type" value="append" checked> Append</label>
+                    <label><input type="radio" name="link-patterns-import-type" value="overwrite"> Overwrite</label>
+                </fieldset>
+                <div class="io-row__buttons">
+                    <button id="link-patterns-import" class="btn btn--primary">Import</button>
+                    <button id="link-patterns-export" class="btn">Export</button>
+                </div>
+            </div>
+            <!-- Status region for Import/Export. Lives in this section so its
+                 errors and "Imported N, skipped M" summary appear next to the
+                 controls that produced them, not in the Add Pattern box. -->
+            <div id="container-link-patterns-io-status">
+                <div class="hidden alert" id="link-patterns-io-status" role="status" aria-live="polite"></div>
+            </div>
+        </section>
+
+        <!-- Section 4: Example patterns. Lives at the bottom as a reference;
+             each row's "Import" button adds it to the rules with one click. -->
+        <section class="section" id="section-examples" aria-labelledby="h-examples">
+            <div class="section__head">
+                <h2 id="h-examples">Example patterns</h2>
+                <p>Common starting points. Tweak the settings on a row, then click Import to add it to your rules.</p>
+            </div>
+            <div class="subcard subcard--flush">
+                <table class="examples-table data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col">Pattern</th>
+                            <th scope="col">Context</th>
+                            <th scope="col">Summary</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Import</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="example-row">
+                            <td>GitHub Docs</td>
+                            <td class="cell--pattern"><code>https://docs\.github\.com</code></td>
+                            <td><input type="checkbox" class="example-show-parent" checked aria-label="Show context"></td>
+                            <td>
+                                <select class="example-summary-type" aria-label="Summary type">
+                                    <option value="none">None</option>
+                                    <option value="latest">Latest</option>
+                                    <option value="all" selected>All</option>
+                                </select>
+                            </td>
+                            <td><input type="checkbox" class="example-show-date" aria-label="Show date"></td>
+                            <td><button type="button" class="btn btn--small button-import-example" title="Import this example as a rule" aria-label="Import GitHub Docs example">Import</button></td>
+                        </tr>
+                        <tr class="example-row">
+                            <td>Zendesk Tickets</td>
+                            <td class="cell--pattern"><code>https://[A-Za-z0-9]+\.zendesk\.com/agent/tickets/[0-9]+</code></td>
+                            <td><input type="checkbox" class="example-show-parent" aria-label="Show context"></td>
+                            <td>
+                                <select class="example-summary-type" aria-label="Summary type">
+                                    <option value="none">None</option>
+                                    <option value="latest" selected>Latest</option>
+                                    <option value="all">All</option>
+                                </select>
+                            </td>
+                            <td><input type="checkbox" class="example-show-date" aria-label="Show date"></td>
+                            <td><button type="button" class="btn btn--small button-import-example" title="Import this example as a rule" aria-label="Import Zendesk Tickets example">Import</button></td>
+                        </tr>
+                        <tr class="example-row">
+                            <td>Slack permalinks</td>
+                            <td class="cell--pattern"><code>https://[a-z0-9-]+\.slack\.com/archives/[A-Z0-9]+/p[0-9]+</code></td>
+                            <td><input type="checkbox" class="example-show-parent" checked aria-label="Show context"></td>
+                            <td>
+                                <select class="example-summary-type" aria-label="Summary type">
+                                    <option value="none" selected>None</option>
+                                    <option value="latest">Latest</option>
+                                    <option value="all">All</option>
+                                </select>
+                            </td>
+                            <td><input type="checkbox" class="example-show-date" checked aria-label="Show date"></td>
+                            <td><button type="button" class="btn btn--small button-import-example" title="Import this example as a rule" aria-label="Import Slack permalinks example">Import</button></td>
+                        </tr>
+                        <tr class="example-row">
+                            <td>GitLab Docs</td>
+                            <td class="cell--pattern"><code>https://docs\.gitlab\.com</code></td>
+                            <td><input type="checkbox" class="example-show-parent" checked aria-label="Show context"></td>
+                            <td>
+                                <select class="example-summary-type" aria-label="Summary type">
+                                    <option value="none">None</option>
+                                    <option value="latest">Latest</option>
+                                    <option value="all" selected>All</option>
+                                </select>
+                            </td>
+                            <td><input type="checkbox" class="example-show-date" aria-label="Show date"></td>
+                            <td><button type="button" class="btn btn--small button-import-example" title="Import this example as a rule" aria-label="Import GitLab Docs example">Import</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="../lib/browser-shim.js"></script>
+    <script src="options.js"></script>
 </body>
 </html>
