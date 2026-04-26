@@ -1,7 +1,68 @@
-// "importScripts" is only supported in chrome. Firefox loads the polyfill from the manifest.json file.
+// "importScripts" is only supported in chrome. Firefox loads the shim from the manifest.json file.
 if (typeof importScripts === "function") {
-  importScripts("../lib/browser-polyfill.min.js");
+  importScripts("../lib/browser-shim.js");
 }
+
+// Inject our content script into already-open Zendesk tabs.
+//
+// MV3 only auto-injects manifest content_scripts into tabs LOADED after
+// the extension is installed/updated/enabled. Tabs that were open before
+// run without our content script — the popup's tabs.sendMessage then
+// fails with "Could not establish connection. Receiving end does not
+// exist."
+//
+// runtime.onInstalled covers fresh install + extension update, but does
+// NOT fire when the user disables and re-enables the extension at
+// chrome://extensions, nor on browser startup with an already-open tab.
+// Calling this from top-level service-worker code below covers all of
+// those cases on every SW activation. The content script's globalThis
+// idempotency guard makes a redundant re-injection a no-op.
+function injectIntoExistingZendeskTabs() {
+  browser.tabs
+    .query({ url: "https://*.zendesk.com/*" })
+    .then((tabs) => {
+      for (const tab of tabs) {
+        browser.scripting
+          .executeScript({
+            target: { tabId: tab.id },
+            // Match the manifest content_scripts injection: same shim,
+            // same load order, same runAt timing. The two injection
+            // paths (manifest auto-inject for new tabs, programmatic
+            // executeScript for already-open tabs) must agree, otherwise
+            // an already-open tab would have different `browser.*`
+            // semantics than a freshly-loaded one.
+            files: [
+              "lib/browser-shim.js",
+              "content-scripts/contentscript.js",
+            ],
+            injectImmediately: true,
+          })
+          .catch((err) => {
+            // Tab may have navigated away or been closed during injection.
+            console.warn(
+              `Zendesk Link Collector - failed to inject into tab ${tab.id}:`,
+              err.message
+            );
+          });
+      }
+    })
+    .catch((err) => {
+      // Service-worker-level failure (permissions revoked, browser shutdown
+      // mid-callback, etc.). Logged so it doesn't surface as an unhandled
+      // promise rejection on the SW.
+      console.warn(
+        "Zendesk Link Collector - tabs.query failed during injection:",
+        err.message
+      );
+    });
+}
+
+// Run on every SW activation. This catches: extension enable/disable
+// toggle, browser startup with already-open Zendesk tabs, and any other
+// SW restart that doesn't fire onInstalled. Install and update are also
+// covered (onInstalled below calls this too — redundant injection is a
+// no-op thanks to the content script's idempotency guard).
+injectIntoExistingZendeskTabs();
 
 // Sends a message to the content script to execute a fetch.
 // Code from https://stackoverflow.com/questions/55214828/how-to-make-a-cross-origin-request-in-a-content-script-currently-blocked-by-cor/55215898#55215898
@@ -433,6 +494,14 @@ browser.runtime.onInstalled.addListener((data) => {
     //     });
     //   });
     // }
+  }
+
+  // Inject content scripts into already-open Zendesk tabs.
+  // MV3 doesn't auto-inject manifest content_scripts into tabs that were
+  // open before the extension was installed or updated, so the popup can't
+  // communicate with them until the user refreshes the page. This fixes that.
+  if (reason === "install" || reason === "update") {
+    injectIntoExistingZendeskTabs();
   }
 });
 

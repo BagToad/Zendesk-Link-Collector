@@ -1,10 +1,32 @@
+// Idempotent listener registration: stash the named listener function on
+// globalThis. If the script runs twice in the same isolated world (e.g.
+// the manifest content_script auto-injection plus a programmatic
+// re-injection on extension install/update), the previous listener is
+// removed before the new one is added. Works whether the isolated world
+// persists across updates or not, and whether manifest or programmatic
+// injection runs first.
+if (globalThis.__zlcOnMessage) {
+  browser.runtime.onMessage.removeListener(globalThis.__zlcOnMessage);
+}
+
 console.log("Zendesk Link Collector - loaded content script");
 
 // Message handler for messages from the background script.
-browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  // Scroll to the comment.
+//
+// Chrome's MV3 dispatch treats the listener's return value as the
+// keep-channel-open signal: returning `true` tells Chrome "I'll call
+// sendResponse asynchronously, leave the port open." If we returned
+// `true` from a branch that never calls sendResponse, the port would
+// stay open until it timed out and the sender's `sendMessage` promise
+// would reject with "message port closed before response" — which the
+// old webextension-polyfill swallowed but native chrome.* doesn't.
+// Each branch therefore decides explicitly whether to keep the port
+// open. Synchronous and fire-and-forget branches fall through and
+// return `undefined`; only the genuinely async `fetch` branch returns
+// `true`.
+function zlcOnMessage(request, sender, sendResponse) {
+  // Scroll to the comment. Fire-and-forget — no sendResponse.
   if (request.type == "scroll") {
-    // This is async because it contains a fetch which we must wait for before sending a response.
     (async () => {
       const element = document.querySelector(
         `[data-comment-id="${request.commentID}"]`
@@ -40,6 +62,7 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         });
       });
     })();
+    return;
   }
 
   // Code from https://stackoverflow.com/questions/55214828/how-to-make-a-cross-origin-request-in-a-content-script-currently-blocked-by-cor/55215898#55215898
@@ -61,9 +84,12 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         sendResponse([null, error]);
       }
     );
+    // Async sendResponse — keep the port open.
+    return true;
   }
 
   // Background script does not have a DOM, so when it needs to parse links from HTML, it sends this message.
+  // sendResponse runs synchronously inside this branch, so no `return true` needed.
   if (request.type == "parse-html-a") {
     const parser = new DOMParser();
     const doc = parser.parseFromString(request.htmlText, "text/html");
@@ -77,7 +103,12 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       });
     });
     sendResponse(linksArr);
+    return;
   }
+
+  // The remaining branches are fire-and-forget — no sendResponse calls.
+  // We fall through and return undefined so Chrome closes the port and
+  // the sender's `sendMessage` promise resolves immediately.
 
   // Try to open zendesk preview.
   if (request.type == "image-preview") {
@@ -130,9 +161,10 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       );
     });
   }
+}
 
-  return true;
-});
+globalThis.__zlcOnMessage = zlcOnMessage;
+browser.runtime.onMessage.addListener(zlcOnMessage);
 
 function highlightComment(element) {
   let highlightElement = element;
