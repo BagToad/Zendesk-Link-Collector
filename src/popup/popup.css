@@ -372,3 +372,13 @@ li.list-item-attachments ul li {
 #list-container-images.selected {
     display: flex;
 }
+/* Focus-visible outlines for keyboard navigation. The negative
+   outline-offset keeps the outline visible inside overflow:auto
+   containers that would otherwise clip it. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+.icon-li:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: -2px;
+}
