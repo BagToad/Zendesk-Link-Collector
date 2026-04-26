@@ -1,121 +1,659 @@
+/*
+ * Options page styles.
+ *
+ * Structure: a centered 1024px shell. Each top-level <section> IS the card —
+ * background, border, padding — with its heading inside. Patterns section
+ * nests subcards in a .stack for the add-form, examples table, and rules table.
+ *
+ * Tokens live on :root so a future light theme can swap them in one place.
+ */
+
+:root {
+    /* Palette — matches the popup window's dark colors with a warmer accent. */
+    --bg:            rgb(22, 27, 34);
+    --bg-deep:       rgb(13, 17, 23);
+    --panel:         rgb(33, 38, 45);
+    --panel-2:       rgb(40, 46, 54);
+    --border:        rgb(55, 62, 71);
+    --border-soft:   rgb(48, 54, 61);
+    --border-2:      rgb(73, 82, 94);
+    --text:          rgb(201, 209, 217);
+    --text-strong:   rgb(240, 246, 252);
+    --muted:         rgb(139, 148, 158);
+    --accent:        rgb(98, 163, 75);
+    --accent-hover:  rgb(118, 183, 95);
+    --accent-text:   rgb(218, 251, 225);
+    --danger-bg:     rgba(248, 81, 73, 0.12);
+    --danger-fg:     rgb(248, 81, 73);
+    --focus:         rgb(88, 166, 255);
+    --row-editing:   rgba(98, 163, 75, 0.10);
+
+    /* Spacing scale (4px base). */
+    --s-1: 4px;
+    --s-2: 8px;
+    --s-3: 12px;
+    --s-4: 16px;
+    --s-5: 24px;
+    --s-6: 32px;
+    --s-7: 48px;
+
+    --radius: 8px;
+    --shell-max: 1024px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
 body {
-    font-family: sans-serif;
-    color: rgb(201, 209, 217);
-    background-color: rgb(22, 27, 34);
+    /* Top-left radial flare + a vertical gradient from near-black at the
+       top into the body color. Gives the page a warmer, more human feel
+       than a centered top tint — the light source is anchored to the
+       upper-left corner. */
+    background:
+        radial-gradient(circle at top left, rgba(56, 139, 253, 0.12), transparent 24rem),
+        linear-gradient(180deg, rgb(13, 17, 23), var(--bg) 14rem);
+    color: var(--text);
+    /* 1rem/1.45 matches the B-console mock: slightly larger and airier than
+       the previous 14px/1.5. Specific font sizes elsewhere (table cells,
+       eyebrow, etc.) are explicit so they don't shift with this baseline. */
+    font: 1rem/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     color-scheme: dark;
+    accent-color: var(--accent);
+    min-height: 100vh;
+    padding-bottom: var(--s-7);
 }
 
-/* Generic Input Styles */
-button:hover,
-input[type="checkbox"]:enabled:hover,
-input[type="file"],
-input[type=file]::-webkit-file-upload-button,
-select {
-    /* Found solution for "Choose File" button not applying styles here:
-    https://stackoverflow.com/questions/1537223/change-cursor-type-on-input-type-file */
-    cursor: pointer;
-    background-color: rgb(39, 44, 51);
+h1, h2, h3 { margin: 0; color: var(--text-strong); font-weight: 600; }
+.muted { color: var(--muted); font-weight: 400; }
+
+code, kbd, pre, .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-button {
-    border-radius: 4px;
-    padding: 2px 12px;
-    background-color: rgb(33, 38, 45);
-    border-color: rgba(240, 246, 252, 0.1);
-    color: rgb(201, 209, 217);
+/* Visible focus ring across the page. */
+:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
 }
 
-button:disabled {
-    background-color: rgb(39, 44, 51);
-    color: rgb(148 147 147);
+/* Centered shell, reused by header + main. */
+.shell {
+    max-width: var(--shell-max);
+    margin: 0 auto;
+    padding: 0 var(--s-5);
 }
 
-button:disabled:hover {
-    cursor: not-allowed;
+/* Page header. Lives above the section cards. */
+.page-header {
+    padding: var(--s-7) 0 var(--s-5);
+}
+.eyebrow {
+    margin: 0 0 var(--s-2);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.page-header h1 {
+    margin: 0 0 var(--s-2);
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    line-height: 1;
+    color: var(--text-strong);
+}
+.lede {
+    margin: var(--s-2) 0 0;
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 64ch;
 }
 
-.input-label {
-    position: relative;
-  }
-  
-.input-label::after {
-    content: "?";
-    position: absolute;
-    top: -15px;
-    left: -8px;
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background-color: rgb(148 147 147);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: help;
-}
-
-.input-container-column {
+/* Main column of section cards. */
+main.shell {
     display: flex;
     flex-direction: column;
+    gap: var(--s-6);
 }
 
-.input-container-row [type="text"] {
-    width: 200px;
+/* Section card — the section element itself is the panel. Mirrors the
+   B-console preview: subtle vertical gradient on the panel color, soft
+   border, lifted with a low-spread shadow, 12px corner radius. */
+.section {
+    background: linear-gradient(180deg, var(--panel), rgb(28, 33, 40));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgb(0 0 0 / 0.18);
+    padding: var(--s-5);
+}
+.section__head { margin-bottom: var(--s-4); }
+.section__head h2 { font-size: 1.15rem; }
+.section__head p { margin: var(--s-1) 0 0; color: var(--muted); font-size: 0.88rem; }
+
+/* Stack of subcards inside a section. */
+.stack { display: flex; flex-direction: column; gap: var(--s-4); }
+
+/* Subcard — nested panel inside a section. Slightly lighter than the
+   parent .section so it reads as raised, not sunken. */
+.subcard {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--s-4);
+}
+/* "Flush" variant: tables sit edge-to-edge so column borders line up with
+   the card border. The title still gets its own padding. */
+.subcard--flush { padding: 0; overflow: hidden; }
+.subcard__title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--s-3);
+}
+.subcard__title--padded {
+    padding: var(--s-3) var(--s-4) 0;
+    margin-bottom: var(--s-3);
 }
 
-.input-container-row label {
-    font-weight: bold;
-    margin: 0 2px 0 15px;
-}
-
-.input-container-row label:first-child {
-    margin-left: 0;
-}
-
-.input-container-row {
-    margin-bottom: 15px;
-}
-
-.input-container-row {
+/*
+ * Toggle row: one flex line of [checkbox][label][?]. Single primitive,
+ * used identically in the global-settings grid and in the pattern form.
+ *
+ * The 2-column grid for globals is on the parent (.toggle-list--grid).
+ * No nested grids, no display:contents — keeping this primitive flat is
+ * the whole point of the recent simplification.
+ */
+.toggle-row {
     display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-1) 0;
+}
+.toggle-row__label {
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-strong);
+}
+
+/* Form label with an inline help button next to it (e.g. "Summary type ?"). */
+.label-with-help {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-1);
+}
+
+/* Two-column layout for the global-settings toggles. Each cell is just a
+   .toggle-row — same primitive used everywhere else. */
+.toggle-list--grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s-3) var(--s-6);
+}
+
+/* Custom-styled checkboxes — consistent across browsers, accent-filled when
+   checked. Used for both global toggles and the disabled checkboxes in the
+   rules table. */
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    margin: 2px 0 0;
+    background: var(--panel-2);
+    border: 1px solid var(--border-2);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+}
+input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+input[type="checkbox"]:checked::after {
+    content: "✓";
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--text-strong);
+    font-size: 13px;
+    line-height: 1;
+}
+input[type="checkbox"]:disabled {
+    cursor: default;
+    opacity: 0.85;
+}
+
+/* Form controls. */
+label { font-size: 13px; color: var(--text); }
+input[type="text"],
+input[type="file"],
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border-2);
+    border-radius: var(--radius);
+    padding: 7px 10px;
+    font: inherit;
+    width: 100%;
+}
+input[type="text"]:focus, select:focus { border-color: var(--focus); outline: none; }
+input[type="text"].mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+input[type="file"] { padding: 5px; cursor: pointer; }
+select {
+    cursor: pointer;
+    padding-right: 28px;
+    /* Inline caret so we don't depend on platform select rendering. */
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path fill='%238b949e' d='M2 4l4 4 4-4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+.form-row { display: flex; flex-direction: column; gap: var(--s-1); min-width: 0; }
+.form-grid {
+    display: grid;
+    gap: var(--s-4);
+    grid-template-columns: 1fr 1fr;
+}
+.form-grid + .form-grid,
+.form-grid + .form-grid--inline,
+.form-grid--inline + .form-grid,
+.form-grid--inline + .form-grid--inline { margin-top: var(--s-4); }
+/* Title is short ("GitHub Docs"); Pattern is long. Give Pattern ~3x the
+   width so most regexes don't wrap or look cramped. */
+.form-grid--title-pattern { grid-template-columns: minmax(160px, 1fr) 3fr; }
+
+/* Compact second row: Summary type select + the Show context / Show date
+   toggles all on one inline row. The Summary type label sits to the left of
+   its select (instead of stacked above it) so it aligns with the toggles. */
+.form-grid--inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-5);
+}
+.form-row--compact {
+    flex: 0 0 auto;
     flex-direction: row;
     align-items: center;
+    gap: var(--s-2);
+}
+.form-row--compact select { width: auto; min-width: 110px; }
+
+/* Inline help button: a small "?" with a description in both `title`
+   (mouse hover) and `aria-label` (screen readers). It's a real <button>
+   so keyboard users can focus and read it. */
+.help-tip {
+    appearance: none;
+    -webkit-appearance: none;
+    margin-left: var(--s-1);
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--panel-2);
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 600;
+    cursor: help;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.help-tip:hover,
+.help-tip:focus-visible {
+    color: var(--text-strong);
+    border-color: var(--accent);
+    outline: none;
 }
 
-.input-container-row * {
-    margin: 0 5px;
+
+/* Buttons. */
+.btn {
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border-2);
+    border-radius: var(--radius);
+    padding: 7px 14px;
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-1);
+}
+.btn:hover { background: var(--border); }
+.btn--primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    /* Light-green tinted text reads as on-brand without the harshness of pure
+       white on the green field. */
+    color: var(--accent-text);
+}
+.btn--primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+.btn--ghost { background: transparent; }
+.btn--small { padding: 4px 10px; font-size: 12px; }
+/* Visually-invalid state for action buttons (e.g. Save with a bad regex).
+   We don't disable the button — clicking it still shows the inline error —
+   but red signals "this won't succeed yet". */
+.btn--invalid,
+.btn--invalid:hover {
+    background: var(--danger-bg);
+    border-color: var(--danger-fg);
+    color: var(--danger-fg);
+}
+.btn:disabled,
+.btn[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
-#link-patterns-error {
-    background-color: rgb(179 0 0 / 18%);
-    padding: 10px;
-    border: 2px solid rgb(179 0 0 / 18%);
+.form-actions { margin-top: var(--s-4); }
+/* Submit button living inside .form-grid--inline (flex row): pushes
+   itself to the right edge so it shares the row with the toggles
+   instead of taking its own line below. The extra margin-top nudges
+   it lower than its row siblings so it doesn't crowd the Pattern
+   input above. */
+.form-inline-submit {
+    margin-left: auto;
+    margin-top: var(--s-4);
+}
+.form-actions--end {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--s-2);
 }
 
-.hidden {
-    display: none;
+/* Error banner — shown below the add-pattern form when validation fails.
+   Sized small so it doesn't dominate the section. Section-level alerts
+   reserve their slot when empty (see the .hidden override below) so that
+   toggling the message doesn't shift the surrounding layout. */
+.alert {
+    margin-top: var(--s-2);
+    background: var(--danger-bg);
+    color: var(--danger-fg);
+    border: 1px solid rgba(248, 81, 73, 0.3);
+    border-radius: var(--radius);
+    padding: var(--s-1) var(--s-2);
+    font-size: 13px;
+    line-height: 1.4;
+}
+.hidden { display: none; }
+
+/* Undo affordance for the most recent rule edit or delete. Sits at
+   the bottom-right of the Rules subcard so the glyph lines up under
+   the Delete column. Always rendered; the .btn:disabled rules above
+   give it a grey/dimmed look when there's nothing to undo. */
+.rules-undo-region {
+    display: flex;
+    justify-content: flex-end;
+    padding: var(--s-1) var(--s-2);
+}
+/* When there is something to undo (button is enabled), give the button
+   a red background to signal a reversible destructive/edit action is
+   available. The .btn:disabled rules above handle the greyed/dimmed
+   empty state. */
+#rules-undo-btn:not(:disabled) {
+    background: var(--danger-fg);
+    border-color: var(--danger-fg);
+    color: white;
+}
+#rules-undo-btn:not(:disabled):hover {
+    filter: brightness(1.1);
 }
 
-/* Table Styles */
-table#table-link-patterns {
+/* Slot reservation for section-level alerts only. The row-edit error has
+   its own slot-reservation strategy via the flex stack inside the pattern
+   cell — see .row-edit-pattern-stack below. Other .hidden consumers (image
+   tab toggles, etc.) are unaffected. */
+#link-patterns-error.hidden,
+#link-patterns-io-status.hidden {
+    visibility: hidden;
+    display: block;
+}
+
+/*
+ * Tables — shared between the Examples sub-card and the Rules sub-card so
+ * the user learns the columns once. The .data-table class provides shared
+ * header/cell styling; #table-link-patterns adds row-edit affordances.
+ */
+.data-table {
+    width: 100%;
     border-collapse: collapse;
 }
-
-table#table-link-patterns td, table#table-link-patterns th {
-    border: 1px solid rgb(201, 209, 217);
+.data-table th,
+.data-table td {
+    padding: var(--s-2) var(--s-3);
+    border-bottom: 1px solid var(--border);
     text-align: center;
+    vertical-align: middle;
+}
+.data-table th {
+    background: var(--panel-2);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-2);
+}
+.data-table th:first-child,
+.data-table td:first-child {
+    text-align: left;
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+/* Inline form controls inside table cells (used in the examples table)
+   shouldn't stretch to fill the cell — let them size to content. */
+.data-table td input[type="checkbox"] {
+    margin: 0;
+    vertical-align: middle;
+}
+.data-table td select {
+    width: auto;
+    min-width: 90px;
+    padding: 4px 24px 4px 8px;
+    font-size: 12px;
+    background-position: right 6px center;
+}
+.data-table td.cell--pattern {
+    text-align: left;
+}
+.data-table td.cell--pattern code,
+.data-table td pre {
+    font-size: 13px;
+    color: var(--text);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.data-table td pre { margin: 0; }
+/* Boolean cells: muted "No" by default; green "Yes" reads the accent color
+   and gives the table a touch of green without being noisy. */
+.data-table td.cell--bool { color: var(--muted); font-size: 12px; }
+.data-table td.cell--bool.is-yes { color: var(--accent-hover); font-weight: 500; }
+
+/* Inline-edit row: text inputs fill their cell so editing feels in place. */
+table#table-link-patterns tr.editing td input[type="text"] {
+    width: 100%;
+    padding: 4px 8px;
+    font-size: 13px;
+}
+table#table-link-patterns tr.editing td.cell--pattern input[type="text"] {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
+/* The pattern cell uses a fixed-height vertical flex stack so the input
+   stays centered when there's no error and visibly slides up when the
+   error appears beneath it — without changing the cell's overall height.
+   td-as-flex is unreliable cross-browser, so the stack lives in a wrapper
+   div appended in editLinkPatternInline. */
+.row-edit-pattern-stack {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--s-1);
+    min-height: 60px;
+}
+table#table-link-patterns tr.editing td.cell--pattern {
+    vertical-align: middle;
+}
+
+/* Row-local validation error — matches the pattern input's metrics
+   (padding, font-size, line-height, mono font) so the two boxes read as
+   the same shape; only the red colors from .alert distinguish them. */
+table#table-link-patterns tr.editing .row-edit-error {
+    margin-top: 0;
+    padding: 4px 8px;
+    font-size: 13px;
+    line-height: 1.4;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* Rules table specifics — hover, edit-row wash, action buttons. */
+/* Fixed layout + colgroup so the Pattern column gets the leftover width
+   and small action columns stay narrow, regardless of cell content width. */
+table#table-link-patterns {
+    width: 100%;
+    table-layout: fixed;
+}
+table#table-link-patterns col.col-title    { width: 14%; }
+table#table-link-patterns col.col-pattern  { width: auto; }
+table#table-link-patterns col.col-bool     { width: 64px; }
+table#table-link-patterns col.col-summary  { width: 76px; }
+table#table-link-patterns col.col-reorder  { width: 56px; }
+table#table-link-patterns col.col-action   { width: 48px; }
+table#table-link-patterns th,
 table#table-link-patterns td {
-    padding: 5px 10px;
+    padding: var(--s-2);
+    overflow: hidden;
+}
+/* Pre-size every body row so toggling the inline-edit error never changes
+   the row's outer height. 60px fits input + gap + error; with td padding
+   this matches the editing-with-error state. */
+table#table-link-patterns tbody td {
+    height: 60px;
+}
+table#table-link-patterns td.cell--pattern pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-width: 100%;
+    margin: 0;
+}
+table#table-link-patterns tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+table#table-link-patterns tbody tr.editing,
+table#table-link-patterns tbody tr.editing:hover {
+    background: var(--row-editing);
+}
+table#table-link-patterns td button {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border-2);
+    border-radius: 6px;
+    padding: 2px 8px;
+    cursor: pointer;
+    font: inherit;
+}
+table#table-link-patterns td button:hover { background: var(--border); }
+/* Edit / Delete buttons render a single emoji glyph; size them as a square
+   so the icon stays centered and the column doesn't grow with text width. */
+table#table-link-patterns td button.button-edit,
+table#table-link-patterns td button.button-delete {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1;
+}
+table#table-link-patterns td button.button-delete:hover {
+    background: var(--danger-bg);
+    border-color: var(--danger-fg);
+}
+/* Reorder column has two stacked arrow buttons. */
+table#table-link-patterns td button.button-reorder-up,
+table#table-link-patterns td button.button-reorder-down {
+    padding: 0 6px;
+    font-size: 10px;
+    line-height: 1.4;
+    margin: 0 1px;
 }
 
-table#table-link-patterns th {
-    font-size: 15px;
-    background-color: rgb(32, 37, 45);
-    padding: 10px;
+/* Import / Export row. */
+.io-row {
+    display: flex;
+    align-items: end;
+    gap: var(--s-4);
+    flex-wrap: wrap;
+}
+.io-row__buttons {
+    display: flex;
+    gap: var(--s-2);
+    margin-left: auto;
 }
 
-table tr.editing {
-    background-color: rgb(179 0 0 / 18%);
+/* Append / Overwrite radio group. Uses a fieldset+legend so screen readers
+   announce the group label. */
+fieldset.radio-set {
+    border: 1px solid var(--border-2);
+    border-radius: var(--radius);
+    padding: 4px 12px 6px;
+    margin: 0;
+    display: flex;
+    gap: var(--s-3);
+    align-items: center;
+}
+.radio-set legend {
+    padding: 0 4px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.radio-set label {
+    display: flex;
+    align-items: center;
+    gap: var(--s-1);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text);
+}
+input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid var(--border-2);
+    background: var(--panel-2);
+    cursor: pointer;
+    position: relative;
+    margin: 0;
+}
+input[type="radio"]:checked { border-color: var(--accent); }
+input[type="radio"]:checked::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    background: var(--accent);
+    border-radius: 50%;
+}
+
+/* Narrow-viewport collapse: 2-col grids drop to one column. */
+@media (max-width: 720px) {
+    .form-grid,
+    .form-grid--title-pattern,
+    .toggle-list--grid { grid-template-columns: 1fr; }
+    .io-row__buttons { margin-left: 0; }
 }
