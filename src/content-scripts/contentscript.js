@@ -1,7 +1,18 @@
+// Idempotent listener registration: stash the named listener function on
+// globalThis. If the script runs twice in the same isolated world (e.g.
+// the manifest content_script auto-injection plus a programmatic
+// re-injection on extension install/update), the previous listener is
+// removed before the new one is added. Works whether the isolated world
+// persists across updates or not, and whether manifest or programmatic
+// injection runs first.
+if (globalThis.__zlcOnMessage) {
+  browser.runtime.onMessage.removeListener(globalThis.__zlcOnMessage);
+}
+
 console.log("Zendesk Link Collector - loaded content script");
 
 // Message handler for messages from the background script.
-browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+function zlcOnMessage(request, sender, sendResponse) {
   // Scroll to the comment.
   if (request.type == "scroll") {
     // This is async because it contains a fetch which we must wait for before sending a response.
@@ -132,7 +143,10 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
 
   return true;
-});
+}
+
+globalThis.__zlcOnMessage = zlcOnMessage;
+browser.runtime.onMessage.addListener(zlcOnMessage);
 
 function highlightComment(element) {
   let highlightElement = element;

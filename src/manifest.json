@@ -38,6 +38,6 @@
       "description": "Copy ticket ID to clipboard in markdown"
     }
   },
-  "permissions": ["activeTab", "storage", "clipboardWrite"],
+  "permissions": ["activeTab", "storage", "clipboardWrite", "scripting"],
   "host_permissions": ["https://*.zendesk.com/*"]
 }
